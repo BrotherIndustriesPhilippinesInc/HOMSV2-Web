@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "@uppy/core": "^4.4.2",
     "bootstrap": "^5.3.3",
     "jquery": "^3.7.1",
     "sweetalert2": "^11.15.10"
