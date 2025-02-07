@@ -2,9 +2,9 @@
   $compTest = $button->navButton("Component Test", "/comptest");
   $dashboard = $button->navButton("Dashboard", "/");
 
-  $uploadPOL = $button->navButton("Upload POL", "/production/upload_pol", "text-center");
-  $poSelection = $button->navButton("PO Selection", "/production/po_selection", "text-center");
-  $history = $button->navButton("History", "/production/history", "text-center");
+  $uploadPOL = $button->navButton("Upload POL", "/production/upload_pol", "text-center pt-2");
+  $poSelection = $button->navButton("PO Selection", "/production/po_selection", "text-center pt-2");
+  $history = $button->navButton("History", "/production/history", "text-center pt-2");
 
   $confirmation = $button->navButton("Confirmation", "/confirmation");
   $graphs = $button->navButton("Graphs", "/graphs");
@@ -30,26 +30,32 @@
   </div>
   <div class="offcanvas-body p-0">
     <ul class="nav flex-column">
+      <!-- COMPONENT TEST -->
       <li class="nav-item d-flex">
           <div class="nav-status <?php echo isActive('/comptest', $currentPath); ?>" style="width: 8px; height: auto;"></div>
           <div class="w-100">
-            <?php echo $compTest; ?>
+            <div class="nav-link w-100 text-primary fs-5 fw-medium">
+              <?php echo $compTest; ?>
+            </div>
           </div>
           
       </li>
-
+      <!-- DASHBOARD -->
       <li class="nav-item d-flex">
           <div class="nav-status <?php echo isActive('/', $currentPath); ?>" style="width: 8px; height: auto;"></div>
           <div class="w-100">
-            <?php echo $dashboard; ?>
+            <div class="nav-link w-100 text-primary fs-5 fw-medium">
+              <?php echo $dashboard; ?>
+            </div>
+            
           </div>
       </li>
-      
+      <!-- PRODUCTION -->
       <li class="nav-item d-flex">
           <div class="nav-status <?php echo isActive('/production', $currentPath); ?>" style="width: 8px; height: auto;"></div>
           <div class="nav-link w-100 text-primary fs-5 fw-medium">
             <div class="nav-title d-flex justify-content-center align-items-center">
-              <span class="w-100 fs-4">Production</span>
+              <span class="w-100 fs-5">Production</span>
               <img class="arrow" src="/resources/icons/arrow_down.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
               <img class="arrow d-none" src="/resources/icons/arrow_up.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
             </div>
@@ -64,12 +70,6 @@
           
       </li>
 
-      <li class="nav-item d-flex">
-          <div class="nav-status <?php echo isActive('/confirmation', $currentPath); ?>" style="width: 8px; height: auto;"></div>
-          <div class="w-100">
-            <?php echo $confirmation; ?>
-          </div>
-      </li>
 
       <li class="nav-item d-flex">
           <div class="nav-status <?php echo isActive('/history', $currentPath); ?>" style="width: 8px; height: auto;"></div>
