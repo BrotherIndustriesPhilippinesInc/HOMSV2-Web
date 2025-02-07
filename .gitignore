@@ -1,0 +1,499 @@
+# Ignore node_modules folder
+node_modules/
+modules
+# Ignore local development environment variables
+.env
+
+# Ignore logs
+logs/
+
+# Ignore coverage reports
+coverage/
+
+# Ignore dependencies installed by Composer
+/vendor/
+
+# Ignore the PHPStorm IDE configuration
+/.idea/
+
+# Ignore the VSCode IDE configuration
+/.vscode/
+
+# Ignore the NetBeans IDE configuration
+/nbproject/
+
+# Ignore the Sublime Text IDE configuration
+/.sublime-project
+/.sublime-workspace
+
+# Ignore the vim IDE configuration
+/.vimrc
+
+# Ignore the Mac OS X .DS_Store files
+.DS_Store
+
+# Ignore the Windows Thumbs.db files
+Thumbs.db
+
+# Ignore the Windows desktop.ini files
+desktop.ini
+
+# Ignore the Windows .Spotlight-V100 files
+.Spotlight-V100
+
+# Ignore the Windows .Trashes files
+.Trashes
+
+# Ignore the Windows .ehthumbs.db files
+.ehthumbs.db
+
+# Ignore the Windows .LSOverride files
+.LSOverride
+
+# Ignore the Windows _WLX_.lnk files
+_WLX_.lnk
+
+# Ignore the Windows FileList.txt files
+FileList.txt
+
+# Ignore the Windows Desktop.ini files
+Desktop.ini
+
+# Ignore the Windows p-list files
+*.plist
+
+# Ignore the Windows .ini files
+*.ini
+
+# Ignore the Windows .config files
+*.config
+
+# Ignore the Windows .userprefs files
+*.userprefs
+
+# Ignore the Windows .userprefs files
+*.userprefs
+
+# Ignore the Windows .properties files
+*.properties
+
+# Ignore the Windows .settings files
+*.settings
+
+# Ignore the Windows .localstorage files
+*.localstorage
+
+# Ignore the Windows .log files
+*.log
+
+# Ignore the Windows .tmp files
+*.tmp
+
+# Ignore the Windows .temp files
+*.temp
+
+# Ignore the Windows .old files
+*.old
+
+# Ignore the Windows .orig files
+*.orig
+
+# Ignore the Windows .bak files
+*.bak
+
+# Ignore the Windows .swp files
+*.swp
+
+# Ignore the Windows .swo files
+*.swo
+
+# Ignore the Windows .swn files
+*.swn
+
+# Ignore the Windows .swx files
+*.swx
+
+# Ignore the Windows .suo files
+*.suo
+
+# Ignore the Windows .sdf files
+*.sdf
+
+# Ignore the Windows .pdb files
+*.pdb
+
+# Ignore the Windows .cache files
+*.cache
+
+# Ignore the Windows .profiler files
+*.profiler
+
+# Ignore the Windows .userprefs files
+*.userprefs
+
+# Ignore the Windows .vspscc files
+*.vspscc
+
+# Ignore the Windows .vssscc files
+*.vssscc
+
+# Ignore the Windows .sln files
+*.sln
+
+# Ignore the Windows .csproj files
+*.csproj
+
+# Ignore the Windows .vbproj files
+*.vbproj
+
+# Ignore the Windows .fsproj files
+*.fsproj
+
+# Ignore the Windows .shproj files
+*.shproj
+
+# Ignore the Windows .xproj files
+*.xproj
+
+# Ignore the Windows .user file
+*.user
+
+# Ignore the Windows .suo file
+*.suo
+
+# Ignore the Windows .ncb file
+*.ncb
+
+# Ignore the Windows .opensdf file
+*.opensdf
+
+# Ignore the Windows .sdf file
+*.sdf
+
+# Ignore the Windows .ipch file
+*.ipch
+
+# Ignore the Windows .iobj file
+*.iobj
+
+# Ignore the Windows .ipdb file
+*.ipdb
+
+# Ignore the Windows .obj file
+*.obj
+
+# Ignore the Windows .pch file
+*.pch
+
+# Ignore the Windows .pdb file
+*.pdb
+
+# Ignore the Windows .rsp file
+*.rsp
+
+# Ignore the Windows .sbr file
+*.sbr
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .tlh file
+*.tlh
+
+# Ignore the Windows .tli file
+*.tli
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .user file
+*.user
+
+# Ignore the Windows .filters file
+*.filters
+
+# Ignore the Windows .userprefs file
+*.userprefs
+
+# Ignore the Windows .suo file
+*.suo
+
+# Ignore the Windows .ncb file
+*.ncb
+
+# Ignore the Windows .opensdf file
+*.opensdf
+
+# Ignore the Windows .sdf file
+*.sdf
+
+# Ignore the Windows .ipch file
+*.ipch
+
+# Ignore the Windows .iobj file
+*.iobj
+
+# Ignore the Windows .ipdb file
+*.ipdb
+
+# Ignore the Windows .obj file
+*.obj
+
+# Ignore the Windows .pch file
+*.pch
+
+# Ignore the Windows .pdb file
+*.pdb
+
+# Ignore the Windows .rsp file
+*.rsp
+
+# Ignore the Windows .sbr file
+*.sbr
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .tlh file
+*.tlh
+
+# Ignore the Windows .tli file
+*.tli
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .user file
+*.user
+
+# Ignore the Windows .filters file
+*.filters
+
+# Ignore the Windows .userprefs file
+*.userprefs
+
+# Ignore the Windows .suo file
+*.suo
+
+# Ignore the Windows .ncb file
+*.ncb
+
+# Ignore the Windows .opensdf file
+*.opensdf
+
+# Ignore the Windows .sdf file
+*.sdf
+
+# Ignore the Windows .ipch file
+*.ipch
+
+# Ignore the Windows .iobj file
+*.iobj
+
+# Ignore the Windows .ipdb file
+*.ipdb
+
+# Ignore the Windows .obj file
+*.obj
+
+# Ignore the Windows .pch file
+*.pch
+
+# Ignore the Windows .pdb file
+*.pdb
+
+# Ignore the Windows .rsp file
+*.rsp
+
+# Ignore the Windows .sbr file
+*.sbr
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .tlh file
+*.tlh
+
+# Ignore the Windows .tli file
+*.tli
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .user file
+*.user
+
+# Ignore the Windows .filters file
+*.filters
+
+# Ignore the Windows .userprefs file
+*.userprefs
+
+# Ignore the Windows .suo file
+*.suo
+
+# Ignore the Windows .ncb file
+*.ncb
+
+# Ignore the Windows .opensdf file
+*.opensdf
+
+# Ignore the Windows .sdf file
+*.sdf
+
+# Ignore the Windows .ipch file
+*.ipch
+
+# Ignore the Windows .iobj file
+*.iobj
+
+# Ignore the Windows .ipdb file
+*.ipdb
+
+# Ignore the Windows .obj file
+*.obj
+
+# Ignore the Windows .pch file
+*.pch
+
+# Ignore the Windows .pdb file
+*.pdb
+
+# Ignore the Windows .rsp file
+*.rsp
+
+# Ignore the Windows .sbr file
+*.sbr
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .tlh file
+*.tlh
+
+# Ignore the Windows .tli file
+*.tli
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .user file
+*.user
+
+# Ignore the Windows .filters file
+*.filters
+
+# Ignore the Windows .userprefs file
+*.userprefs
+
+# Ignore the Windows .suo file
+*.suo
+
+# Ignore the Windows .ncb file
+*.ncb
+
+# Ignore the Windows .opensdf file
+*.opensdf
+
+# Ignore the Windows .sdf file
+*.sdf
+
+# Ignore the Windows .ipch file
+*.ipch
+
+# Ignore the Windows .iobj file
+*.iobj
+
+# Ignore the Windows .ipdb file
+*.ipdb
+
+# Ignore the Windows .obj file
+*.obj
+
+# Ignore the Windows .pch file
+*.pch
+
+# Ignore the Windows .pdb file
+*.pdb
+
+# Ignore the Windows .rsp file
+*.rsp
+
+# Ignore the Windows .sbr file
+*.sbr
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .tlh file
+*.tlh
+
+# Ignore the Windows .tli file
+*.tli
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .user file
+*.user
+
+# Ignore the Windows .filters file
+*.filters
+
+# Ignore the Windows .userprefs file
+*.userprefs
+
+# Ignore the Windows .suo file
+*.suo
+
+# Ignore the Windows .ncb file
+*.ncb
+
+# Ignore the Windows .opensdf file
+*.opensdf
+
+# Ignore the Windows .sdf file
+*.sdf
+
+# Ignore the Windows .ipch file
+*.ipch
+
+# Ignore the Windows .iobj file
+*.iobj
+
+# Ignore the Windows .ipdb file
+*.ipdb
+
+# Ignore the Windows .obj file
+*.obj
+
+# Ignore the Windows .pch file
+*.pch
+
+# Ignore the Windows .pdb file
+*.pdb
+
+# Ignore the Windows .rsp file
+*.rsp
+
+# Ignore the Windows .sbr file
+*.sbr
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .tlh file
+*.tlh
+
+# Ignore the Windows .tli file
+*.tli
+
+# Ignore the Windows .tlb file
+*.tlb
+
+# Ignore the Windows .user file
+*.user
+
+# Ignore the Windows .filters file
+*.filters
+
