@@ -5,14 +5,14 @@
         
         <div>
             <span>
-                <img src="resources/icons/call.svg" alt="user-logo-icon" style="width: 20px; height: 20px;">
+                <img src="/resources/icons/call.svg" alt="user-logo-icon" style="width: 20px; height: 20px;">
             </span>
             <span class="fw-bold">3407</span>
         </div>
         
         <div>
             <span>
-                <img src="resources/icons/mail.svg" alt="user-logo-icon" style="width: 20px; height: 20px;">
+                <img src="/resources/icons/mail.svg" alt="user-logo-icon" style="width: 20px; height: 20px;">
             </span>
             <span class="fw-bold">bpsapplicatiosupport@brother-biph.com.ph</span>
         </div>

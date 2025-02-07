@@ -1,9 +1,12 @@
 <?php 
   $compTest = $button->navButton("Component Test", "/comptest");
   $dashboard = $button->navButton("Dashboard", "/");
-  $startProduction = $button->navButton("Start Production", "/production");
+
+  $uploadPOL = $button->navButton("Upload POL", "/production/upload_pol", "text-center");
+  $poSelection = $button->navButton("PO Selection", "/production/po_selection", "text-center");
+  $history = $button->navButton("History", "/production/history", "text-center");
+
   $confirmation = $button->navButton("Confirmation", "/confirmation");
-  $history = $button->navButton("History", "/history");
   $graphs = $button->navButton("Graphs", "/graphs");
 
 
@@ -22,7 +25,7 @@
   </div>
   <div class="d-flex justify-content-center mb-4">
     <span data-bs-toggle="offcanvas" data-bs-target="#offcanvasDark" aria-controls="offcanvasDark">
-        <img src="resources/icons/logo.svg" alt="logo-icon">
+        <img src="/resources/icons/logo.svg" alt="logo-icon">
     </span>
   </div>
   <div class="offcanvas-body p-0">
@@ -44,9 +47,21 @@
       
       <li class="nav-item d-flex">
           <div class="nav-status <?php echo isActive('/production', $currentPath); ?>" style="width: 8px; height: auto;"></div>
-          <div class="w-100">
-            <?php echo $startProduction; ?>
+          <div class="nav-link w-100 text-primary fs-5 fw-medium">
+            <div class="nav-title d-flex justify-content-center align-items-center">
+              <span class="w-100 fs-4">Production</span>
+              <img class="arrow" src="/resources/icons/arrow_down.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
+              <img class="arrow d-none" src="/resources/icons/arrow_up.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
+            </div>
+            <div class="nav-submenu">
+              <?php 
+                echo $uploadPOL; 
+                echo $poSelection;
+                echo $history;
+              ?>
+            </div>
           </div>
+          
       </li>
 
       <li class="nav-item d-flex">

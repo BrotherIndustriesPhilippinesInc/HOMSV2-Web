@@ -1,0 +1,30 @@
+export function navigation() {
+    expand();
+    linkHover();
+}
+
+function expand(){
+
+    $(".nav-link").on("click", function (e) {
+        let submenu = $(this).find(".nav-submenu");
+
+        if (submenu.hasClass("open")) {
+            submenu.removeClass("open").stop().animate({ maxHeight: "0px" }, 300);
+        } else {
+            submenu.addClass("open").stop().animate({ maxHeight: submenu.prop("scrollHeight") + "px" }, 300);
+        }
+
+        // Toggle arrow icons
+        $(this).find(".arrow").toggleClass("d-none");
+    });
+}
+
+function linkHover(){
+    $(".nav-button").on("mouseenter", function () {
+        $(this).removeClass("text-decoration-none").addClass("text-decoration-underline");
+    });
+
+    $(".nav-button").on("mouseleave", function () {
+        $(this).removeClass("text-decoration-underline").addClass("text-decoration-none");
+    });
+}

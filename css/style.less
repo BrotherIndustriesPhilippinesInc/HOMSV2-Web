@@ -67,3 +67,15 @@
 input[type="text"]::-webkit-input-placeholder {
     color: @secondary-text;
 }
+
+.nav-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: height 0.3s ease-in-out;
+}
+.nav-submenu.open {
+    max-height: 500px; /* Adjust based on content */
+}
+.nav-title{
+    cursor: pointer;
+}

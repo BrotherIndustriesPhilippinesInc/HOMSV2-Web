@@ -23,7 +23,7 @@ class Buttons
     {
 
         $html = <<<HTML
-        <a href="{$url}" type="button" class="nav-link text-primary fs-5 fw-medium text-center {$class}" $buttonAttributes>
+        <a href="{$url}" type="button" class="nav-button w-100 text-primary text-decoration-none p-3 fs-5 fw-medium {$class}" $buttonAttributes>
             $text
         </a>
         HTML;
