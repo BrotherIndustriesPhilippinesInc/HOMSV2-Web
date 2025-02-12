@@ -15,6 +15,9 @@ $(function () {
                         theme: 'dark'
                     }
     )
-    .use(FileInput, { });
-    console.log("uploadPOL");
+
+    $(".uppy-Root").on("click", function (e) {
+        e.preventDefault();
+        window.location.href = "/production/wc_selection";
+    });
 });

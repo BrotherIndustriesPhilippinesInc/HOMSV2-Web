@@ -4,17 +4,20 @@ class Dropdowns
     public function __construct(){
 
     }
-
-    public function primaryDropdown($name){
+    public function primaryDropdown($name, $text, array $options = []) {
+        $list = "";
+        foreach ($options as $key => $value) {
+            $list .= <<<HTML
+                <li class="dropdown-item"><span id="{$name}-{$key}" value="{$key}">{$value}</span></li>
+            HTML;
+        }
         $html = <<<HTML
             <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Dropdown button
+                <button class="btn btn-secondary dropdown-toggle text-primary fw-medium" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    $text
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    $list
                 </ul>
             </div>
         HTML;

@@ -9,12 +9,37 @@
 @primary-misc: #2DD5B9;
 @secondary-misc: #8DCEE3;
 
+@danger: #FF0000;
+
+.secondary-background{
+    background-color: @secondary-background !important;
+}
+
+.text-danger, .border-danger{
+    color: @danger !important;
+}
+
+.tertiary-background{
+    background-color: @tertiary-background !important;
+}
+
 .bg-custom{
     background-color: @primary-background !important;
+}
+.text-primary-misc{
+    color: @primary-misc !important;
 }
 
 .btn{
     background-color: @secondary-background !important;
+    border-color: @primary-misc !important;
+}
+.btn:hover{
+    border: solid 1px @primary-text !important;
+    .btn-span{
+        text-decoration: underline !important;
+    }
+    
 }
 
 .btn-nav{
@@ -78,4 +103,60 @@ input[type="text"]::-webkit-input-placeholder {
 }
 .nav-title{
     cursor: pointer;
+}
+.uppy-Dashboard-inner{
+    background-color: @secondary-background !important;
+    border-color: @primary-misc !important;
+}
+.uppy-u-reset.uppy-c-btn.uppy-Dashboard-browse{
+    color: @primary-misc !important;
+    text-decoration: none !important;
+}
+input:focus, textarea:focus, select:focus {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+.modal-content{
+    background-color: @secondary-background !important;
+}
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+.main-content{
+    height: calc(100vh - 82px);
+}
+.content-group{
+    background-color: @tertiary-background;
+}
+.plan-details{
+    font-size: 12px;
+}
+.plan-detail-textbox{
+    font-size: 32px;
+    text-align: center;
+}
+.section-details-label{
+    font-size: 12px;
+    color: @primary-misc;
+    font-weight: 500;
+    white-space: nowrap;
+    padding-right: 8px;
+}
+.flatpickr-no-calendar{
+    background-color: @secondary-background !important;
+    border: 0;
+    width: 100%;
+    padding: 4px;
+    border-radius: 8px;
+    color: @primary-misc;
+    text-align: center;
+}
+.causeCategories-span, .actionCategories-span{
+    font-size: 10px;
+}
+.popover-body{
+    background-color: @secondary-background !important;
+    border-radius: 8px;
+    border: 0;
 }

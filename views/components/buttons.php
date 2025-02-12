@@ -6,14 +6,16 @@ class Buttons
     }
     public function primaryButton($name, $text, $imgSource ='', $alt='', $buttonAttributes = '',$class='',)
     {
-        $addClass = '';
+        $spanClass = '';
+        $imageExists = '';
         if($imgSource != '' && $text != ''){
-            $addClass = "class='ps-2'";
-        }   
+            $spanClass = "ps-2";
+            $imageExists = "<img src='{$imgSource}' alt='{$alt}'>";
+        }
         $html = <<<HTML
-        <button type="button" class='{$name} btn btn-primary bg-custom-tertiary border-0 rounded-3 p-2 fw-medium text-primary {$class}' $buttonAttributes>
-            <img src='{$imgSource}' alt='{$alt}'>
-            <span {$addClass}>$text</span>
+        <button type="button" class='{$name} btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary {$class}' $buttonAttributes>
+            $imageExists
+            <span class="{$name}-span btn-span {$spanClass}">$text</span>
         </button>
         HTML;
         return $html;
@@ -29,4 +31,6 @@ class Buttons
         HTML;
         return $html;
     }
+
+
 }

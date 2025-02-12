@@ -1,7 +1,7 @@
 <?php 
     include_once __DIR__ . "/help-popover.php";
 ?>
-<div id="header" class="row justify-content-center py-4 sticky-top">
+<div id="header" class="row justify-content-center py-3 sticky-top">
     
         <!-- First Column -->
         <div class="col d-flex align-items-center">

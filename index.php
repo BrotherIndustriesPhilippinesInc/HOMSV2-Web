@@ -12,6 +12,8 @@
     <!-- BOOSTRAP -->
     <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
     <script defer src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- POPPER -->
+    <script defer src="/non_module_libraries/popper/popper.min.js"></script>
 
     <!-- SWEETALERT2 -->
     <script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
@@ -21,20 +23,28 @@
 
     <!-- UPPY -->
     <link href="https://releases.transloadit.com/uppy/v4.13.2/uppy.min.css" rel="stylesheet"/>
-    
 
+    <!-- FLATPICKR -->
+    <!-- <link rel="stylesheet" href="/non_module_libraries/flatpickr/flatpickr.min.css">
+    <script src="/non_module_libraries/flatpickr/flatpickr.min.js" defer></script> -->
+    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     
 </head>
 <body>
     <?php
-    //Components
+    //Initialize Components
     require_once __DIR__ . '/views/components/buttons.php';
     require_once __DIR__ . '/views/components/textboxes.php';
     require_once __DIR__ . '/views/components/selects.php';
-
+    require_once __DIR__ . '/views/components/dropdowns.php';
+    
     $button = new Buttons();
     $textbox = new Textboxes();
     $select = new Selects();
+    $dropdown = new Dropdowns();
+
+
     // Router
 
     // Define routes and their corresponding callback functions
@@ -50,6 +60,12 @@
         },
         '/production/upload_pol' => function() {
             include __DIR__ . '/views/pages/production/upload_pol.php';
+        },
+        '/production/wc_selection' => function() {
+            include __DIR__ . '/views/pages/production/wc_selection.php';
+        },
+        '/production/details' => function() {
+            include __DIR__ . '/views/pages/production/details.php';
         },
         
 

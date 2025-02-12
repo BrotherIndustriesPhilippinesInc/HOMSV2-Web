@@ -3,7 +3,7 @@
   $dashboard = $button->navButton("Dashboard", "/");
 
   $uploadPOL = $button->navButton("Upload POL", "/production/upload_pol", "text-center pt-2");
-  $poSelection = $button->navButton("PO Selection", "/production/po_selection", "text-center pt-2");
+  $wcSelection = $button->navButton("WC Selection", "/production/wc_selection", "text-center pt-2");
   $history = $button->navButton("History", "/production/history", "text-center pt-2");
 
   $confirmation = $button->navButton("Confirmation", "/confirmation");
@@ -62,7 +62,7 @@
             <div class="nav-submenu">
               <?php 
                 echo $uploadPOL; 
-                echo $poSelection;
+                echo $wcSelection;
                 echo $history;
               ?>
             </div>

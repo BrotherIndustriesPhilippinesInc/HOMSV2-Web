@@ -2,7 +2,8 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "jquery": "^3.7.1",
-    "sweetalert2": "^11.15.10"
+    "sweetalert2": "^11.15.10",
+    "flatpickr-4.6.13": "^4.6.13"
   },
   "devDependencies": {
     "less": "^4.2.2"
