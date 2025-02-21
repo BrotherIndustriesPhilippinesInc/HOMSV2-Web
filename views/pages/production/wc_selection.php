@@ -1,5 +1,8 @@
 <?php
     global $button;
+    global $textbox;
+    
+    $date = $textbox->dateSelect("date");
 ?>
 
 <title>HOMS - WC Selection</title>
@@ -11,6 +14,9 @@
     ?>
     <div class="bg-custom-secondary container-fluid rounded-3">
         <h1>Work Center Selection</h1>
+        <div class="py-2">
+            <?php echo $date ?>
+        </div>
         <div class="d-grid gap-2" style="grid-template-columns: repeat(5, 1fr);">
             
             <?php 
@@ -24,4 +30,4 @@
     
 </body>
 
-<script defer type="module" src="/js/functions/wcSelection.js"></script>
+<script defer type="module" src="/js/functions/page-scripts/wcSelection.js"></script>

@@ -67,21 +67,15 @@
               ?>
             </div>
           </div>
-          
       </li>
 
-
-      <li class="nav-item d-flex">
-          <div class="nav-status <?php echo isActive('/history', $currentPath); ?>" style="width: 8px; height: auto;"></div>
-          <div class="w-100">
-            <?php echo $history; ?>
-          </div>
-      </li>
-      
       <li class="nav-item d-flex">
           <div class="nav-status <?php echo isActive('/graphs', $currentPath); ?>" style="width: 8px; height: auto;"></div>
           <div class="w-100">
-            <?php echo $graphs; ?>
+            <div class="nav-link w-100 text-primary fs-5 fw-medium">
+              <?php echo $graphs; ?>
+            </div>
+            
           </div>
       </li>
     </ul>

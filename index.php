@@ -27,8 +27,14 @@
     <!-- FLATPICKR -->
     <!-- <link rel="stylesheet" href="/non_module_libraries/flatpickr/flatpickr.min.css">
     <script src="/non_module_libraries/flatpickr/flatpickr.min.js" defer></script> -->
-    <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> -->
+    <link rel="stylesheet" type="text/css" href="/non_module_libraries/flatpickr/dark.css">
+    <script src="/non_module_libraries/flatpickr/flatpickr.js"></script>
+
+    <!-- CHART JS -->
+    <script src="/non_module_libraries/chartjs/chart.umd.min.js"></script>
+    <script src="/non_module_libraries/chartjs/chartjs-adapter-date-fns.bundle.min.js"></script>
     
 </head>
 <body>
@@ -67,7 +73,9 @@
         '/production/details' => function() {
             include __DIR__ . '/views/pages/production/details.php';
         },
-        
+        '/graphs' => function() {
+            include __DIR__ . '/views/pages/graphs/graphs.php';
+        },
 
     ];
 

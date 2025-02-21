@@ -20,6 +20,7 @@
     
     $hourlyTime = $dropdown->primaryDropdown("hourlyTime", "Hourly Time", ["8:00-10:00", "10:00-12:00", "12:00-14:00", "14:00-16:00", "16:00-18:00", "18:00-20:00", "20:00-22:00", "22:00-24:00"]);
     $directOperations = $textbox->primaryTextbox("directOperations", "secondary-background p-1 text-center");
+
     $startTime = $textbox->timeSelect("startTime");
     $endTime = $textbox->timeSelect("endTime");
 
@@ -31,8 +32,8 @@
     $causeOfVariance = $textbox->textArea("causeOfVariance", "secondary-background p-1 h-100");
     $action = $textbox->textArea("action", "secondary-background p-1 h-100");
 
-    $causeCategories = $button->primaryButton("causeCategories", "Cause Categories", "/resources/icons/list_alt.svg", "cause_categories", "", "d-flex align-items-center p-1");
-    $actionCategories = $button->primaryButton("actionCategories", "Action Categories", "/resources/icons/list_alt.svg", "action_categories", "", "d-flex align-items-center p-1");
+    $causeCategories = $button->primaryButton("causeCategories", "Cause Categories", "/resources/icons/list_alt.svg", "cause_categories", "data-bs-toggle='modal' data-bs-target='#causeModal'", "d-flex align-items-center p-1");
+    $actionCategories = $button->primaryButton("actionCategories", "Action Categories", "/resources/icons/list_alt.svg", "action_categories", "data-bs-toggle='modal' data-bs-target='#actionModal'", "d-flex align-items-center p-1");
     
     $homsView = $button->primaryButton("homsView", "HOMS", "/resources/icons/visibility.svg", "homs_view");
     $save = $button->primaryButton("save", "Save", "/resources/icons/save.svg", "save");
@@ -82,10 +83,12 @@
             <div class="w-75 d-flex flex-column gap-2">
                 <!-- CONTROLS -->
                 <div class="d-flex justify-content-between w-100">
-                    <div>
-                        <?php
-                            echo $selectPO; 
-                        ?>
+                    <div class="">
+                        <div>
+                            <?php
+                                echo $selectPO; 
+                            ?>
+                        </div>
                     </div>
                     
                     <div class="d-flex gap-2">
@@ -287,6 +290,42 @@
         </div>
     </div>
 
+    <div id="causeModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Select Causes</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-grid gap-2" style="grid-template-columns: repeat(1, 1fr);">
+                    <?php 
+                        for($i = 0; $i < 10; $i++){
+                            echo $button->primaryButton("po-button","Cause #{$i}", "", "", "data-po-id='{$i}' data-bs-dismiss='modal' data-bs-target='#popover-stops'");
+                        }
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="actionModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Select Actions</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-grid gap-2" style="grid-template-columns: repeat(1, 1fr);">
+                    <?php 
+                        for($i = 0; $i < 10; $i++){
+                            echo $button->primaryButton("po-button","Actions #{$i}", "", "", "data-po-id='{$i}' data-bs-dismiss='modal' data-bs-target='#popover-stops'");
+                        }
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- POPOVERS -->
     <div  id="popover-stops" style="display: none;">
         <div class="d-flex gap-2 flex-column">
@@ -298,9 +337,8 @@
                 <?php echo $lineStopPopOver ?>
             </div>
         </div>
-        
     </div>
 </body>
 
-<script defer type="module" src="/js/functions/detailsPOSelection.js"></script>
-<script defer type="module" src="/js/functions/flatpickr.js"></script>
+<script defer type="module" src="/js/functions/page-scripts/detailsPOSelection.js"></script>
+<script defer type="module" src="/js/functions/page-scripts/flatpickr.js"></script>

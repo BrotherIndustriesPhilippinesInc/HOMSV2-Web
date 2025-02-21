@@ -15,4 +15,4 @@
     </div>
 </body>
 
-<script defer type="module" src="/js/functions/uploadPOL.js"></script>
+<script defer type="module" src="/js/functions/page-scripts/uploadPOL.js"></script>

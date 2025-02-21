@@ -26,9 +26,16 @@ class Textboxes{
         HTML;
         return $html;
     }
+    public function dateSelect($name){
+        $html = <<<HTML
+            <input id="{$name}" class="flatpickr-calendar-input btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary" type="text" placeholder="Select Date.." readonly="readonly">
+        HTML;
+        return $html;
+    }
+
     public function timeSelect($name){
         $html = <<<HTML
-            <input id="{$name}" class="flatpickr-no-calendar" type="text" placeholder="Select Time.." readonly="readonly">
+            <input id="{$name}" class="flatpickr-no-calendar" type="text" placeholder="Select Date.." readonly="readonly">
         HTML;
         return $html;
     }
