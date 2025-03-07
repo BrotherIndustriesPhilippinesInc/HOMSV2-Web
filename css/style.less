@@ -14,6 +14,9 @@
 .secondary-background{
     background-color: @secondary-background !important;
 }
+.secondary-text{
+    color: @secondary-text !important;
+}
 
 .text-danger, .border-danger{
     color: @danger !important;
@@ -159,4 +162,38 @@ input:focus, textarea:focus, select:focus {
     background-color: @secondary-background !important;
     border-radius: 8px;
     border: 0;
+}
+
+.output-header{
+    font-size: 12px;
+}
+.nav.nav-tabs{
+    border-bottom: @primary-misc 1px solid !important;
+}
+.nav-tabs .nav-link{
+    background-color: @tertiary-background !important;
+    color: @tertiary-text !important;
+    font-weight: bold;
+    font-size: 12px;
+    border-bottom: @primary-misc 1px solid !important;
+}
+.nav-tabs .nav-link.active{
+    background-color: @secondary-background !important;
+    color: @primary-misc !important;
+    font-weight: bold;
+    font-size: 16px;
+    border-color: @primary-misc !important;
+}
+table.dataTable{
+    border-collapse: collapse !important;
+}
+td, tr, th{
+    border-color: @secondary-text !important;
+    border-width: 2px !important;
+    border-collapse: collapse;
+    padding: 4px;
+
+}
+th{
+    padding: 16px;
 }

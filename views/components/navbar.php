@@ -1,13 +1,13 @@
 <?php 
-  $compTest = $button->navButton("Component Test", "/comptest");
-  $dashboard = $button->navButton("Dashboard", "/");
+  $compTest = $button->navButton("Component Test", "/homs/comptest");
+  $dashboard = $button->navButton("Dashboard", "/homs/");
 
-  $uploadPOL = $button->navButton("Upload POL", "/production/upload_pol", "text-center pt-2");
-  $wcSelection = $button->navButton("WC Selection", "/production/wc_selection", "text-center pt-2");
-  $history = $button->navButton("History", "/production/history", "text-center pt-2");
+  $uploadPOL = $button->navButton("Upload POL", "/homs/production/upload_pol", "text-center pt-2");
+  $wcSelection = $button->navButton("WC Selection", "/homs/production/wc_selection", "text-center pt-2");
+  $history = $button->navButton("History", "/homs/production/history", "text-center pt-2");
 
-  $confirmation = $button->navButton("Confirmation", "/confirmation");
-  $graphs = $button->navButton("Graphs", "/graphs");
+  $confirmation = $button->navButton("Confirmation", "/homs/confirmation");
+  $graphs = $button->navButton("Graphs", "/homs/graphs");
 
 
     // Get the current path
@@ -25,7 +25,7 @@
   </div>
   <div class="d-flex justify-content-center mb-4">
     <span data-bs-toggle="offcanvas" data-bs-target="#offcanvasDark" aria-controls="offcanvasDark">
-        <img src="/resources/icons/logo.svg" alt="logo-icon">
+        <img src="/homs/resources/icons/logo.svg" alt="logo-icon">
     </span>
   </div>
   <div class="offcanvas-body p-0">
@@ -56,8 +56,8 @@
           <div class="nav-link w-100 text-primary fs-5 fw-medium">
             <div class="nav-title d-flex justify-content-center align-items-center">
               <span class="w-100 fs-5">Production</span>
-              <img class="arrow" src="/resources/icons/arrow_down.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
-              <img class="arrow d-none" src="/resources/icons/arrow_up.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
+              <img class="arrow" src="/homs/resources/icons/arrow_down.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
+              <img class="arrow d-none" src="/homs/resources/icons/arrow_up.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
             </div>
             <div class="nav-submenu">
               <?php 

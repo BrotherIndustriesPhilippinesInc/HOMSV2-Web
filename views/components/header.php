@@ -6,23 +6,23 @@
         <!-- First Column -->
         <div class="col d-flex align-items-center">
             <button class="bg-custom border-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDark" aria-controls="offcanvasDark">
-                <img src="/resources/icons/menu.svg" alt="menu-icon" class="">
+                <img src="/homs/resources/icons/menu.svg" alt="menu-icon" class="">
             </button>
-            <a href="/"><img src="/resources/icons/HΩMS.svg" alt="HΩMS-logo" class="ms-2"></a>
+            <a href="/homs/"><img src="/homs/resources/icons/HΩMS.svg" alt="HΩMS-logo" class="ms-2"></a>
         </div>
 
         <!-- Second Column -->
         <div class="col d-flex justify-content-end align-items-center gap-3">
             <button class="bg-custom border-0" popovertarget="help-popover">
-                <img src="/resources/icons/Help.svg"  alt="help-icon" class="">
+                <img src="/homs/resources/icons/Help.svg"  alt="help-icon" class="">
             </button>
             <span>
-                <a href="/settings"><img src="/resources/icons/settings.svg" alt="settings-icon" class=""></a>
+                <a href="/homs/settings"><img src="/homs/resources/icons/settings.svg" alt="settings-icon" class=""></a>
             </span>
 
             <div class="d-flex align-items-center">
                 <span>
-                    <img src="/resources/icons/UserLogo.svg" alt="user-logo-icon" class="">
+                    <img src="/homs/resources/icons/UserLogo.svg" alt="user-logo-icon" class="">
                 </span>
                 <div class="d-flex flex-column text-center">
                     <span class="header-text ms-2 fw-bold">Lastname, Firstname</span>

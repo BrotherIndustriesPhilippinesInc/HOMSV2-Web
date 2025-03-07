@@ -7,10 +7,10 @@
 
     $search = $textbox->searchTextbox("searchPO");
 
-    $selectPO = $button->primaryButton("po-button-modal", "Select PO", "/resources/icons/shopping_cart.svg", "po_cart", "data-bs-toggle='modal' data-bs-target='#poModal'");
+    $selectPO = $button->primaryButton("po-button-modal", "Select PO", "/homs/resources/icons/shopping_cart.svg", "po_cart", "data-bs-toggle='modal' data-bs-target='#poModal'");
 
-    $startProduction = $button->primaryButton("startProduction", "Start Production", "/resources/icons/pallet.svg", "Start Production");
-    $addPlan = $button->primaryButton("addPlan", "Add Plan", "/resources/icons/add.svg", "Add Plan");
+    $startProduction = $button->primaryButton("startProduction", "Start Production", "/homs/resources/icons/pallet.svg", "Start Production");
+    $addPlan = $button->primaryButton("addPlan", "Add Plan", "/homs/resources/icons/add.svg", "Add Plan");
 
     $planQuantity = $textbox->primaryTextbox("planQuantity", "plan-detail-textbox secondary-background p-1");
 
@@ -32,14 +32,14 @@
     $causeOfVariance = $textbox->textArea("causeOfVariance", "secondary-background p-1 h-100");
     $action = $textbox->textArea("action", "secondary-background p-1 h-100");
 
-    $causeCategories = $button->primaryButton("causeCategories", "Cause Categories", "/resources/icons/list_alt.svg", "cause_categories", "data-bs-toggle='modal' data-bs-target='#causeModal'", "d-flex align-items-center p-1");
-    $actionCategories = $button->primaryButton("actionCategories", "Action Categories", "/resources/icons/list_alt.svg", "action_categories", "data-bs-toggle='modal' data-bs-target='#actionModal'", "d-flex align-items-center p-1");
+    $causeCategories = $button->primaryButton("causeCategories", "Cause Categories", "/homs/resources/icons/list_alt.svg", "cause_categories", "data-bs-toggle='modal' data-bs-target='#causeModal'", "d-flex align-items-center p-1");
+    $actionCategories = $button->primaryButton("actionCategories", "Action Categories", "/homs/resources/icons/list_alt.svg", "action_categories", "data-bs-toggle='modal' data-bs-target='#actionModal'", "d-flex align-items-center p-1");
     
-    $homsView = $button->primaryButton("homsView", "HOMS", "/resources/icons/visibility.svg", "homs_view");
-    $save = $button->primaryButton("save", "Save", "/resources/icons/save.svg", "save");
+    $homsView = $button->primaryButton("homsView", "HOMS", "/homs/resources/icons/visibility.svg", "homs_view");
+    $save = $button->primaryButton("save", "Save", "/homs/resources/icons/save.svg", "save");
 
-    $lineStopPopOver = $button->primaryButton("lineStop-popOver", "Line Stop", "/resources/icons/front_hand.svg", "line_stop", "", "w-100 border border-danger text-danger");
-    $breaktimePopOver = $button->primaryButton("breaktime-popOver", "Breaktime", "/resources/icons/fork_spoon.svg", "breaktime", "", "w-100");
+    $lineStopPopOver = $button->primaryButton("lineStop-popOver", "Line Stop", "/homs/resources/icons/front_hand.svg", "line_stop", "", "w-100 border border-danger text-danger");
+    $breaktimePopOver = $button->primaryButton("breaktime-popOver", "Breaktime", "/homs/resources/icons/fork_spoon.svg", "breaktime", "", "w-100");
 ?>
 
 <title>HOMS - WC Selection</title>
@@ -60,7 +60,7 @@
                 </div>
                 
                 <div class="d-flex gap-2 align-items-center">
-                    <img src="/resources/icons/list_alt.svg" style="width: 16px; height: 16px;"/>
+                    <img src="/homs/resources/icons/list_alt.svg" style="width: 16px; height: 16px;"/>
                     <span class="fw-bold">170</span>
                 </div>
 
@@ -70,7 +70,7 @@
             </div>
             
             <div>
-                <img src="/resources/icons/arrow_back_2.svg" alt="arrow-popover-trigger" class="popover-trigger"
+                <img src="/homs/resources/icons/arrow_back_2.svg" alt="arrow-popover-trigger" class="popover-trigger"
                     data-bs-toggle="popover" 
                     data-bs-placement="left"
                     data-bs-html="true"
@@ -340,5 +340,5 @@
     </div>
 </body>
 
-<script defer type="module" src="/js/functions/page-scripts/detailsPOSelection.js"></script>
-<script defer type="module" src="/js/functions/page-scripts/flatpickr.js"></script>
+<script defer type="module" src="/homs/js/functions/page-scripts/detailsPOSelection.js"></script>
+<script defer type="module" src="/homs/js/functions/flatpickr.js"></script>

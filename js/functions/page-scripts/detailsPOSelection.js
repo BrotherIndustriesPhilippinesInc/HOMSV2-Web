@@ -1,4 +1,5 @@
-import appendParameterToURL from "./appendParameterToUrl.js";
+import appendParameterToURL from "./../appendParameterToUrl.js";
+import redirect from "./../redirect.js";
 
 $(function () {
     $(".po-button").on("click", function (e) {
@@ -6,6 +7,10 @@ $(function () {
     });
 
     popoverInitialize();
+
+    $(".homsView").on("click", function (e) {
+        redirect("/homs/production/output");
+    });
 });
 function popoverInitialize() {
     const popoverTrigger = document.querySelector(".popover-trigger");

@@ -3,38 +3,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- JQUERY -->
-    <script defer src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script defer src="/homs/node_modules/jquery/dist/jquery.min.js"></script>
 
     <!-- LESS CSS -->
-    <link rel="stylesheet/less" type="text/css" href="/css/style.less" />
-    <script defer src="/node_modules/less/dist/less.min.js"></script>
+    <link rel="stylesheet/less" type="text/css" href="/homs/css/style.less" />
+    <script defer src="/homs/node_modules/less/dist/less.min.js"></script>
 
     <!-- BOOSTRAP -->
-    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.css">
-    <script defer src="/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="/homs/node_modules/bootstrap/dist/css/bootstrap.css">
+    <script defer src="/homs/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     <!-- POPPER -->
-    <script defer src="/non_module_libraries/popper/popper.min.js"></script>
+    <script defer src="/homs/non_module_libraries/popper/popper.min.js"></script>
 
     <!-- SWEETALERT2 -->
-    <script src="/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <script defer src="/homs/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
 
     <!-- MAINSCRIPT -->
-    <script type="module" defer src="/js/main-script.js"></script>
+    <script defer type="module" defer src="/homs/js/main-script.js"></script>
 
     <!-- UPPY -->
     <link href="https://releases.transloadit.com/uppy/v4.13.2/uppy.min.css" rel="stylesheet"/>
 
-    <!-- FLATPICKR -->
-    <!-- <link rel="stylesheet" href="/non_module_libraries/flatpickr/flatpickr.min.css">
-    <script src="/non_module_libraries/flatpickr/flatpickr.min.js" defer></script> -->
-    <!-- <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script> -->
-    <link rel="stylesheet" type="text/css" href="/non_module_libraries/flatpickr/dark.css">
-    <script src="/non_module_libraries/flatpickr/flatpickr.js"></script>
+    <link rel="stylesheet" type="text/css" href="/homs/non_module_libraries/flatpickr/dark.css">
+    <script defer src="/homs/non_module_libraries/flatpickr/flatpickr.js"></script>
 
     <!-- CHART JS -->
-    <script src="/non_module_libraries/chartjs/chart.umd.min.js"></script>
-    <script src="/non_module_libraries/chartjs/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script defer src="/homs/non_module_libraries/chartjs/chart.umd.min.js"></script>
+    <script defer src="/homs/non_module_libraries/chartjs/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+    <!-- DATATABLES -->
+    <script defer src="/homs/non_module_libraries/datatables/datatables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/homs/non_module_libraries/datatables/datatables.min.css">
     
 </head>
 <body>
@@ -55,36 +55,40 @@
 
     // Define routes and their corresponding callback functions
     $routes = [
-        '/' => function() {
+        '/homs/' => function() {
             include __DIR__ . '/views/pages/home.php';
         },
-        '/comptest' => function() {
+        '/homs/comptest' => function() {
             include __DIR__ . '/tests/components-view.php';
         },
-        '/contact' => function() {
+        '/homs/contact' => function() {
             echo "Contact us at: contact@example.com";
         },
-        '/production/upload_pol' => function() {
+        '/homs/production/upload_pol' => function() {
             include __DIR__ . '/views/pages/production/upload_pol.php';
         },
-        '/production/wc_selection' => function() {
+        '/homs/production/wc_selection' => function() {
             include __DIR__ . '/views/pages/production/wc_selection.php';
         },
-        '/production/details' => function() {
+        '/homs/production/details' => function() {
             include __DIR__ . '/views/pages/production/details.php';
         },
-        '/graphs' => function() {
+        '/homs/graphs' => function() {
             include __DIR__ . '/views/pages/graphs/graphs.php';
+        },
+        '/homs/production/output' => function() {
+            include __DIR__ . '/views/pages/production/hourly_output_view.php';
         },
 
     ];
 
     // Get the current path
     $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
+    
     // Check if the path exists in the routes
     if (array_key_exists($path, $routes)) {
         // Call the associated function
+        
         $routes[$path]();
     } else {
         // Handle 404 Not Found

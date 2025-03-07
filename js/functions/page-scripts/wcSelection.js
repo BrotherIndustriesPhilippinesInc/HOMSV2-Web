@@ -2,7 +2,7 @@ $(function () {
     $(".wc-button").on("click", function (e) {
         let wcId = $(this).data("wc-id");
 
-        let url = new URL(window.location.origin + "/production/details");
+        let url = new URL(window.location.origin + "/homs/production/details");
 
         // Preserve existing query parameters
         let params = new URLSearchParams(window.location.search);

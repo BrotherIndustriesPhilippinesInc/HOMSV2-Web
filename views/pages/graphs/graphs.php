@@ -18,4 +18,4 @@
         
     </div>
 </body>
-<script defer type="module" src="/js/functions/page-scripts/initialGraph.js"></script>
+<script defer type="module" src="/homs/js/functions/page-scripts/initialGraph.js"></script>

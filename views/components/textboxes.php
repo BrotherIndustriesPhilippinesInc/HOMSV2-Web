@@ -19,7 +19,7 @@ class Textboxes{
     public function searchTextbox($name){
         $html = <<<HTML
         <div class="d-flex bg-custom-tertiary border-0 rounded-4 p-1 ps-2">
-            <img src="/resources/icons/search.svg" />
+            <img src="/homs/resources/icons/search.svg" />
             <input type="text" id="{$name}" class="bg-custom-tertiary border-0 rounded-4 fw-medium text-primary text-center" placeholder="Search">
         </div>
             

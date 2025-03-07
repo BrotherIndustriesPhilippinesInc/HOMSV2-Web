@@ -3,7 +3,7 @@ import apiCall from "./../apiCall.js";
 let chart = null; // ✅ Global chart instance
 
 $(function () {
-    // ✅ Auto-refresh every 1 second
+    // ✅ Auto-refresh every 3 second
     setInterval(updateGraph, 3000);
 
     // ✅ Initial load
@@ -12,7 +12,7 @@ $(function () {
 
 async function updateGraph() {
     try {
-        const data = await apiCall("/API/graphs/GetInitialGraph.php", "GET", null, false);
+        const data = await apiCall("/homs/API/graphs/GetInitialGraph.php", "GET", null, false);
 
         // ✅ Get current timestamp
         const now = new Date();

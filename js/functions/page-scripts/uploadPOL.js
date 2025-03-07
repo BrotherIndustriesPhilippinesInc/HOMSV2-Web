@@ -18,6 +18,6 @@ $(function () {
 
     $(".uppy-Root").on("click", function (e) {
         e.preventDefault();
-        window.location.href = "/production/wc_selection";
+        window.location.href = "/homs/production/wc_selection";
     });
 });
