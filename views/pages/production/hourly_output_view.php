@@ -93,7 +93,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td rowspan="2">6:00 - 8:00</td>
+                            <td>6:00 - 8:00</td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -103,23 +103,11 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td>sdsds</td>
-
+                            <td>
+                                <div>asdasd</div>
+                                <div>asdasdsdsd</div>
+                            </td>
                         </tr>
-                        <tr>
-                            <td></td>
-                            <td>asdasd</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-
                         <tr>
                             <td>8:00 - 10:00</td>
                             <td></td>

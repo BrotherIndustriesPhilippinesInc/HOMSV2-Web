@@ -6,6 +6,6 @@ $(function () {
         order: [
             [0, '']
         ],
-        responsive: false
+        responsive: true
     });
 });
