@@ -25,8 +25,8 @@
                     <img src="/homs/resources/icons/UserLogo.svg" alt="user-logo-icon" class="">
                 </span>
                 <div class="d-flex flex-column text-center">
-                    <span class="header-text ms-2 fw-bold">Lastname, Firstname</span>
-                    <span class="header-text ms-2 fw-bold">BPS</span>
+                    <span id="username" class="header-text ms-2 fw-bold">Lastname, Firstname</span>
+                    <span id="section" class="header-text ms-2 fw-bold">BPS</span>
                 </div>
             </div>
             

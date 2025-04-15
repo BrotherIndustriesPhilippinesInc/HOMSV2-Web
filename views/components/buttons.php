@@ -20,6 +20,22 @@ class Buttons
         HTML;
         return $html;
     }
+    public function primaryButtonAlt($name, $text, $imgLink ='', $buttonAttributes = '',$class='',)
+    {
+        $spanClass = '';
+        $imageExists = '';
+        if($imgLink != '' && $text != ''){
+            $spanClass = "ps-2";
+            $imageExists = "<i class='{$imgLink}'></i>";
+        }
+        $html = <<<HTML
+        <button type="button" class='{$name} btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary {$class}' $buttonAttributes>
+            $imageExists
+            <span class="{$name}-span btn-span {$spanClass}">$text</span>
+        </button>
+        HTML;
+        return $html;
+    }
 
     public function navButton($text, $url ,$class='', $buttonAttributes = '')
     {

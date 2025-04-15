@@ -1,8 +1,8 @@
 import { navigation } from "./navigation/navScript.js";
-import modalAriaFix from "./functions/modalAriaFix.js";
 import "./functions/popperInitialize.js";
+import loadUser from "./globals/loadUser.js";
 
 $(function () {
     navigation();
-    modalAriaFix();
+    loadUser();
 });

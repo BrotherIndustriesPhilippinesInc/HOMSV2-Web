@@ -1,15 +1,17 @@
 <?php
-    global $button;
-    global $textbox;
-    global $dropdown;
+    $button = new Buttons();
+    $textbox = new Textboxes();
+    $dropdown = new Dropdowns();
 
-    $wcId = $_GET['wc'];
+    $wcName = $_GET['wc'];
 
     $search = $textbox->searchTextbox("searchPO");
 
     $selectPO = $button->primaryButton("po-button-modal", "Select PO", "/homs/resources/icons/shopping_cart.svg", "po_cart", "data-bs-toggle='modal' data-bs-target='#poModal'");
 
-    $startProduction = $button->primaryButton("startProduction", "Start Production", "/homs/resources/icons/pallet.svg", "Start Production");
+    $startProduction = $button->primaryButton("startProduction", "Start Production", "/homs/resources/icons/pallet.svg", "");
+    $stopProduction = $button->primaryButtonAlt("stopProduction", "Stop Production", "fa-regular fa-circle-stop", "", "danger");
+
     $addPlan = $button->primaryButton("addPlan", "Add Plan", "/homs/resources/icons/add.svg", "Add Plan");
 
     $planQuantity = $textbox->primaryTextbox("planQuantity", "plan-detail-textbox secondary-background p-1");
@@ -38,7 +40,7 @@
     $homsView = $button->primaryButton("homsView", "HOMS", "/homs/resources/icons/visibility.svg", "homs_view");
     $save = $button->primaryButton("save", "Save", "/homs/resources/icons/save.svg", "save");
 
-    $lineStopPopOver = $button->primaryButton("lineStop-popOver", "Line Stop", "/homs/resources/icons/front_hand.svg", "line_stop", "", "w-100 border border-danger text-danger");
+    $lineStopPopOver = $button->primaryButton("lineStop-popOver", "Line Stop", "/homs/resources/icons/front_hand.svg", "line_stop", "", "w-100 border border-danger text-danger danger");
     $breaktimePopOver = $button->primaryButton("breaktime-popOver", "Breaktime", "/homs/resources/icons/fork_spoon.svg", "breaktime", "", "w-100");
 ?>
 
@@ -56,12 +58,12 @@
 
             <div class="d-flex align-items-center gap-2">
                 <div>
-                    <h1><?php echo "Work Center #".$wcId ?></h1>
+                    <h1><?php echo "$wcName"?></h1>
                 </div>
                 
                 <div class="d-flex gap-2 align-items-center">
                     <img src="/homs/resources/icons/list_alt.svg" style="width: 16px; height: 16px;"/>
-                    <span class="fw-bold">170</span>
+                    <span class="fw-bold">quantity(placeholder)</span>
                 </div>
 
                 <div>
@@ -97,9 +99,10 @@
                                 echo $startProduction;
                             ?>
                         </div>
+
                         <div>
                             <?php 
-                                echo $addPlan;
+                                echo $stopProduction;
                             ?>
                         </div>
                         
@@ -223,8 +226,8 @@
             </div>
             
             <!-- PLAN -->
-            <div class="d-flex gap-2 flex-column justify-content-between w-25 h-100">
-                <div class="d-flex flex-column w-100 h-100 justify-content-between content-group rounded-3 p-2">
+            <div class="d-flex gap-2 flex-column w-25">
+                <div class="d-flex flex-column w-100 justify-content-between content-group rounded-3 p-2">
                     <h5>Plan</h5>
                     <div>
                         <span class="plan-details">Plan Quantity</span>
@@ -258,7 +261,7 @@
                 <div class="d-flex flex-column gap-2">
                     <?php 
                         echo $homsView;
-                        echo $save;
+                        
                     ?>
                 </div>
             </div>

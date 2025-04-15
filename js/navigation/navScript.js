@@ -1,6 +1,7 @@
 export function navigation() {
     expand();
     linkHover();
+    removeBackdrop();
 }
 
 function expand(){
@@ -26,5 +27,11 @@ function linkHover(){
 
     $(".nav-button").on("mouseleave", function () {
         $(this).removeClass("text-decoration-underline").addClass("text-decoration-none");
+    });
+}
+
+function removeBackdrop(){
+    document.addEventListener('show.bs.offcanvas', function () {
+        document.querySelectorAll('.offcanvas-backdrop').forEach(backdrop => backdrop.remove());
     });
 }

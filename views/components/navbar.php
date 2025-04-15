@@ -3,7 +3,7 @@
   $dashboard = $button->navButton("Dashboard", "/homs/");
 
   $uploadPOL = $button->navButton("Upload POL", "/homs/production/upload_pol", "text-center pt-2");
-  $wcSelection = $button->navButton("WC Selection", "/homs/production/wc_selection", "text-center pt-2");
+  $exportReports = $button->navButton("Export Reports", "/homs/production/export_reports", "text-center pt-2");
   $history = $button->navButton("History", "/homs/production/history", "text-center pt-2");
 
   $confirmation = $button->navButton("Confirmation", "/homs/confirmation");
@@ -62,8 +62,8 @@
             <div class="nav-submenu">
               <?php 
                 echo $uploadPOL; 
-                echo $wcSelection;
                 echo $history;
+                echo $exportReports;
               ?>
             </div>
           </div>

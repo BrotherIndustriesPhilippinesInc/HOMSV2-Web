@@ -5,19 +5,19 @@
     $date = $textbox->dateSelect("date");
 ?>
 
-<title>HOMS - Work Center Selection</title>
+<title>HOMS - Export Reports</title>
 
 <body class="bg-custom text-light container-fluid">
     <?php 
         require_once __DIR__ . "/../../components/header.php";
         require_once __DIR__ . '/../../components/navbar.php';
     ?>
-    <div class="main-content bg-custom-secondary container-fluid rounded-3">
-        <h1>Work Center Selection</h1>
+    <div class="bg-custom-secondary container-fluid rounded-3">
+        <h1>Export Reports</h1>
         <div class="py-2">
             <?php echo $date ?>
         </div>
-        <div id="work_center_container" class="d-grid gap-2" style="grid-template-columns: repeat(5, 1fr);">
+        <div class="d-grid gap-2" style="grid-template-columns: repeat(5, 1fr);">
 
         </div>
     </div>

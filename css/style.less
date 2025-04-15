@@ -38,11 +38,19 @@
     border-color: @primary-misc !important;
 }
 .btn:hover{
-    border: solid 1px @primary-text !important;
     .btn-span{
         text-decoration: underline !important;
     }
-    
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
+    z-index: 1;
+}
+input:hover, textarea:hover{
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
+    z-index: 1;
+}
+input:focus, textarea:focus{
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc !important;
+    z-index: 2;
 }
 
 .btn-nav{
@@ -107,6 +115,11 @@ input[type="text"]::-webkit-input-placeholder {
 .nav-title{
     cursor: pointer;
 }
+
+#uppy-dashboard{
+    height: calc(100vh - (82px + 56px)) !important;
+}
+
 .uppy-Dashboard-inner{
     background-color: @secondary-background !important;
     border-color: @primary-misc !important;
@@ -115,11 +128,11 @@ input[type="text"]::-webkit-input-placeholder {
     color: @primary-misc !important;
     text-decoration: none !important;
 }
-input:focus, textarea:focus, select:focus {
+/* input:focus, textarea:focus, select:focus {
     outline: none !important;
     box-shadow: none !important;
     border: none !important;
-}
+} */
 .modal-content{
     background-color: @secondary-background !important;
 }
@@ -196,4 +209,13 @@ td, tr, th{
 }
 th{
     padding: 16px;
+}
+
+.danger{
+    border-color: @danger !important;
+    color: @danger !important;
+}
+.danger:hover{
+    border-color: @danger !important;
+    box-shadow: 0 0 10px @danger, 0 0 20px @danger;
 }

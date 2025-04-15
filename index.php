@@ -36,6 +36,8 @@
     <script defer src="/homs/non_module_libraries/datatables/datatables.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/homs/non_module_libraries/datatables/datatables.min.css">
     
+    <!-- FONT AWESOME -->
+    <script src="https://kit.fontawesome.com/b745f328d5.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <?php
@@ -44,6 +46,7 @@
     require_once __DIR__ . '/views/components/textboxes.php';
     require_once __DIR__ . '/views/components/selects.php';
     require_once __DIR__ . '/views/components/dropdowns.php';
+    require_once __DIR__ . '/helpers/MSQLServer.php';
     
     $button = new Buttons();
     $textbox = new Textboxes();
@@ -66,6 +69,9 @@
         },
         '/homs/production/upload_pol' => function() {
             include __DIR__ . '/views/pages/production/upload_pol.php';
+        },
+        '/homs/production/export_reports' => function() {
+            include __DIR__ . '/views/pages/production/export_reports.php';
         },
         '/homs/production/wc_selection' => function() {
             include __DIR__ . '/views/pages/production/wc_selection.php';
@@ -95,5 +101,6 @@
         http_response_code(404);
         include __DIR__ . '/views/pages/404.php';
     }
+
     ?>
 </body>
