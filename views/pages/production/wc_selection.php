@@ -2,7 +2,7 @@
     global $button;
     global $textbox;
     
-    $date = $textbox->dateSelect("date");
+    $search = $textbox->searchTextbox("searchPO");
 ?>
 
 <title>HOMS - Work Center Selection</title>
@@ -14,11 +14,23 @@
     ?>
     <div class="main-content bg-custom-secondary container-fluid rounded-3">
         <h1>Work Center Selection</h1>
-        <div class="py-2">
-            <?php echo $date ?>
+        <div class="d-flex align-items-center justify-content-between py-2">
+            <?php echo $search ?>
+            <div class="d-flex flex-column">
+                <div>
+                    <span class="secondary-text">Last Update: </span>
+                    <span id="last_update_date" class="fw-bold text-primary"></span>
+                    <span class="fw-bold text-primary"> - </span>
+                    <span id="last_update_time" class="fw-bold text-primary"></span>
+                </div>
+                <div>
+                    <span class="secondary-text">By: </span>
+                    <span id="last_update_by" class="fw-bold text-primary"></span>
+                </div>
+            </div>
+            
         </div>
         <div id="work_center_container" class="d-grid gap-2" style="grid-template-columns: repeat(5, 1fr);">
-
         </div>
     </div>
     

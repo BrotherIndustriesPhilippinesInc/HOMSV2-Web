@@ -63,12 +63,9 @@
                 
                 <div class="d-flex gap-2 align-items-center">
                     <img src="/homs/resources/icons/list_alt.svg" style="width: 16px; height: 16px;"/>
-                    <span class="fw-bold">quantity(placeholder)</span>
+                    <span class="fw-bold">quantity</span>
                 </div>
 
-                <div>
-                    <?php echo $search; ?>
-                </div>
             </div>
             
             <div>
@@ -77,7 +74,6 @@
                     data-bs-placement="left"
                     data-bs-html="true"
                 />
-                
             </div>
         </div>
 
@@ -230,28 +226,28 @@
                 <div class="d-flex flex-column w-100 justify-content-between content-group rounded-3 p-2">
                     <h5>Plan</h5>
                     <div>
-                        <span class="plan-details">Plan Quantity</span>
+                        <span class="plan-details section-details-label">Plan Quantity</span>
                         <?php
                             echo $planQuantity;
                         ?>
                     </div>
 
                     <div>
-                        <span class="plan-details">Takt Time (Seconds)</span>
+                        <span class="plan-details section-details-label">Takt Time (Seconds)</span>
                         <?php
                             echo $planQuantity;
                         ?>
                     </div>
 
                     <div>
-                        <span class="plan-details">Actual Quantity</span>
+                        <span class="plan-details section-details-label">Actual Quantity</span>
                         <?php
                             echo $planQuantity;
                         ?>
                     </div>
 
                     <div>
-                        <span class="plan-details">Variance</span>
+                        <span class="plan-details section-details-label">Variance</span>
                         <?php
                             echo $planQuantity;
                         ?>
@@ -282,12 +278,11 @@
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Select Production Order</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body d-grid gap-2" style="grid-template-columns: repeat(1, 1fr);">
-                    <?php 
-                        for($i = 0; $i < 150; $i++){
-                            echo $button->primaryButton("po-button","Production Order #{$i}", "", "", "data-po-id='{$i}' data-bs-dismiss='modal' data-bs-target='#popover-stops'");
-                        }
-                    ?>
+                <div class="p-3 d-flex">
+                    <?php echo $search; ?>
+                </div>
+                <div id="po_list" class="modal-body d-grid gap-2" style="grid-template-columns: repeat(4, 1fr);">
+                    
                 </div>
             </div>
         </div>

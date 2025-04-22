@@ -5,6 +5,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 require_once __DIR__ ."/Controller.php";
 require_once __DIR__ ."/../models/POLModel.php";
 require_once __DIR__ ."/../helpers/DataRenamer.php";
+require_once __DIR__ ."/../controllers/UserController.php";
 
 
 class POLController extends Controller
@@ -15,50 +16,22 @@ class POLController extends Controller
         $this->renamer = new DataRenamer();
     }
 
-    public function create(array $data){
-        $user = $data["user_EmpNo"];
-        $section = $data["section"];
-        
-        try {
-            
-            $polData = $this->readPOL($data, $user);
-            
-            if (empty($polData)) throw new Exception("No data provided.");
-            
-            switch ($section) {
-                case "BPS":
-                    $this->model->setTableName("tc");
-
-                    break;
-                case 'TC':
-                    $this->model->setTableName("tc");
-
-                    break;
-                case 'PT':
-                    $this->model->setTableName("pt");
-
-                    break;
-                
-                default:
-                    # code...
-                    break;
-            }
-
-            $this->model->deleteAll();
-            foreach ($polData as $key => $value) {
-                $this->model->insert($value);
-            }
-
-            $this->moveFiletoServer($data);
-
-        } catch (Exception $e) {
-            return $this->errorResponse($e);
+    private function setTableName($section) {
+        switch ($section) {
+            case "BPS":
+                $this->model->setTableName("tc");
+                break;
+            case 'TC':
+                $this->model->setTableName("tc");
+                break;
+            case 'PT':
+                $this->model->setTableName("pt");
+                break;
+            default:
+                throw new Exception("Invalid section name.");
         }
-
-        $uniqueWorkCenters = $this->findWorkCenter($polData);
-        return ["work_centers"=>$uniqueWorkCenters];
     }
-    
+
     private function moveFiletoServer(array $data) {
         date_default_timezone_set('Asia/Manila');
 
@@ -97,7 +70,8 @@ class POLController extends Controller
 
     private function readPOL($file, $user) {
         date_default_timezone_set('Asia/Manila');
-
+        $time_created = (new DateTime())->format('Y-m-d H:i:s');
+        
         $tmpPath = $file["tmp_name"]; // Uploaded temp file
         
         try {
@@ -132,7 +106,7 @@ class POLController extends Controller
                     "description"   => trim($sheet->getCell("H$row")->getCalculatedValue()),
                     "qty"      => trim($sheet->getCell("I$row")->getCalculatedValue()),
                     "creator"       => $user,
-                    "time_created"  => (new DateTime())->format('Y-m-d H:i:s'),
+                    "time_created"  => $time_created,
                     "updated_by"    => null,
                     "time_updated"  => null,
                 ];
@@ -145,6 +119,37 @@ class POLController extends Controller
         }
     }
 
+    public function create(array $data){
+        $user = $data["user_EmpNo"];
+        $section = $data["section"];
+        $is_additional = filter_var($data["is_additional"], FILTER_VALIDATE_BOOLEAN);
+
+        try {
+            
+            $polData = $this->readPOL($data, $user);
+            
+            if (empty($polData)) throw new Exception("No data provided.");
+            
+            $this->setTableName($section);
+            
+            if(!$is_additional){
+                $this->model->deleteAll();
+            }
+            
+            foreach ($polData as $key => $value) {
+                $this->model->insert($value);
+            }
+
+            $this->moveFiletoServer($data);
+
+        } catch (Exception $e) {
+            return $this->errorResponse($e);
+        }
+
+        $uniqueWorkCenters = $this->findWorkCenter($polData);
+        return ["work_centers"=>$uniqueWorkCenters];
+    }
+    
     private function findWorkCenter($pol) {
         $uniqueValues = [];
         foreach ($pol as $row) {
@@ -157,12 +162,67 @@ class POLController extends Controller
         return $uniqueValues;
     }
 
-    public function getWorkCenters(){
+    public function getWorkCenters(string $section){
         try {
-            $this->model->setTableName("tc");
+            if($section == "bps"){
+                $section = "tc";
+            }
+            $this->model->setTableName($section);
             $response = $this->model->getAll();
-            $uniqueWorkCenters = $this->findWorkCenter($response);
+            $uniqueWorkCenters["work_centers"] = $this->findWorkCenter($response);
             return $uniqueWorkCenters;
+        } catch (Exception $e) {
+            return $this->errorResponse($e);
+        }
+    }
+
+    public function getPOLUpdate($section){
+        try {
+            if($section == "bps"){
+                $section = "tc";
+            }
+            $this->model->setTableName($section);
+            $response = $this->model->getAll();
+
+
+            $lastIndex = array_key_last($response);
+            $updateData["last_update"] = $response[$lastIndex]["time_created"];
+
+            /* USER CREATOR */
+            $userController = new UserController();
+
+            $creator = $userController->get("{$response[$lastIndex]["creator"]}");
+            $updateData["last_update_by"] = ["EmpNo"=>$creator["EmpNo"], "FullName"=>$creator["Full_Name"]];
+
+            return $updateData;
+        } catch (Exception $e) {
+            return $this->errorResponse($e);
+        }
+    }
+
+    public function deletePOL($section){
+        try {
+            $this->setTableName($section);
+            return $this->model->deleteAll();
+        } catch (Exception $e) {
+            return $this->errorResponse($e);
+        }
+
+    }
+
+    public function getPOList($section){
+        try {
+            $this->setTableName($section);
+            return $this->model->getAll();
+        } catch (Exception $e) {
+            return $this->errorResponse($e);
+        }
+    }
+
+    public function getPODetails($section, $po){
+        try {
+            $this->setTableName($section);
+            return $this->model->get("prd_order_no = '$po'");
         } catch (Exception $e) {
             return $this->errorResponse($e);
         }

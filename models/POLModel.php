@@ -26,4 +26,3 @@ class POLModel extends Model
         $this->table = strtolower($section) . "_pol";
     }
 }
- 

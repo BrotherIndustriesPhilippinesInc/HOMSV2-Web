@@ -17,7 +17,8 @@ $(function () {
 
     uppy.setMeta({
         user_EmpNo: user['EmpNo'],
-        section: user['Section']
+        section: user['Section'],
+        
     });
 
     uppy
@@ -36,8 +37,13 @@ $(function () {
             formData: true,
         });
 
+    uppy.on("upload", () => {
+        const files = uppy.getFiles();
+        const isAdditional = files.length > 1 ? true : $('#add_pol').is(':checked');
+        uppy.setMeta({ is_additional: isAdditional });
+    });
+
     uppy.on('upload-success', (file, response) => {
-        localStorage.setItem('work_centers', JSON.stringify(response["body"]["data"]["work_centers"]));
         window.location.href = '/homs/production/wc_selection';
     });
 

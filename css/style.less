@@ -44,11 +44,11 @@
     box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
     z-index: 1;
 }
-input:hover, textarea:hover{
+.glow:hover{
     box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
     z-index: 1;
 }
-input:focus, textarea:focus{
+.glow:focus{
     box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc !important;
     z-index: 2;
 }
@@ -218,4 +218,19 @@ th{
 .danger:hover{
     border-color: @danger !important;
     box-shadow: 0 0 10px @danger, 0 0 20px @danger;
+}
+
+#searchPO:focus-visible{
+    outline: 0 !important;
+    border: 0 !important;
+}
+.flatpickr-input:focus-visible{
+    outline: 0 !important;
+    border: 0 !important;
+}
+input[type="checkbox"]{
+    accent-color: @primary-misc;
+}
+.popover-trigger{
+    cursor: pointer;
 }

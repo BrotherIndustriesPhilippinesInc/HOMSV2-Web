@@ -13,7 +13,7 @@ class Buttons
             $imageExists = "<img src='{$imgSource}' alt='{$alt}'>";
         }
         $html = <<<HTML
-        <button type="button" class='{$name} btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary {$class}' $buttonAttributes>
+        <button type="button" class='{$name} btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary {$class} glow' $buttonAttributes>
             $imageExists
             <span class="{$name}-span btn-span {$spanClass}">$text</span>
         </button>
@@ -29,7 +29,7 @@ class Buttons
             $imageExists = "<i class='{$imgLink}'></i>";
         }
         $html = <<<HTML
-        <button type="button" class='{$name} btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary {$class}' $buttonAttributes>
+        <button type="button" class='{$name} btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary {$class} glow' $buttonAttributes>
             $imageExists
             <span class="{$name}-span btn-span {$spanClass}">$text</span>
         </button>

@@ -2,7 +2,7 @@
 require_once __DIR__ . "/../API.php";
 require_once __DIR__ ."/../../controllers/POLController.php";
 
-class GetWorkCenters extends API
+class GetPOLLastUpdate extends API
 {
     public function __construct() {
         parent::__construct(new POLController());
@@ -14,13 +14,13 @@ class GetWorkCenters extends API
         $section = strtolower($data["section"]);
         
         try {
-            $response = $this->controller->getWorkCenters($section); ;
+            $response = $this->controller->getPOLUpdate($section); ;
             return $this->jsonResponse($response);
         } catch (Exception $e) {
             return $this->errorResponse($e);
         }
     }
 }
-$api = new GetWorkCenters();
+$api = new GetPOLLastUpdate();
 
 $api->get($_GET);

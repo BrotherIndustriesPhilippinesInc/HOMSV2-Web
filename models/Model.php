@@ -55,7 +55,7 @@ abstract class Model implements IModel {
         $table = $this->getTableName();
         $this->validateTableName($table);
 
-        $stmt = $this->conn->query("SELECT * FROM {$table}");
+        $stmt = $this->conn->query("SELECT * FROM {$table} ORDER BY id ASC");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -64,7 +64,7 @@ abstract class Model implements IModel {
         $table = $this->getTableName();
         $this->validateTableName($table);
 
-        $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE $where");
+        $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE $where ORDER BY id DESC");
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -132,7 +132,6 @@ abstract class Model implements IModel {
         return $data;
     }
     
-
     public function runSqlServerViews(string $serverName, array $connectionOptions, string $viewName) {
         try {
 

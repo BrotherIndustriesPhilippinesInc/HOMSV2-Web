@@ -37,7 +37,11 @@
     <link rel="stylesheet" type="text/css" href="/homs/non_module_libraries/datatables/datatables.min.css">
     
     <!-- FONT AWESOME -->
-    <script src="https://kit.fontawesome.com/b745f328d5.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://kit.fontawesome.com/b745f328d5.js" crossorigin="anonymous"></script> -->
+    <link href="/homs/non_module_libraries/fontawesome/css/fontawesome.css" rel="stylesheet" />
+    <link href="/homs/non_module_libraries/fontawesome/css/brands.css" rel="stylesheet" />
+    <link href="/homs/non_module_libraries/fontawesome/css/solid.css" rel="stylesheet" />
+
 </head>
 <body>
     <?php
@@ -69,6 +73,9 @@
         },
         '/homs/production/upload_pol' => function() {
             include __DIR__ . '/views/pages/production/upload_pol.php';
+        },
+        '/homs/production/work_center' => function() {
+            include __DIR__ . '/views/pages/production/wc_selection.php';
         },
         '/homs/production/export_reports' => function() {
             include __DIR__ . '/views/pages/production/export_reports.php';
