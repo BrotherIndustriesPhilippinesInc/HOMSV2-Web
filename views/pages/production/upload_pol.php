@@ -13,15 +13,14 @@
         <h1>Upload POL</h1>
         <div id="uppy-dashboard" class="d-flex flex-column justify-content-center align-items-center">
             <div>
-                <input type="checkbox" id="add_pol">
-                <label for="add_pol"><span class="text-primary fw-semibold">Additional POL</span></label>
+                <input type="checkbox" id="update_pol">
+                <label for="update_pol"><span class="text-primary fw-semibold">Update POs</span></label>
             </div>
             <div>
-                <p class="text-primary fst-italic">(Check this if you want to add to the existing POL)</p>
+                <p class="text-primary fst-italic">(Check this if you want to update specific POs)</p>
             </div>
             <div class="d-flex justify-content-center align-items-center"></div>
         </div>
-        
     </div>
 </body>
 

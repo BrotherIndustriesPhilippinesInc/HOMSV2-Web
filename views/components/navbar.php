@@ -7,6 +7,8 @@
   $exportReports = $button->navButton("Export Reports", "/homs/production/export_reports", "text-center pt-2");
   $history = $button->navButton("History", "/homs/production/history", "text-center pt-2");
 
+  $reasons = $button->navButton("Reasons & Actions", "/homs/admin/reasons", "text-center pt-2");
+
   $confirmation = $button->navButton("Confirmation", "/homs/confirmation");
   $graphs = $button->navButton("Graphs", "/homs/graphs");
 
@@ -66,6 +68,23 @@
                 echo $wcSelection;
                 echo $history;
                 echo $exportReports;
+              ?>
+            </div>
+          </div>
+      </li>
+
+      <!-- ADMIN -->
+      <li class="nav-item d-flex">
+          <div class="nav-status <?php echo isActive('/admin', $currentPath); ?>" style="width: 8px; height: auto;"></div>
+          <div class="nav-link w-100 text-primary fs-5 fw-medium">
+            <div class="nav-title d-flex justify-content-center align-items-center">
+              <span class="w-100 fs-5">Admin</span>
+              <img class="arrow" src="/homs/resources/icons/arrow_down.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
+              <img class="arrow d-none" src="/homs/resources/icons/arrow_up.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
+            </div>
+            <div class="nav-submenu">
+              <?php 
+                echo $reasons; 
               ?>
             </div>
           </div>

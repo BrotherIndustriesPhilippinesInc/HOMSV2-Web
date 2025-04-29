@@ -3,7 +3,7 @@ require_once __DIR__ . '/../interfaces/IModel.php';
 
 abstract class Model implements IModel {
     protected PDO $conn;
-    private static array $allowedTables = ['pol', 'test_table', 'pt_pol', 'tc_pol']; // ✅ Prevents SQL Injection
+    private static array $allowedTables = ['pol', 'test_table', 'pt_pol', 'tc_pol','reasons']; // ✅ Prevents SQL Injection
     private static string $host = '10.248.1.152';
     private static string $username = 'postgres';
     private static string $password = '1234';
@@ -39,8 +39,18 @@ abstract class Model implements IModel {
     }
 
     public function insert(array $data) {
+        date_default_timezone_set('Asia/Manila');
+
         $table = $this->getTableName();
-        $this->validateTableName($table); // ✅ Secure table name
+        $this->validateTableName($table);
+
+        if (empty($data['creator'])) {
+            throw new InvalidArgumentException('Missing required field: creator');
+        }
+        
+        if (!isset($data['time_created'])) {
+            $data['time_created'] = date('Y-m-d H:i:s'); // Current timestamp
+        }
 
         $columns = implode(", ", array_keys($data));
         $placeholders = ":" . implode(", :", array_keys($data));
@@ -70,18 +80,30 @@ abstract class Model implements IModel {
     }
 
     public function update($id, array $data) {
-        if (!is_numeric($id)) throw new Exception("Invalid ID");
+        date_default_timezone_set('Asia/Manila');
 
+        if (!is_numeric($id)) {
+            throw new Exception("Invalid ID");
+        }
+    
         $table = $this->getTableName();
         $this->validateTableName($table);
+    
+        if (!isset($data['time_created'])) {
+            $data['time_created'] = date('Y-m-d H:i:s'); // Current timestamp
+        }
 
+        // 🔄 Remap fields for update context
+        $data = $this->remapForUpdate($data);
+    
         $fields = implode(", ", array_map(fn($key) => "$key = :$key", array_keys($data)));
-
+    
         $sql = "UPDATE {$table} SET {$fields} WHERE id = :id";
         $stmt = $this->conn->prepare($sql);
-
+    
         $data['id'] = (int)$id;
         $stmt->execute($this->sanitizeData($data));
+    
         return ["status" => "success"];
     }
 
@@ -166,4 +188,46 @@ abstract class Model implements IModel {
             die("Database query failed. Please contact the administrator."); // ✅ Prevent exposing sensitive errors
         }
     }
+
+    public function checkIfExists(string $column, string $value) {
+        $table = $this->getTableName();
+        $this->validateTableName($table); // ✅ Secure table name
+
+        $stmt = $this->conn->prepare("SELECT id FROM {$table} WHERE {$column} = :value");
+        $stmt->execute(['value' => $value]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['id'] : null; // ✅ Return ID if exists, null otherwise
+    }
+
+    public function upsert(string $column, array $data) {
+        if (!isset($data[$column])) {
+            throw new Exception("Key column '{$column}' missing from data");
+        }
+    
+        $existingId = $this->checkIfExists($column, $data[$column]);
+
+        if ($existingId === null) {
+            return $this->insert($data);
+        }
+        $updateData = $this->remapForUpdate($data);
+        return $this->update($existingId, $updateData);
+    }
+
+    private function remapForUpdate(array $data): array {
+        $map = [
+            'creator' => 'updated_by',
+            'time_created' => 'time_updated',
+        ];
+    
+        foreach ($map as $oldKey => $newKey) {
+            if (isset($data[$oldKey])) {
+                $data[$newKey] = $data[$oldKey];
+                unset($data[$oldKey]);
+            }
+        }
+    
+        return $data;
+    }
+    
+
 }

@@ -92,7 +92,9 @@
         '/homs/production/output' => function() {
             include __DIR__ . '/views/pages/production/hourly_output_view.php';
         },
-
+        '/homs/admin/reasons' => function() {
+            include __DIR__ . '/views/pages/admin/reasons.php';
+        },
     ];
 
     // Get the current path

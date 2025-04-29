@@ -30,6 +30,8 @@ abstract class API implements IAPI {
         try {
             $debugData = $this->debugRequestData($where);
             $response = $where === null ? $this->controller->getAll() : $this->controller->get($where);
+            $this->checkError($response);
+
             return $this->jsonResponse($response, $debugData);
         } catch (Exception $e) {
             return $this->errorResponse($e);
@@ -40,6 +42,8 @@ abstract class API implements IAPI {
         try {
             $debugData = $this->debugRequestData($data); // Capture request data
             $response = $this->controller->create($data);
+            $this->checkError($response);
+
             return $this->jsonResponse($response, $debugData);
         } catch (Exception $e) {
             return $this->errorResponse($e, $data);
@@ -50,6 +54,8 @@ abstract class API implements IAPI {
         try {
             $debugData = $this->debugRequestData($data);
             $response = $this->controller->update($id, $data);
+            $this->checkError($response);
+
             return $this->jsonResponse($response, $debugData);
         } catch (Exception $e) {
             return $this->errorResponse($e, $data);
@@ -60,6 +66,8 @@ abstract class API implements IAPI {
         try {
             $debugData = $this->debugRequestData($data);
             $response = $this->controller->partialUpdate($id, $data);
+            $this->checkError($response);
+            
             return $this->jsonResponse($response, $debugData);
         } catch (Exception $e) {
             return $this->errorResponse($e, $data);
@@ -99,7 +107,7 @@ abstract class API implements IAPI {
 
         $response = [
             "status" => "error",
-            "message" => "An error occurred while processing your request."
+            "message" => $e->getMessage(),
         ];
 
         if ($this->development) {
@@ -114,5 +122,13 @@ abstract class API implements IAPI {
         echo json_encode($response, JSON_PRETTY_PRINT);
         exit;
     }
-}
 
+    protected function checkError($response){
+        if ($response && isset($response["status"])) {
+            if ($response["status"] === "error") {
+                $message = $response["details"] ?? "Unknown error."; // Fallback message if details missing
+                throw new Exception($message);
+            }
+        }
+    }
+}

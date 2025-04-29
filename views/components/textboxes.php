@@ -41,7 +41,7 @@ class Textboxes{
     }
     public function textArea($name, $class=" ", $placeholder = ""){
         $html = <<<HTML
-            <textarea id="{$name}" class="{$class} form-control border-0 rounded-3 fw-medium text-primary glow" placeholder="{$placeholder}"></textarea>
+            <textarea id="{$name}" class="{$class} form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="{$placeholder}"></textarea>
         HTML;
         return $html;
     }

@@ -11,7 +11,7 @@ class UploadPOL extends API
     public function index($data, $additional) {
         
         $this->validation->requiredFields($data["file"], ["name", "type", "tmp_name", "size"]);
-        $this->validation->requiredFields($additional, ["user_EmpNo", "section", "is_additional"]);
+        $this->validation->requiredFields($additional, ["user_EmpNo", "section", "for_update", "is_multiple_files", "is_first_file"]);
         $data = array_merge($data["file"], $additional);
 
         $this->post($data);

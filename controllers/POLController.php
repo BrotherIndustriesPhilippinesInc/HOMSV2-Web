@@ -122,7 +122,9 @@ class POLController extends Controller
     public function create(array $data){
         $user = $data["user_EmpNo"];
         $section = $data["section"];
-        $is_additional = filter_var($data["is_additional"], FILTER_VALIDATE_BOOLEAN);
+        $for_update = filter_var($data["for_update"], FILTER_VALIDATE_BOOLEAN);
+        $is_multiple_files = filter_var($data["is_multiple_files"], FILTER_VALIDATE_BOOLEAN);
+        $is_first_file = filter_var($data["is_first_file"], FILTER_VALIDATE_BOOLEAN);
 
         try {
             
@@ -131,13 +133,20 @@ class POLController extends Controller
             if (empty($polData)) throw new Exception("No data provided.");
             
             $this->setTableName($section);
-            
-            if(!$is_additional){
+
+            if (!$for_update && $is_first_file) {
                 $this->model->deleteAll();
             }
             
-            foreach ($polData as $key => $value) {
-                $this->model->insert($value);
+            if($for_update){
+                foreach ($polData as $key => $value) {
+                    $this->model->upsert("prd_order_no", $value);
+                }
+
+            }else{
+                foreach ($polData as $key => $value) {
+                    $this->model->insert($value);
+                }
             }
 
             $this->moveFiletoServer($data);
@@ -176,25 +185,47 @@ class POLController extends Controller
         }
     }
 
-    public function getPOLUpdate($section){
+    public function getPOLUpdate($section)
+    {
         try {
-            if($section == "bps"){
+            if (strtolower($section) === "bps") {
                 $section = "tc";
             }
+
             $this->model->setTableName($section);
             $response = $this->model->getAll();
 
+            if (empty($response)) {
+                throw new Exception("No records found.");
+            }
 
-            $lastIndex = array_key_last($response);
-            $updateData["last_update"] = $response[$lastIndex]["time_created"];
+            // Find the row with the latest timestamp (either time_updated or time_created)
+            $latest = null;
+            foreach ($response as $row) {
+                $time = $row["time_updated"] ?? $row["time_created"];
+                if (!$latest || strtotime($time) > strtotime($latest["timestamp"])) {
+                    $latest = [
+                        "timestamp" => $time,
+                        "emp_no" => $row["updated_by"] ?? $row["creator"]
+                    ];
+                }
+            }
 
-            /* USER CREATOR */
+            if (!$latest) {
+                throw new Exception("Unable to determine last update.");
+            }
+
+            // Fetch user details
             $userController = new UserController();
+            $userInfo = $userController->get($latest["emp_no"]);
 
-            $creator = $userController->get("{$response[$lastIndex]["creator"]}");
-            $updateData["last_update_by"] = ["EmpNo"=>$creator["EmpNo"], "FullName"=>$creator["Full_Name"]];
-
-            return $updateData;
+            return [
+                "last_update" => $latest["timestamp"],
+                "last_update_by" => [
+                    "EmpNo" => $userInfo["EmpNo"] ?? $latest["emp_no"],
+                    "FullName" => $userInfo["Full_Name"] ?? "Unknown"
+                ]
+            ];
         } catch (Exception $e) {
             return $this->errorResponse($e);
         }
@@ -222,7 +253,17 @@ class POLController extends Controller
     public function getPODetails($section, $po){
         try {
             $this->setTableName($section);
-            return $this->model->get("prd_order_no = '$po'");
+
+            return $this->model->get("id = '$po'");
+        } catch (Exception $e) {
+            return $this->errorResponse($e);
+        }
+    }
+
+    public function checkPO($section, $po){
+        try {
+            $this->setTableName($section);
+            return (bool)$this->model->checkIfExists("prd_order_no", $po);
         } catch (Exception $e) {
             return $this->errorResponse($e);
         }

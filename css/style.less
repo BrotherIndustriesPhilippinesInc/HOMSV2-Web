@@ -18,6 +18,10 @@
     color: @secondary-text !important;
 }
 
+.tertiary-text{
+    color: @tertiary-text !important;
+}   
+
 .text-danger, .border-danger{
     color: @danger !important;
 }
@@ -197,20 +201,6 @@ input[type="text"]::-webkit-input-placeholder {
     font-size: 16px;
     border-color: @primary-misc !important;
 }
-table.dataTable{
-    border-collapse: collapse !important;
-}
-td, tr, th{
-    border-color: @secondary-text !important;
-    border-width: 2px !important;
-    border-collapse: collapse;
-    padding: 4px;
-
-}
-th{
-    padding: 16px;
-}
-
 .danger{
     border-color: @danger !important;
     color: @danger !important;
@@ -233,4 +223,86 @@ input[type="checkbox"]{
 }
 .popover-trigger{
     cursor: pointer;
+}
+
+#details-container{
+    color : @secondary-text;
+    font-size: 12px;
+}
+
+#reasons-table td, tr{
+    position: relative;
+}
+#reasons-table td, th{
+    background-color: @tertiary-background !important;
+    color: @secondary-text !important;
+    border: 0;
+}
+
+#reasons-table tr:hover{
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
+    z-index: 2;
+}
+#reasons-table tr:focus{
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc !important;
+    z-index: 2;
+}
+
+#dt-length-0{
+    color: @primary-misc;
+    background-color: @tertiary-background !important;
+    border-color: @primary-misc !important;
+}
+#dt-length-0:hover{
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
+    z-index: 1;
+}
+
+#dt-length-0:focus{
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc !important;
+    z-index: 2;
+}
+
+#dt-search-0{
+    color: @primary-misc;
+    background-color: @tertiary-background !important;
+    border-color: @primary-misc !important;
+}
+#dt-search-0:hover{
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
+    z-index: 1;
+}
+
+#dt-search-0:focus{
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc !important;
+    z-index: 2;
+}
+
+.page-link{
+    color: @primary-misc !important;
+    background-color: @tertiary-background !important;
+    border: solid 1px @primary-misc !important;
+}
+
+.dt-paging-button.page-item.active .page-link{
+    background-color: @primary-misc !important;
+    color: @tertiary-background !important;
+    border-color: @primary-misc !important;
+}
+
+.dt-paging-button.page-item.active .page-link:hover{
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
+    z-index: 1;
+}
+
+.buttons-colvis{
+    background-color: @tertiary-background !important;
+    color: @primary-misc !important;
+    font-weight: 500 !important;
+}
+
+label{
+    color: @primary-misc !important;
+    font-size: 12px;
+    font-weight: 500;
 }

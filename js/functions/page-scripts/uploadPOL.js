@@ -7,6 +7,8 @@ import {
   
 $(function () {
     let user = JSON.parse(localStorage.getItem("user"));
+    let successCount = 0;
+    let totalFiles = 0;
 
     const uppy = new Uppy({
         restrictions: {
@@ -35,19 +37,42 @@ $(function () {
         .use(XHRUpload, {
             endpoint: '/homs/API/uploading/uploadPOL.php',
             formData: true,
+            limit: 1
         });
 
-    uppy.on("upload", () => {
+    uppy.on('upload', () => {
         const files = uppy.getFiles();
-        const isAdditional = files.length > 1 ? true : $('#add_pol').is(':checked');
-        uppy.setMeta({ is_additional: isAdditional });
+        totalFiles = files.length;
+        successCount = 0;
+    
+        const forUpdate = $('#update_pol').is(':checked');
+        const isMultipleFiles = totalFiles > 1;
+    
+        files.forEach((file, index) => {
+            uppy.setFileMeta(file.id, {
+                is_first_file: index === 0,
+                for_update: forUpdate,
+                is_multiple_files: isMultipleFiles
+            });
+        });
     });
 
     uppy.on('upload-success', (file, response) => {
-        window.location.href = '/homs/production/wc_selection';
-    });
+        // Optional: Check for backend's confirmation of complete processing
+        const backendStatus = response.body?.processingComplete ?? true;
 
+        if (backendStatus) {
+            successCount++;
+        } else {
+            alert(`Server did not confirm full processing for file ${file.name}`);
+        }
+
+        if (successCount === totalFiles) {
+            window.location.href = '/homs/production/wc_selection';
+        }
+    });
+    
     uppy.on('upload-error', (file, error, response) => {
-        alert('Error: ' + error.message);
+        alert('Error uploading file: ' + file.name + '\n' + error.message);
     });
 });
