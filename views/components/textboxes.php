@@ -4,9 +4,9 @@ class Textboxes{
         
     }
 
-    public function primaryTextbox($name, $class = "", $placeholder = ""){
+    public function primaryTextbox($name, $class = "", $placeholder = "", $value = "", $type= "text"){
         $html = <<<HTML
-            <input type="text" id="{$name}" class="{$class} form-control border-0 rounded-3 fw-medium text-primary glow" placeholder="{$placeholder}">
+            <input type={$type} id="{$name}" class="{$class} form-control border-0 rounded-3 fw-medium text-primary glow" placeholder="{$placeholder}" value="{$value}">
         HTML;
         return $html;
     }
@@ -33,9 +33,9 @@ class Textboxes{
         return $html;
     }
 
-    public function timeSelect($name){
+    public function timeSelect($name, $class = "", $attributes = ""){
         $html = <<<HTML
-            <input id="{$name}" class="flatpickr-no-calendar glow" type="text" placeholder="Select Date.." readonly="readonly">
+            <input id="{$name}" class="flatpickr-no-calendar glow {$class}" type="text" placeholder="Select Date.." readonly="readonly" {$attributes}>
         HTML;
         return $html;
     }

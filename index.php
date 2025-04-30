@@ -17,7 +17,8 @@
     <script defer src="/homs/non_module_libraries/popper/popper.min.js"></script>
 
     <!-- SWEETALERT2 -->
-    <script defer src="/homs/node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="/homs/node_modules/sweetalert2/dist/sweetalert2.dark.css" />
+    <script defer src="/homs/node_modules/sweetalert2/dist/sweetalert2.min.js"></script>
 
     <!-- MAINSCRIPT -->
     <script defer type="module" defer src="/homs/js/main-script.js"></script>
@@ -25,6 +26,7 @@
     <!-- UPPY -->
     <link href="https://releases.transloadit.com/uppy/v4.13.2/uppy.min.css" rel="stylesheet"/>
 
+    <!-- FLATPICKR -->
     <link rel="stylesheet" type="text/css" href="/homs/non_module_libraries/flatpickr/dark.css">
     <script defer src="/homs/non_module_libraries/flatpickr/flatpickr.js"></script>
 

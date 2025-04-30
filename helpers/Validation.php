@@ -13,7 +13,7 @@ class Validation
         $errors = ["missing_fields" => []];
 
         foreach ($required_fields as $field) {
-            if (!isset($data[$field]) || empty(trim($data[$field]))) {
+            if (!isset($data[$field]) || trim($data[$field]) === '') {
                 $errors["missing_fields"][] = $field; // Append missing field
             }
         }

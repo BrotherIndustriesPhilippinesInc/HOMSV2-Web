@@ -19,6 +19,8 @@ $(function () {
         url.search = params.toString(); // Apply parameters to the URL
 
         window.location.href = url.toString(); // Navigate to the new URL
+
+        localStorage.setItem('wc', wcValue);
     });
 
     $("#searchPO").on("input", function () {

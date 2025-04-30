@@ -5,13 +5,13 @@ class Selects
 
     }
 
-    public function primarySelect($name, $text, $options = []){
+    public function primarySelect($name, $text, $options = [], $attributes="", $class=""){
         $optionsHtml = "";
         foreach($options as $key => $value){
             $optionsHtml .= "<option value='$key'>$value</option>";
         }
         $html = <<<HTML
-            <select class="{$name} form-select bg-custom-tertiary text-primary fw-bold border-0 glow" aria-label="Default select example">
+            <select class="{$name} form-select bg-custom-tertiary text-primary fw-bold glow primary-border {$class}" aria-label="Default select example" $attributes>
                 <option disabled selected class="text-primary fw-bold">{$text}</option>
                 {$optionsHtml}
             </select>

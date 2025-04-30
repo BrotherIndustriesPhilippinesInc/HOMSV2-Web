@@ -3,7 +3,7 @@ require_once __DIR__ . '/../interfaces/IModel.php';
 
 abstract class Model implements IModel {
     protected PDO $conn;
-    private static array $allowedTables = ['pol', 'test_table', 'pt_pol', 'tc_pol','reasons']; // ✅ Prevents SQL Injection
+    private static array $allowedTables = ['pol', 'test_table', 'pt_pol', 'tc_pol','reasons', 'production_records']; // ✅ Prevents SQL Injection
     private static string $host = '10.248.1.152';
     private static string $username = 'postgres';
     private static string $password = '1234';
@@ -73,7 +73,6 @@ abstract class Model implements IModel {
 
         $table = $this->getTableName();
         $this->validateTableName($table);
-
         $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE $where ORDER BY id DESC");
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
