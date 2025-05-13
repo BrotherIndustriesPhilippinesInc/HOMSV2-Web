@@ -8,7 +8,7 @@
 
     $search = $textbox->searchTextbox("searchPO");
 
-    $selectPO = $button->primaryButton("po-button-modal", "Select PO", "/homs/resources/icons/shopping_cart.svg", "po_cart", "data-bs-toggle='modal' data-bs-target='#poModal'");
+    $selectPO = $button->primaryButton("po-button-modal", "Select PO", "/homs/resources/icons/shopping_cart.svg", "po_cart", "data-bs-toggle='modal' data-bs-target='#poModal' style='z-index: 99'");
 
     $startProduction = $button->primaryButton("startProduction", "Start Production", "/homs/resources/icons/pallet.svg", "", );
 
@@ -23,8 +23,8 @@
     $variance = $textbox->primaryTextbox("variance", "plan-detail-textbox secondary-background p-1", "", "0", "number");
 
     $lineSelect = $select->primarySelect("lineSelect", "Line", ["Line 1", "Line 2", "Line 3", "Line 4", "Line 5", "Line 6", "Line 7", "Line 8", "Line 9", "Line 10"], "");
-    $areaSelect = $select->primarySelect("areaSelect", "Area", ["Area 1", "Area 2", "Area 3", "Area 4", "Area 5", "Area 6", "Area 7", "Area 8", "Area 9", "Area 10"], "");
-    $shiftSelect = $select->primarySelect("shiftSelect", "Shift", ["ds1"=>"6:00 AM - 4:00 PM", "dssp"=>"7:00 AM - 5:00 PM", "ds2"=>"7:30 AM - 5:30 PM", "ds3"=>"9:00 AM - 7:00 PM", "ns1"=>"6:00 PM - 4:00 AM", "nssp"=>"7:00 PM - 5:00 AM", "ns2"=>"7:30 PM - 5:30 PM"], "");
+    $areaSelect = $select->primarySelect("areaSelect", "Line / Team", ["Area 1", "Area 2", "Area 3", "Area 4", "Area 5", "Area 6", "Area 7", "Area 8", "Area 9", "Area 10"], "");
+    $shiftSelect = $select->primarySelect("shiftSelect", "Shift", ["ds"=>"Day Shift", "ns"=>"Night Shift"], "");
     
     $hourlyTime = $select->primarySelect("hourlyTime", "Hourly Time", ["06:00 - 08:00", "08:00 - 10:00", "10:00 - 12:00", "12:00 - 14:00", "14:00 - 16:00", "16:00 - 18:00", "18:00 - 20:00", "20:00 - 22:00", "22:00 - 24:00"], "");
     $directOperations = $textbox->primaryTextbox("directOperations", "secondary-background p-1 text-center", "", 0);
@@ -64,15 +64,17 @@
         require_once __DIR__ . '/../../components/navbar.php';
     ?>
     
-    <div class="main-content d-flex flex-column bg-custom-secondary container-fluid rounded-3 pb-2"> 
+    <div class="d-flex flex-column bg-custom-secondary container-fluid rounded-3 pb-2"> 
         <div class="d-flex align-items-center justify-content-between gap-3">
 
-            <div class="d-flex align-items-center gap-2 w-75 justify-content-between">
+            <div class="d-flex align-items-center gap-2 justify-content-between">
                 <div>
                     <h1><?php echo "$wcName"?></h1>
                 </div>
-                
-                <div id="details-container" class="d-none gap-5">
+            </div>
+
+            <div id="" class="initial initial-setup">
+                <div class="d-flex gap-5"  style="color : #8DCEE3; font-size: 12px;">
                     <div id="po_number" class="gap-2 align-items-center">
                         <i class="fa-solid fa-paste" style="font-size: 24px; margin-right: 5px;"></i>
                         <span class="fw-bold">po_number</span>
@@ -82,13 +84,13 @@
                         <span class="fw-bold">material</span>
                     </div>
                     <div id="description" class="gap-2 align-items-center">
-                         <i class="fa-solid fa-info" style="font-size: 24px; margin-right: 5px;"></i>
+                            <i class="fa-solid fa-info" style="font-size: 24px; margin-right: 5px;"></i>
                         <span class="fw-bold">description</span>
                     </div>
                 </div>
             </div>
             
-            <div class="initial">
+            <div id="" class="initial initial-setup" >
                 <img src="/homs/resources/icons/arrow_back_2.svg" alt="arrow-popover-trigger" class="popover-trigger"
                     data-bs-toggle="popover" 
                     data-bs-placement="left"
@@ -109,7 +111,7 @@
                         </div>
                     </div>
                     
-                    <div class=" initial gap-2">
+                    <div class="initial initial-setup gap-2">
                         <div>
                             <?php 
                                 echo $startProduction;
@@ -124,19 +126,20 @@
                         
                     </div>
                 </div>
+
                 <!-- SECTION DETAILS -->
-                <div class="initial content-group p-2 rounded-3 flex-column gap-2">
+                <div id="" class="initial initial-setup content-group p-2 rounded-3 flex-column gap-2">
                     <div class="d-flex justify-content-between">
                         <h5>Section Details</h5>
                         <div class="d-flex gap-2">
                             <div>
                                 <?php
-                                    echo $lineSelect;
+                                    echo $areaSelect;
                                 ?>
                             </div>
                             <div>
                                 <?php
-                                    echo $areaSelect;
+                                    echo $lineSelect;
                                 ?>
                             </div>
                             <div>
@@ -175,6 +178,7 @@
 
                     </div>
                 </div>
+
                 <!-- STOPS -->
                 <div class="d-none content-group p-2 rounded-3">
                     <h5>Stops (Minutes)</h5>
@@ -208,7 +212,7 @@
                 </div>
             
                 <!-- PLAN -->
-                <div class="initial gap-2 flex-column w-100">
+                <div id="" class="initial initial-setup gap-2 flex-column w-100">
                     <div class="d-flex flex-column w-100 justify-content-between content-group rounded-3 p-2">
                         <h5>Current Status</h5>
                         <div class="d-flex gap-2">
@@ -226,14 +230,14 @@
                                 ?>
                             </div>
 
-                            <div>
+                            <div class="countInputs">
                                 <span class="plan-details section-details-label">Actual Quantity</span>
                                 <?php
                                     echo $actualQuantity;
                                 ?>
                             </div>
 
-                            <div>
+                            <div class="countInputs">
                                 <span class="plan-details section-details-label">Variance</span>
                                 <?php
                                     echo $variance;
@@ -243,24 +247,53 @@
                         
                         
                     </div>
-                    <div class="d-flex gap-2">
-                        <?php 
-                            echo $homsView;
-                            echo $addPlan;
-                        ?>
-                    </div>
+                </div>
+
+                <!-- CURRENT DATA -->
+                <div class="initial initial-setup">
+                    <table id="data-table" class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">PO</th>
+                                <th scope="col">Section</th>
+                                <th scope="col">Workcenter</th>
+                                <th scope="col">Line</th>
+                                <th scope="col">Area</th>
+                                <th scope="col">Material</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Plan Quantity</th>
+                                <th scope="col">Takt Time</th>
+                                <th scope="col">Actual Quantity</th>
+                                <th scope="col">Variance</th>
+                                <th scope="col">Shift</th>
+                                <th scope="col">Hourly Time</th>
+                                <th scope="col">Direct Operators</th>
+                                <th scope="col">Start Time</th>
+                                <th scope="col">End Time</th>
+                                <th scope="col">Advance Reason</th>
+                                <th scope="col">Advance Action</th>
+                                <th scope="col">Linestop Reason</th>
+                                <th scope="col">Linestop Action</th>
+
+                                <th scope="col">Creator</th>
+                                <th scope="col">Time Created</th>
+                                <th scope="col">Updated By</th>
+                                <th scope="col">Production Action</th>
+                                
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <!-- LOADING -->
+                <div id="loading" class="justify-content-center align-items-center h-100" style="display:none;">
+                    <div class="loader"></div>
                 </div>
             </div>
-            
-            
-            
         </div>
 
     </div>
-
-
-
-
 
     <!-- MODALS -->
     <div id="poModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
@@ -350,7 +383,24 @@
                         <div class="d-flex flex-column content-group p-2 rounded-3 h-100">
                             <h5>Advance / Delay</h5>
                             <div class="d-flex h-100">
-                                <div class="d-flex gap-2 w-100">
+                                <div class="container text-center">
+                                    <div class="row">
+                                        <div class="col">
+                                        <select class="js-example-basic-single" name="state">
+                                            <option value="AL">Alabama</option>
+                                                ...
+                                            <option value="WY">Wyoming</option>
+                                        </select>
+                                        </div>
+                                        <div class="col">
+                                        Column
+                                        </div>
+                                        <div class="col">
+                                        Column
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="d-flex gap-2 w-100">
                                     <div class="d-flex flex-column w-50">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <span class="section-details-label">Reason</span>
@@ -371,7 +421,7 @@
                                         ?>
                                     </div>
                                     
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>

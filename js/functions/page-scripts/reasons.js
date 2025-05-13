@@ -22,10 +22,10 @@ $(async function () {
         },
         columns: [
             { data: "name" },
-            { data: "details", visible: false},
+            { data: "details", visible: true},
             { data: "category" },
-            { data: "loss_factor_legend" },
-            { data: "creator" },
+            { data: "loss_factor_legend", visible: false },
+            { data: "creator", visible: false },
             { data: "time_created", visible: false},
             { data: "updated_by", visible: false },
             { data: "time_updated", visible: false },
@@ -46,7 +46,7 @@ $(async function () {
         }
     };
     
-    let table = dataTablesInitialization("#reasons-table", params);
+    let table = dataTablesInitialization("#data-table", params);
 
     $(".create").on("click", function (e) {
         $("#create-name").val("");

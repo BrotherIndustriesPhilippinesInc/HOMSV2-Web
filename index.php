@@ -39,10 +39,13 @@
     <link rel="stylesheet" type="text/css" href="/homs/non_module_libraries/datatables/datatables.min.css">
     
     <!-- FONT AWESOME -->
-    <!-- <script src="https://kit.fontawesome.com/b745f328d5.js" crossorigin="anonymous"></script> -->
     <link href="/homs/non_module_libraries/fontawesome/css/fontawesome.css" rel="stylesheet" />
     <link href="/homs/non_module_libraries/fontawesome/css/brands.css" rel="stylesheet" />
     <link href="/homs/non_module_libraries/fontawesome/css/solid.css" rel="stylesheet" />
+
+    <!-- SELECT2 -->
+    <link href="/homs/non_module_libraries/select2/select2.min.css" rel="stylesheet" />
+    <script defer src="/homs/non_module_libraries/select2/select2.min.js"></script>
 
 </head>
 <body>
@@ -96,6 +99,15 @@
         },
         '/homs/admin/reasons' => function() {
             include __DIR__ . '/views/pages/admin/reasons.php';
+        },
+        '/homs/admin/workcenters' => function() {
+            include __DIR__ . '/views/pages/admin/workcenters.php';
+        },
+        '/homs/admin/st' => function() {
+            include __DIR__ . '/views/pages/admin/stmanagement.php';
+        },
+        '/homs/production/history' => function() {
+            include __DIR__ . '/views/pages/production/edit_history.php';
         },
     ];
 

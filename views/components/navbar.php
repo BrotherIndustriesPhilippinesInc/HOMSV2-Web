@@ -5,13 +5,14 @@
   $uploadPOL = $button->navButton("Upload POL", "/homs/production/upload_pol", "text-center pt-2");
   $wcSelection = $button->navButton("Work Center Selection", "/homs/production/wc_selection", "text-center pt-2");
   $exportReports = $button->navButton("Export Reports", "/homs/production/export_reports", "text-center pt-2");
-  $history = $button->navButton("History", "/homs/production/history", "text-center pt-2");
+  $history = $button->navButton("Edit History", "/homs/production/history", "text-center pt-2");
 
   $reasons = $button->navButton("Reasons & Actions", "/homs/admin/reasons", "text-center pt-2");
+  $workcenters = $button->navButton("Workcenters", "/homs/admin/workcenters", "text-center pt-2");
+  $st_management = $button->navButton("St Management", "/homs/admin/st", "text-center pt-2");
 
   $confirmation = $button->navButton("Confirmation", "/homs/confirmation");
   $graphs = $button->navButton("Graphs", "/homs/graphs");
-
 
     // Get the current path
   $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -84,7 +85,9 @@
             </div>
             <div class="nav-submenu">
               <?php 
-                echo $reasons; 
+                echo $reasons;
+                echo $workcenters;
+                echo $st_management;
               ?>
             </div>
           </div>

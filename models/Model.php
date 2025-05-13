@@ -3,7 +3,7 @@ require_once __DIR__ . '/../interfaces/IModel.php';
 
 abstract class Model implements IModel {
     protected PDO $conn;
-    private static array $allowedTables = ['pol', 'test_table', 'pt_pol', 'tc_pol','reasons', 'production_records']; // ✅ Prevents SQL Injection
+    private static array $allowedTables = ['pol', 'test_table', 'pt_pol', 'tc_pol','reasons', 'production_records', 'workcenters', 'st_management', 'edit_history']; // ✅ Prevents SQL Injection
     private static string $host = '10.248.1.152';
     private static string $username = 'postgres';
     private static string $password = '1234';
@@ -74,6 +74,7 @@ abstract class Model implements IModel {
         $table = $this->getTableName();
         $this->validateTableName($table);
         $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE $where ORDER BY id DESC");
+        /* var_dump($stmt); */
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -199,18 +200,34 @@ abstract class Model implements IModel {
     }
 
     public function upsert(string $column, array $data) {
+        
         if (!isset($data[$column])) {
             throw new Exception("Key column '{$column}' missing from data");
         }
     
         $existingId = $this->checkIfExists($column, $data[$column]);
-
+        
         if ($existingId === null) {
             return $this->insert($data);
         }
         $updateData = $this->remapForUpdate($data);
         return $this->update($existingId, $updateData);
     }
+
+    public function upsertMultiple(array $columns, array $data) {
+        $existingId = $this->checkIfExistsMultiple($columns, $data);
+        
+        if ($existingId === null) {
+            $this->insert($data);
+            return 'inserted';
+        } else {
+            $updateData = $this->remapForUpdate($data);
+            $this->update($existingId, $updateData);
+            return 'updated';
+        }
+    }
+    
+    
 
     private function remapForUpdate(array $data): array {
         $map = [
@@ -227,6 +244,48 @@ abstract class Model implements IModel {
     
         return $data;
     }
-    
 
+    public function executePrepared(string $query, array $params = [], string $mode = 'all') {
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute($params);
+    
+        switch ($mode) {
+            case 'all':
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            case 'one':
+                return $stmt->fetch(PDO::FETCH_ASSOC);
+            case 'rowCount':
+                return $stmt->rowCount();
+            case 'none':
+                return true;
+            default:
+                throw new InvalidArgumentException("Invalid mode: $mode");
+        }
+    }
+    
+    public function checkIfExistsMultiple(array $columns, array $data) {
+        $table = $this->getTableName();
+        $this->validateTableName($table);
+    
+        $whereParts = [];
+        $params = [];
+    
+        foreach ($columns as $i => $col) {
+            $paramName = ":param{$i}";
+            $whereParts[] = "\"{$col}\" = {$paramName}";
+            $params[$paramName] = $data[$col];
+        }
+    
+        $whereClause = implode(" AND ", $whereParts);
+        $sql = "SELECT id FROM \"{$table}\" WHERE {$whereClause} LIMIT 1";
+    
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        return $result ? $result['id'] : null;
+    }
+    
+    
+    
 }

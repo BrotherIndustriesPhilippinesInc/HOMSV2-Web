@@ -1,22 +1,26 @@
-import appendParameterToURL from "./../appendParameterToUrl.js";
-import redirect from "./../redirect.js";
-import apiCall from "./../apiCall.js";
+import appendParameterToURL from "../appendParameterToUrl.js";
+import redirect from "../redirect.js";
+import apiCall from "../apiCall.js";
 import { search, formatTimeOnlyToPostgres, switchModals } from "../helperFunctions.js";
+import dataTablesInitialization from "../dataTablesInitialization.js";
 
 $(function () {
+
     const section = JSON.parse(localStorage.getItem('user'))['Section'];
     const userId = JSON.parse(localStorage.getItem('user'))["EmpNo"];
     const work_center = localStorage.getItem('wc');
 
     let selectedPOData = {};
 
+    let table;
+    
     /* PAGE INITIALIZATION */
+    $('.js-example-basic-single').select2();
     getPOList();
     getReasons();
     $(".stopProduction").hide();
-    $(".popover-trigger").hide();
-    getLatestRun();
-
+    $(".countInputs").hide();
+    $("#initial").removeClass("gap-2");
     const startTime = flatpickr("#startTime");
     const endTime = flatpickr("#endTime");
 
@@ -33,34 +37,22 @@ $(function () {
     });
 
     $(document).on("click", ".po-button", async function (e) {
-        $(".initial").addClass("d-flex");
-        $(".initial").removeClass("initial")
-
-        const poId = $(this).data("po-id");
-        
-
-        let details = await apiCall('/homs/API/uploading/getPODetails.php?section=' + section + '&po=' + poId, 'GET');
-        selectedPOData = details.data;
-
-        /* LINE SELECT INITIALIZATION */
-        $(".lineSelect").empty();
-        $(".lineSelect").append(new Option(details.data.line_name, details.data.line_name));
-        $(".lineSelect").val(details.data.line_name).trigger("change");
-
-        /* PLAN QUANTITY INITIALIZATION */
-        $("#planQuantity").val(details.data.qty);
-
-        if(details){
-            $("#details-container").removeClass("d-none");
-            $("#details-container").addClass("d-flex");
-        }
-
-        $("#po_number span").text(details.data.prd_order_no);
-        $("#material span").text(details.data.material);
-        $("#description span").text(details.data.description);
         
         const modal = bootstrap.Modal.getInstance(document.getElementById('poModal'));
         if (modal) modal.hide();
+        loading("show");
+
+        const poId = $(this).data("po-id");
+        $.when(
+            setup(poId),
+            
+        ).done(function () {
+            loading("hide");
+            createTable();
+        }).fail(function () {
+            alert('Error loading data.');
+            
+        });
 
         updateVariance();
     });
@@ -68,13 +60,8 @@ $(function () {
     $(".startProduction").on("click", function () {
         
         const shift = {
-            "ds1": {"from": "06:00", "to": "16:00"},
-            "dssp": {"from": "07:00", "to": "17:00"},
-            "ds2": {"from": "07:30", "to": "17:30"},
-            "ds3": {"from": "09:00", "to": "19:00"},
-            "ns1": {"from": "18:00", "to": "04:00"},
-            "nssp": {"from": "19:00", "to": "05:00"},
-            "ns2": {"from": "19:30", "to": "05:30"},
+            "ds": {"from": "06:00", "to": "19:00"},
+            "ns": {"from": "19:00", "to": "05:30"},
         };
     
         let now = new Date();
@@ -106,18 +93,20 @@ $(function () {
             if (result.isConfirmed) {
                 $("#startTime").val(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
                 $(".shiftSelect").val(selectedShift);
+
+
                 let data = {
                     "production_action": "start",
-                    "po_id": selectedPOData.id, 
+                    "po_id": selectedPOData.po_id, 
                     "po": selectedPOData.prd_order_no, 
                     "section": section,
-                    "work_center": selectedPOData.work_center,
+                    "work_center": work_center,
                     "line_name": selectedPOData.line_name,
                     "area": "N/A",
                     "material": selectedPOData.material,
                     "description": selectedPOData.description,
-                    "plan_quantity": selectedPOData.qty,
-                    "takt_time": 0,
+                    "plan_quantity": selectedPOData.plan_quantity,
+                    "takt_time": $("#taktTime").val(),
                     "actual_quantity": $("#actualQuantity").val(),
                     "variance": $("#variance").val(),
                     "shift": $(".shiftSelect").val(),
@@ -126,7 +115,7 @@ $(function () {
                     "end_time": null,
                     "creator": userId
                 }
-                let result = await apiCall('/homs/API/production/insertProductionRecord.php', 'POST', data).then((response) => {
+                let result = await apiCall('/homs/API/production/startProductionRecord.php', 'POST', data).then((response) => {
                     /* ACKNOWLEDGEMENT */
                     Swal.fire({
                         title: 'Started!',
@@ -139,11 +128,15 @@ $(function () {
                         $(".popover-trigger").show();
                         $(".po-button-modal").hide();
                         $(".stopProduction").show();
+                        $(".countInputs").show();
                         $(this).hide();
                     });
+                    table.ajax.reload(null, false);
                 });
             }
         });
+
+        
     });
 
     $(".save").on("click", async function () {
@@ -184,16 +177,16 @@ $(function () {
 
         let data = {
             "production_action": "end",
-            "po_id": selectedPOData.id, 
+            "po_id": selectedPOData.po_id, 
             "po": selectedPOData.prd_order_no, 
             "section": section,
-            "work_center": selectedPOData.work_center,
+            "work_center": work_center,
             "line_name": selectedPOData.line_name,
             "area": "N/A",
             "material": selectedPOData.material,
             "description": selectedPOData.description,
-            "plan_quantity": selectedPOData.qty,
-            "takt_time": 0,
+            "plan_quantity": selectedPOData.plan_quantity,
+            "takt_time": $("#taktTime").val(),
             "actual_quantity": $("#actualQuantity").val(),
             "variance": $("#variance").val(),
             "shift": $(".shiftSelect").val(),
@@ -208,7 +201,7 @@ $(function () {
             "creator": userId
         }
 
-        let result = await apiCall('/homs/API/production/insertProductionRecord.php', 'POST', data).then((response) => {
+        let result = await apiCall('/homs/API/production/endProductionRecord.php', 'POST', data).then((response) => {
             /* CONFIRMATION */
             Swal.fire({
                 title: 'Stopped!',
@@ -221,9 +214,12 @@ $(function () {
                 $(".po-button-modal").show();
                 $(".startProduction").show();
                 $(".stopProduction").hide();
+                $(".countInputs").hide();
+                $(".shiftSelect").val("Shift").trigger("change");
                 $(this).show();
-
                 resetFields();
+
+                table.ajax.reload(null, false);
             });
         });
 
@@ -347,9 +343,10 @@ $(function () {
     }
     
     function resetFields(){
-        /* $("#planQuantity").val(""); */
-        $("#actualQuantity").val("0");
+        /* $("#planQuantity").val("0"); */
+        /* $("#actualQuantity").val("0"); */
         /* $(".lineSelect").val("").trigger("change"); */
+        
         $(".shiftSelect").val("Shift").trigger("change");
         $(".hourlyTime").val("").trigger("change");
 
@@ -366,11 +363,247 @@ $(function () {
         updateVariance();
     }
 
-    async function getLatestRun(){
-        let now = new Date();
-        let date = now.toISOString().split('T')[0];
+    async function setup(poId){
+        let lastRun = await getLatestRun(poId);
+        if (
+            lastRun.data.production_action === "end" ||
+            lastRun.data.production_action === undefined ||
+            lastRun.data.production_action === ""
+        ) {
+            await initialSetup(poId);
+            return;
+        }
 
-        let data = await apiCall(`/homs/API/production/getLastRunning.php?date=${date}&section=${section}&work_center=${work_center}`, 'GET');
-        console.table(data);
+        /* LINE SELECT INITIALIZATION */
+        $(".lineSelect").empty();
+        $(".lineSelect").append(new Option(lastRun.data.line_name, lastRun.data.line_name));
+        $(".lineSelect").val(lastRun.data.line_name).trigger("change");
+
+        /* AREA SELECT INITIALIZATION */
+
+        /* PLAN QUANTITY INITIALIZATION */
+        $("#planQuantity").val(lastRun.data.plan_quantity);
+
+        if(lastRun){
+            $("#details-container").removeClass("d-none");
+            $("#details-container").addClass("d-flex");
+        }
+
+        /* DATA SETTING */
+        $("#po_number span").text(lastRun.data.prd_order_no);
+        $("#material span").text(lastRun.data.material);
+        $("#description span").text(lastRun.data.description);
+        $("#taktTime").val(lastRun.data.takt_time?? 0);
+        $("#actualQuantity").val(lastRun.data.actual_quantity ?? 0);
+        $("#variance").val(lastRun.data.variance?? 0);
+        $(".shiftSelect").val(lastRun.data.shift);
+
+        /* $("#advanceCause").val(lastRun.data.advance_reason);
+        $("#advanceAction").val(lastRun.data.advance_action);
+        $("#linestopCause").val(lastRun.data.linestop_reason);
+        $("#linestopAction").val(lastRun.data.linestop_action); */
+
+        /* FLIP TO STOP PRODUCTION */
+        $(".popover-trigger").show();
+        $(".po-button-modal").hide();
+        $(".stopProduction").show();
+        $(".countInputs").show();
+        $(".startProduction").hide();
+    }
+
+    async function getLatestRun(poId){
+        let now = new Date();
+        let localDateTime = now.toLocaleString('en-PH', {
+            timeZone: 'Asia/Manila'
+        });
+
+        let details = await apiCall(`/homs/API/production/getLastRunning.php?section=${section}&work_center=${work_center}&po=${poId}`, 'GET');
+        selectedPOData = details.data;
+        
+        return details;
+    }
+
+    async function initialSetup(poId){
+        let lastRun = await apiCall(`/homs/API/production/getLastRunning.php?section=${section}&work_center=${work_center}&po=${poId}`, 'GET');
+                        
+        selectedPOData = lastRun.data;
+
+        /* LINE SELECT INITIALIZATION */
+        $(".lineSelect").empty();
+        $(".lineSelect").append(new Option(lastRun.data.line_name, lastRun.data.line_name));
+        $(".lineSelect").val(lastRun.data.line_name).trigger("change");
+
+        /* AREA SELECT INITIALIZATION */
+
+        /* PLAN QUANTITY INITIALIZATION */
+        $("#planQuantity").val(lastRun.data.plan_quantity);
+
+        if(lastRun){
+            $("#details-container").removeClass("d-none");
+            $("#details-container").addClass("d-flex");
+        }
+
+        /* DATA SETTING */
+        $("#po_number span").text(lastRun.data.prd_order_no);
+        $("#material span").text(lastRun.data.material);
+        $("#description span").text(lastRun.data.description);
+        $("#taktTime").val(lastRun.data.takt_time?? 0);
+        $("#actualQuantity").val(lastRun.data.actual_quantity ?? 0);
+        $("#variance").val(lastRun.data.variance?? 0);
+        $('.shiftSelect').prop('selectedIndex', 0).trigger('change');
+
+        /* ADD both data setting the reasons */
+        $("#advanceCause").val(lastRun.data.advance_reason);
+        $("#advanceAction").val(lastRun.data.advance_action);
+        $("#linestopCause").val(lastRun.data.linestop_reason);
+        $("#linestopAction").val(lastRun.data.linestop_action);
+
+        /* TAKT TIME OVERRIDE */
+        let itemCode = lastRun.data.material;
+        let taktTimeValue = await apiCall(`/homs/API/admin/getTaktTime.php?material=${itemCode}`, 'GET');
+        $("#taktTime").val(taktTimeValue.data.current_tt_mh);
+    }
+
+    function loading(state){
+        if(state === "show"){
+            $("#loading").show();
+            $("#loading").addClass('d-flex');
+
+            $(".initial").removeClass("d-flex");
+            $(".initial").addClass("initial-setup"); 
+            
+            $(".popover-trigger").hide();
+        }
+        else if(state === "hide"){
+            $("#loading").hide();
+            $("#loading").removeClass('d-flex');
+
+            $(".initial").removeClass("d-none");
+            $(".initial").removeClass("initial-setup");
+
+            $(".popover-trigger").show();
+        }
+    }
+
+    function createTable(){
+        const params = {
+            ajax: {
+                url: `/homs/api/production/getSectionProduction.php?section=${section}&po=${selectedPOData.prd_order_no}`, // your endpoint
+                method: "GET",
+                dataSrc: function (json) {
+                    return json.data; // extract the data array from your JSON
+                }
+            },
+            layout: {
+                topStart: {
+                    buttons: ['colvis']
+                },
+                topEnd: ['search', 'pageLength'],
+            },
+            columns: [
+                { data: 'id' },
+                { data: "po", visible: false},
+                { data: "section", visible: false},
+                { data: "work_center", visible: false},
+                { data: "line_name", visible: false},
+                { data: "area", visible: false},
+                { data: "material", visible: false},
+                { data: "description", visible: false},
+                { data: "plan_quantity"},
+                { data: "takt_time", visible: false},
+                { data: "actual_quantity"},
+                { data: "variance"},
+                { data: "shift", visible: false},
+                { data: "hourly_time", visible: false},
+                { data: "direct_operators", visible: false},
+                { data: "start_time"},
+                { data: "end_time"},
+                { data: "advance_reason", visible: false},
+                { data: "advance_action", visible: false},
+                { data: "linestop_reason", visible: false},
+                { data: "linestop_action", visible: false},
+
+                { data: "creator", visible: false},
+                { data: "time_created", visible: false},
+                { data: "updated_by", visible: false},
+                { data: "production_action", visible: false},
+                {
+                    data: null,
+                    title: "Actions",
+                    render: function (data, type, row) {
+                        return `
+                            <button class="btn btn-primary edit-prod" data-prod_id="${row.id}" data-bs-toggle="modal" data-bs-target="#prodEditModal">Edit</button>
+                            <button class="btn danger delete-prod" data-prod_id="${row.id}">Delete</button>
+                        `;
+                    }
+                },
+                
+            ],
+            columnDefs: [
+                { targets: 0, visible: false }, // hide ID column
+                { targets: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24], 
+                    createdCell: function (td, cellData, rowData, rowIndex, colIndex) {
+                        $(td).attr('contenteditable', 'true');
+                    }
+                }
+            ],
+    
+            createdRow: function(row, data, dataIndex) {
+                $(row).addClass('reason-row');
+                $(row).attr('data-reason-id', data["id"]);
+            }
+        };
+        $('#data-table').DataTable().destroy();
+        table = dataTablesInitialization("#data-table", params);
+    }
+
+    let oldRowData = null;
+    // Capture old row data on focus (when a cell is clicked to edit)
+    $(document).on('focus', '#data-table tbody td[contenteditable]', function () {
+        const row = table.row($(this).closest('tr'));  // Get the row containing the edited cell
+        oldRowData = $.extend(true, {}, row.data());  // Make a deep copy of the old row data
+    });
+
+    // Capture the edit when the cell loses focus (after editing)
+    $(document).on('blur', '#data-table tbody td[contenteditable]', function () {
+        watchEdit(this, table, oldRowData);
+    });
+
+    async function watchEdit(cell, table, oldRowData) {
+        const row = table.row(cell.closest('tr'));
+        const newRowData = row.data();
+        const colIndex = table.cell(cell).index().column;
+        const colName = table.settings()[0].aoColumns[colIndex].data;
+        const newValue = $(cell).text().trim();
+    
+        const oldValueStr = (oldRowData[colName] ?? '').toString().trim();
+        const newValueStr = newValue.toString().trim();
+    
+        const changedFields = [];
+    
+        if (oldValueStr !== newValueStr) {
+            changedFields.push({
+                column: colName,
+                oldValue: oldValueStr,
+                newValue: newValueStr
+            });
+    
+            // Update internal DataTable state
+            newRowData[colName] = newValue;
+            row.data(newRowData).invalidate();
+    
+            console.log('Row edited:', {
+                oldRowData,
+                newRowData,
+                changedFields
+            });
+
+            let data = {"creator": userId, "old_data": JSON.stringify(oldRowData), "new_data": JSON.stringify(newRowData)};
+
+            await apiCall('/homs/API/production/submitedithistory.php', 'POST', data);
+            
+        } else {
+            console.log("No changes detected in this row");
+        }
     }
 });

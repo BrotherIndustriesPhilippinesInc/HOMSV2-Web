@@ -4,7 +4,6 @@ import { search } from "../helperFunctions.js";
 $(function () {
     const section = JSON.parse(localStorage.getItem('user'))['Section'];
     generateWorkcenters(section);
-    getLastUpdate(section);
 
     $(document).on("click", ".wc-button", function (e) {
         let wcValue = $(this).data("wc-value"); // Get the wc value from the button's data attribute
@@ -48,7 +47,7 @@ async function generateWorkcenters(section) {
     })
     .then(response => response.json())
     .then(data => {
-        work_centers = data.data.work_centers
+        work_centers = data.data.workcenters
     })
 
     await fetch('/homs/helpers/componentAPI/wcButtons.php', {

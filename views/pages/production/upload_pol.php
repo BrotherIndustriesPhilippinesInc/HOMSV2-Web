@@ -13,7 +13,7 @@
         <h1>Upload POL</h1>
         <div id="uppy-dashboard" class="d-flex flex-column justify-content-center align-items-center">
             <div>
-                <input type="checkbox" id="update_pol">
+                <input type="checkbox" id="update_pol" class="glow">
                 <label for="update_pol"><span class="text-primary fw-semibold">Update POs</span></label>
             </div>
             <div>

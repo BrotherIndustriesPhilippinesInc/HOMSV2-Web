@@ -46,3 +46,118 @@ export function switchModals(hideId, showId) {
         nextModalEl.removeEventListener('hidden.bs.modal', handler);
     });
 }
+
+export function validateFields(fields) {
+    let invalidFields = fields.filter(field => !field.value || field.value.trim() === "");
+
+    if (invalidFields.length > 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Missing Fields',
+            html: 'Please fill in the following fields:<br><b>' +
+                  invalidFields.map(f => f.name).join('</b><br><b>') + '</b>',
+        });
+        return false; // validation failed
+    }
+
+    return true; // validation passed
+} 
+
+export function uploader(){
+    let user = JSON.parse(localStorage.getItem("user"));
+        let successCount = 0;
+        let totalFiles = 0;
+    
+        const uppy = new Uppy({
+            restrictions: {
+                allowedFileTypes: ['.xlsx', '.xls', '.xlsm'] // Restrict to XLSX and XLS files
+            },
+            allowMultipleUploadBatches: true
+        });
+    
+        uppy.setMeta({
+            user_EmpNo: user['EmpNo'],
+            section: user['Section'],
+            
+        });
+    
+        uppy
+            .use(
+                Dashboard, {    
+                    inline: true, 
+                    target: '#uppy-dashboard',
+                    width: '300px',
+                    height: '300px',
+                    theme: 'dark',
+                    showProgressDetails: false
+                })
+    
+            .use(XHRUpload, {
+                endpoint: '/homs/API/uploading/uploadPOL.php',
+                formData: true,
+                limit: 1
+            });
+    
+        uppy.on('upload', () => {
+            const files = uppy.getFiles();
+            totalFiles = files.length;
+            successCount = 0;
+
+        
+            files.forEach((file, index) => {
+                uppy.setFileMeta(file.id, {
+                    is_first_file: index === 0,
+                });
+            });
+        });
+    
+        uppy.on('upload-success', (file, response) => {
+            // Optional: Check for backend's confirmation of complete processing
+            const backendStatus = response.body?.processingComplete ?? true;
+    
+            if (backendStatus) {
+                successCount++;
+            } else {
+                alert(`Server did not confirm full processing for file ${file.name}`);
+            }
+    
+            if (successCount === totalFiles) {
+                window.location.href = '/homs/production/wc_selection';
+            }
+        });
+        
+        uppy.on('upload-error', (file, error, response) => {
+            alert('Error uploading file: ' + file.name + '\n' + error.message);
+        });
+}
+
+export function resetFields(fields)
+{
+    /* let selectors = [
+        ".register-plant",
+        "#register-item-code",
+        "#register-sequence-no",
+        "#register-item-text",
+
+        "#register-new-st-sap",
+        "#register-current-st-mh",
+        "#register-st-default-flag",
+        "#register-st-update-sign",
+
+        "#register-new-tt-sap",
+        "#register-current-tt-mh",
+        "#register-tt-update-sign",
+        "#register-delete-sign",
+
+        ".register-section"
+    ]; */
+    
+    fields.forEach(selector => {
+        let $el = $(selector);
+        if ($el.is("select")) {
+            $el.prop("selectedIndex", 0); // Reset dropdown to first option
+        } else {
+            $el.val(""); // Clear input fields
+        }
+    });
+}

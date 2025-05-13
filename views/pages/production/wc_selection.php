@@ -12,11 +12,11 @@
         require_once __DIR__ . "/../../components/header.php";
         require_once __DIR__ . '/../../components/navbar.php';
     ?>
-    <div class="main-content bg-custom-secondary container-fluid rounded-3">
+    <div class="bg-custom-secondary container-fluid rounded-3">
         <h1>Work Center Selection</h1>
         <div class="d-flex align-items-center justify-content-between py-2">
             <?php echo $search ?>
-            <div class="d-flex flex-column">
+            <div class="d-none flex-column">
                 <div>
                     <span class="secondary-text">Last Update: </span>
                     <span id="last_update_date" class="fw-bold text-primary"></span>

@@ -230,50 +230,54 @@ input[type="checkbox"]{
     font-size: 12px;
 }
 
-#reasons-table td, tr{
+#data-table td, tr{
     position: relative;
 }
-#reasons-table td, th{
+#data-table td, th{
     background-color: @tertiary-background !important;
     color: @secondary-text !important;
     border: 0;
+    text-align: center !important;
+    vertical-align: middle !important;
+
 }
 
-#reasons-table tr:hover{
+#data-table tr:hover{
     box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
     z-index: 2;
 }
-#reasons-table tr:focus{
+#data-table tr:focus{
     box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc !important;
     z-index: 2;
 }
 
-#dt-length-0{
-    color: @primary-misc;
+[id^="dt-search-"] {
+    color: @primary-misc !important;
     background-color: @tertiary-background !important;
     border-color: @primary-misc !important;
 }
-#dt-length-0:hover{
+
+[id^="dt-search-"]:hover {
     box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
     z-index: 1;
 }
 
-#dt-length-0:focus{
+[id^="dt-search-"]:focus {
     box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc !important;
     z-index: 2;
 }
 
-#dt-search-0{
-    color: @primary-misc;
+[id^="dt-length-"] {
+    color: @primary-misc !important;
     background-color: @tertiary-background !important;
     border-color: @primary-misc !important;
 }
-#dt-search-0:hover{
+[id^="dt-length-"]:hover{
     box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
     z-index: 1;
 }
 
-#dt-search-0:focus{
+[id^="dt-length-"]:focus{
     box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc !important;
     z-index: 2;
 }
@@ -311,7 +315,7 @@ label{
     border-color: @primary-misc !important;
 }
 
-.initial{
+.initial-setup{
     display: none !important;
 }
 
@@ -343,4 +347,50 @@ div:where(.swal2-container) div:where(.swal2-popup){
 .swal2-cancel:hover {
     box-shadow: 0 0 10px @danger, 0 0 20px @danger;
     z-index: 1;
+}
+/* HTML: <div class="loader"></div> */
+.loader {
+    width: 90px;
+    height: 14px;
+    box-shadow: 0 3px 0 #fff;
+    background: linear-gradient(#fff 0 0) 50%/2px 100% no-repeat;
+    display: grid;
+  }
+  .loader:before,
+  .loader:after{
+    content: "";
+    grid-area: 1/1;
+    background: radial-gradient(circle closest-side, var(--c,#fff) 92%,#0000 ) 0 0/calc(100%/4) 100%;
+    clip-path: inset(0 50% 0 0);
+    animation: l3 1s infinite linear;
+  }
+  .loader:after{
+    --c: @primary-misc; 
+    clip-path: inset(0 0 0 50%);
+  }
+  @keyframes l3 {
+      100% {background-position: calc(100%/3) 0}
+  }
+
+[contenteditable]:focus-visible {
+    color: @primary-misc !important;
+    background-color: @tertiary-background !important;
+    border-color: @primary-misc !important;
+    outline: none;
+}
+
+[contenteditable]:hover {
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
+    z-index: 1;
+    outline: none;
+}
+
+[contenteditable]:focus {
+    box-shadow: 0 0 10px @primary-misc, 0 0 20px @primary-misc;
+    z-index: 2;
+    outline: none;
+}
+
+.border-solid{
+    border: 1px solid @primary-misc !important;
 }

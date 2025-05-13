@@ -7,7 +7,6 @@ require_once __DIR__ ."/../models/POLModel.php";
 require_once __DIR__ ."/../helpers/DataRenamer.php";
 require_once __DIR__ ."/../controllers/UserController.php";
 
-
 class POLController extends Controller
 {
     private DataRenamer $renamer;
@@ -104,7 +103,7 @@ class POLController extends Controller
                     "sales_order"   => trim($sheet->getCell("F$row")->getCalculatedValue()),
                     "material"      => trim($sheet->getCell("G$row")->getCalculatedValue()),
                     "description"   => trim($sheet->getCell("H$row")->getCalculatedValue()),
-                    "qty"      => trim($sheet->getCell("I$row")->getCalculatedValue()),
+                    "qty" => ($val = trim($sheet->getCell("I$row")->getCalculatedValue())) === '' ? 0 : $val,
                     "creator"       => $user,
                     "time_created"  => $time_created,
                     "updated_by"    => null,
@@ -139,14 +138,19 @@ class POLController extends Controller
             }
             
             if($for_update){
+                
                 foreach ($polData as $key => $value) {
+
                     $this->model->upsert("prd_order_no", $value);
                 }
 
             }else{
+
                 foreach ($polData as $key => $value) {
+
                     $this->model->insert($value);
                 }
+
             }
 
             $this->moveFiletoServer($data);
@@ -253,8 +257,27 @@ class POLController extends Controller
     public function getPODetails($section, $po){
         try {
             $this->setTableName($section);
+            
+            $pol = $this->model->get("id = '$po'");
 
-            return $this->model->get("id = '$po'");
+            $data=[
+                "po_id"=> $pol["id"],
+                "work_center"=> $pol["work_center"],
+                "line_name"=> $pol["line_name"],
+                "pc_status"=> $pol["pc_status"],
+                "prod_status"=> $pol["prod_status"],
+                "prd_order_no"=> $pol["prd_order_no"],
+                "sales_order"=> $pol["sales_order"],
+                "material"=> $pol["material"],
+                "description"=> $pol["description"],
+                "plan_quantity"=> $pol["qty"],
+                "pol_creator"=> $pol["creator"],
+                "pol_time_created"=> $pol["time_created"],
+                "pol_updated_by"=> $pol["updated_by"],
+                "pol_time_updated"=> $pol["time_updated"]
+            ];
+
+            return $data;
         } catch (Exception $e) {
             return $this->errorResponse($e);
         }
@@ -267,5 +290,35 @@ class POLController extends Controller
         } catch (Exception $e) {
             return $this->errorResponse($e);
         }
+    }
+
+    public function getWC(string $section){
+        try {
+            if($section == "bps"){
+                $section = "Tape Cassette";
+            }
+            $this->model->setTableNameNoAppend("workcenters");
+            $response = $this->model->getAll();
+            $uniqueWorkCenters["workcenters"] = $this->findWC($response, $section);
+            return $uniqueWorkCenters;
+        } catch (Exception $e) {
+            return $this->errorResponse($e);
+        }
+    }
+
+    private function findWC($data, $passedSection) {
+        $uniqueValues = [];
+        foreach ($data as $row) {
+            $value = $row["workcenter"];
+            $section = $row["section"];
+            // Skip empty cells and duplicates
+            if(strtolower($section) === strtolower($passedSection) ){
+                if ($value !== '' && !in_array($value, $uniqueValues)) {
+                    $uniqueValues[] = $value;
+                }
+            }
+            
+        }
+        return $uniqueValues;
     }
 }

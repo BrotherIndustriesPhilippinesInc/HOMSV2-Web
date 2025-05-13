@@ -48,9 +48,10 @@
         <div>
             <?php echo $create; ?>
         </div>
-        <table id="reasons-table" class="table">
+        <table id="data-table" class="table">
             <thead>
                 <tr>
+                
                     <th scope="col">Name</th>
                     <th scope="col">Details</th>
                     <th scope="col">Category</th>
@@ -60,6 +61,7 @@
                     <th scope="col">Updated By</th>
                     <th scope="col">Date Updated</th>
                     <th scope="col">Actions</th>
+
                 </tr>
             </thead>
         </table>

@@ -25,4 +25,8 @@ class POLModel extends Model
     public function setTableName($section){
         $this->table = strtolower($section) . "_pol";
     }
+
+    public function setTableNameNoAppend($section){
+        $this->table = strtolower($section);
+    }
 }

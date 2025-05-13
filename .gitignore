@@ -2,6 +2,8 @@
 node_modules/
 modules
 resources/pols
+resources/DPR
+resources/HO
 non_module_libraries
 # Ignore local development environment variables
 .env

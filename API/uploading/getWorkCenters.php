@@ -14,7 +14,7 @@ class GetWorkCenters extends API
         $section = strtolower($data["section"]);
         
         try {
-            $response = $this->controller->getWorkCenters($section); ;
+            $response = $this->controller->getWC($section); ;
             return $this->jsonResponse($response);
         } catch (Exception $e) {
             return $this->errorResponse($e);
