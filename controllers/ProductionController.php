@@ -6,17 +6,21 @@ require_once __DIR__ ."/../models/ProductionModel.php";
 require_once __DIR__ ."/POLController.php";
 require_once __DIR__ ."/../models/POLModel.php";
 require_once __DIR__ ."/../helpers/DataRenamer.php";
+require_once __DIR__ ."/ESPController.php";
+require_once __DIR__ ."/WorkCenterController.php";
 
 class ProductionController extends Controller
 {
     private $POLController;
+    private $espController;
+
+    private $workCenterController;
 
     public function __construct() {
         parent::__construct(new ProductionModel());
         $this->POLController = new POLController();
-    }
-    public function checkLastAction(){
-
+        $this->espController = new ESPController();
+        $this->workCenterController = new WorkCenterController();
     }
 
     public function lastRun($data){
@@ -27,11 +31,15 @@ class ProductionController extends Controller
         $pol = $this->POLController->getPODetails($section, $po);
         $production_record = $this->get("section = '{$section}' AND work_center = '{$work_center}' AND po_id = '{$pol['po_id']}'");
 
+        $assignedESP = $this->espController->get("assigned_section = '{$section}' AND po_id = '{$pol['po_id']}' AND isrunning = true");
+        
         if($production_record){
+
             $data = [
-                "po_id"=> $pol["po_id"],
+                "po_id"=> $pol["po_id"],    
                 "work_center"=> $pol["work_center"],
-                "line_name"=> $pol["line_name"],
+                "line_name"=> $production_record["line_name"],
+                /* "pol_area"=> $pol["line_name"], */
                 "pc_status"=> $pol["pc_status"],
                 "prod_status"=> $pol["prod_status"],
                 "prd_order_no"=> $pol["prd_order_no"],
@@ -61,13 +69,17 @@ class ProductionController extends Controller
                 "linestop_action"=> $production_record["linestop_action"],
                 "production_record_creator"=> $production_record["creator"],
                 "production_record_time_created"=> $production_record["time_created"],
-                "production_action"=> $production_record["production_action"]
+                "production_action"=> $production_record["production_action"],
+                "advance_reasons"=> $production_record["advance_reasons"],
+                "linestop_reasons"=> $production_record["linestop_reasons"],
+
+                "esp_id"=> $assignedESP ? $assignedESP["id"] : null,
+                
             ];
             return $data;
         }else{
             return $pol;
         }
-        
     }
 
 
@@ -84,5 +96,24 @@ class ProductionController extends Controller
 
     public function getSectionProduction($data){
         return $this->model->getSectionHistory($data);
+    }
+
+    public function updateActualQuantityViaESP($data){
+        /* $id = $data["id"]; */
+        /* GET CURRENT DATA */
+        $latestRun = $this->get("po = '{$data['po']}'");
+
+        if($latestRun["production_action"] === "start"){
+            /* Update Quantity */
+            $data = [
+                "actual_quantity"=> $latestRun["actual_quantity"] + 1,
+                "variance"=> $latestRun["variance"] - 1,
+                "time_created"=> date("Y-m-d H:i:s"),
+                "creator"=> "ESP",
+            ];
+            return $this->model->updateActualQuantityViaESPModel($latestRun["id"], $data);
+        }else{
+            throw new Exception("No production record found for this PO.");
+        }
     }
 }

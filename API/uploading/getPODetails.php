@@ -10,9 +10,9 @@ class GetPODetails extends API
 
     public function index($data = null) {
 
-        $this->validation->requiredFields($data, ["po", "section"]);
+        $this->validation->requiredFields($data, ["poID", "section"]);
         $section = $data["section"];
-        $po = $data["po"];
+        $po = $data["poID"];
 
         try {
             $response = $this->controller->getPODetails($section, $po);

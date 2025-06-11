@@ -38,6 +38,18 @@ abstract class API implements IAPI {
         }
     }
 
+    public function getAllWhere(string $where) {
+        try {
+            $debugData = $this->debugRequestData($where);
+            $response = $this->controller->getAllWhere($where);
+            $this->checkError($response);
+            /* var_dump($response); */
+            return $this->jsonResponse($response, $debugData);
+        } catch (Exception $e) {
+            return $this->errorResponse($e);
+        }
+    }
+
     public function post(array $data) {
         try {
             $debugData = $this->debugRequestData($data); // Capture request data

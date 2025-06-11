@@ -9,6 +9,7 @@
     $search = $textbox->searchTextbox("searchPO");
 
     $selectPO = $button->primaryButton("po-button-modal", "Select PO", "/homs/resources/icons/shopping_cart.svg", "po_cart", "data-bs-toggle='modal' data-bs-target='#poModal' style='z-index: 99'");
+    $selectESP = $select->primarySelect("espSelect", "ESP32", ["Line 1", "Line 2", "Line 3"], "");
 
     $startProduction = $button->primaryButton("startProduction", "Start Production", "/homs/resources/icons/pallet.svg", "", );
 
@@ -18,12 +19,15 @@
     $addPlan = $button->primaryButton("dprView", "DPR View", "/homs/resources/icons/add.svg", "DPR View");
 
     $planQuantity = $textbox->primaryTextbox("planQuantity", "plan-detail-textbox secondary-background p-1", "", "0", "number");
-    $taktTime = $textbox->primaryTextbox("taktTime", "plan-detail-textbox secondary-background p-1", "", "0", "number");
+    
+    $hourlyPlanQuantity = $textbox->primaryTextbox("hourlyPlanQuantity", "plan-detail-textbox secondary-background p-1", "", "0", "number");
+    $taktTime = $textbox->primaryTextbox("taktTime", "plan-detail-textbox secondary-background p-1", "0", "0", "number");
     $actualQuantity = $textbox->primaryTextbox("actualQuantity", "plan-detail-textbox secondary-background p-1", "", "0", "number");
-    $variance = $textbox->primaryTextbox("variance", "plan-detail-textbox secondary-background p-1", "", "0", "number");
+    $variance = $textbox->primaryTextbox("variance", "plan-detail-textbox secondary-background p-1", "0", "0", "number");
 
-    $lineSelect = $select->primarySelect("lineSelect", "Line", ["Line 1", "Line 2", "Line 3", "Line 4", "Line 5", "Line 6", "Line 7", "Line 8", "Line 9", "Line 10"], "");
-    $areaSelect = $select->primarySelect("areaSelect", "Line / Team", ["Area 1", "Area 2", "Area 3", "Area 4", "Area 5", "Area 6", "Area 7", "Area 8", "Area 9", "Area 10"], "");
+    $areaSelect = $select->primarySelect("areaSelect", "Area", ["Area 1", "Area 2", "Area 3", "Area 4", "Area 5", "Area 6", "Area 7", "Area 8", "Area 9", "Area 10"], "");
+    $lineSelect = $select->primarySelect("lineSelect", "Line / Team", ["Line 1", "Line 2", "Line 3", "Line 4", "Line 5", "Line 6", "Line 7", "Line 8", "Line 9", "Line 10"], "");
+    
     $shiftSelect = $select->primarySelect("shiftSelect", "Shift", ["ds"=>"Day Shift", "ns"=>"Night Shift"], "");
     
     $hourlyTime = $select->primarySelect("hourlyTime", "Hourly Time", ["06:00 - 08:00", "08:00 - 10:00", "10:00 - 12:00", "12:00 - 14:00", "14:00 - 16:00", "16:00 - 18:00", "18:00 - 20:00", "20:00 - 22:00", "22:00 - 24:00"], "");
@@ -39,6 +43,8 @@
 
     $advanceCause = $textbox->textArea("advanceCause", "secondary-background p-1");
     $advanceAction = $textbox->textArea("advanceAction", "secondary-background p-1");
+    $advanceAddLayer = $button->primaryButton("advanceAddLayer", "", "/homs/resources/icons/add.svg", "add_layer", "", "d-flex justify-content-center align-items-center p-1");
+    $advanceRemoveLayer = $button->primaryButton("advanceRemoveLayer", "", "/homs/resources/icons/delete.svg", "remove_layer", "", "d-flex justify-content-center align-items-center p-1 danger");
 
     $linestopCause = $textbox->textArea("linestopCause", "secondary-background p-1");
     $linestopAction = $textbox->textArea("linestopAction", "secondary-background p-1");
@@ -50,10 +56,15 @@
     $linestopActionCategories = $button->primaryButton("linestopActionCategories", "Action Categories", "/homs/resources/icons/list_alt.svg", "action_categories", "data-bs-toggle='modal' data-bs-target='#linestopActionCategoriesModal'", "d-flex align-items-center p-1");
     
     $homsView = $button->primaryButton("homsView", "HOMS", "/homs/resources/icons/visibility.svg", "homs_view");
-    $save = $button->primaryButton("save", "Stop", "/homs/resources/icons/save.svg", "save", "data-bs-dismiss='modal'");
+            
+    $save = $button->primaryButtonAlt("save", "Stop Production", "fa-regular fa-circle-stop", "data-bs-dismiss='modal'", "danger" );
 
     $lineStopPopOver = $button->primaryButton("lineStop-popOver", "Line Stop", "/homs/resources/icons/front_hand.svg", "line_stop", "", "w-100 border border-danger text-danger danger");
     $breaktimePopOver = $button->primaryButton("breaktime-popOver", "Breaktime", "/homs/resources/icons/fork_spoon.svg", "breaktime", "", "w-100");
+
+    $complianceRate = $textbox->primaryTextbox("complianceRate", "plan-detail-textbox secondary-background p-1", "0%", "0", "text");
+
+    $target = $textbox->primaryTextbox("target", "plan-detail-textbox secondary-background p-1", "0", "0", "number");
 ?>
 
 <title>HOMS - WC Selection</title>
@@ -103,10 +114,15 @@
             <div class="w-100 d-flex flex-column gap-2">
                 <!-- CONTROLS -->
                 <div class=" d-flex justify-content-between w-100">
-                    <div class="">
+                    <div class="d-flex gap-2">
                         <div>
                             <?php
                                 echo $selectPO; 
+                            ?>
+                        </div>
+                        <div class="initial initial-setup">
+                            <?php
+                                echo $selectESP;
                             ?>
                         </div>
                     </div>
@@ -132,16 +148,19 @@
                     <div class="d-flex justify-content-between">
                         <h5>Section Details</h5>
                         <div class="d-flex gap-2">
-                            <div>
-                                <?php
-                                    echo $areaSelect;
-                                ?>
-                            </div>
+                            
                             <div>
                                 <?php
                                     echo $lineSelect;
                                 ?>
                             </div>
+
+                            <div>
+                                <?php
+                                    echo $areaSelect;
+                                ?>
+                            </div>
+
                             <div>
                                 <?php
                                     echo $shiftSelect;
@@ -217,14 +236,28 @@
                         <h5>Current Status</h5>
                         <div class="d-flex gap-2">
                             <div>
-                                <span class="plan-details section-details-label">Plan Quantity</span>
+                                <span class="plan-details section-details-label">Original PO Plan Quantity</span>
                                 <?php
                                     echo $planQuantity;
                                 ?>
                             </div>
 
                             <div>
-                                <span class="plan-details section-details-label">Takt Time (Seconds)</span>
+                                <span class="plan-details section-details-label">Hourly Plan Quantity</span>
+                                <?php
+                                    echo $hourlyPlanQuantity;
+                                ?>
+                            </div>
+
+                            <div class="countInputs">
+                                <span class="plan-details section-details-label">Target</span>
+                                <?php
+                                    echo $target;
+                                ?>
+                            </div>
+
+                            <div>
+                                <span class="plan-details section-details-label">Takt Time</span>
                                 <?php
                                     echo $taktTime;
                                 ?>
@@ -241,6 +274,13 @@
                                 <span class="plan-details section-details-label">Variance</span>
                                 <?php
                                     echo $variance;
+                                ?>
+                            </div>
+
+                            <div class="countInputs">
+                                <span class="plan-details section-details-label">Compliance Rate</span>
+                                <?php
+                                    echo $complianceRate;
                                 ?>
                             </div>
                         </div>
@@ -263,6 +303,7 @@
                                 <th scope="col">Material</th>
                                 <th scope="col">Description</th>
                                 <th scope="col">Plan Quantity</th>
+                                <th scope="col">Hourly Plan Quantity</th>
                                 <th scope="col">Takt Time</th>
                                 <th scope="col">Actual Quantity</th>
                                 <th scope="col">Variance</th>
@@ -271,16 +312,16 @@
                                 <th scope="col">Direct Operators</th>
                                 <th scope="col">Start Time</th>
                                 <th scope="col">End Time</th>
-                                <th scope="col">Advance Reason</th>
-                                <th scope="col">Advance Action</th>
-                                <th scope="col">Linestop Reason</th>
-                                <th scope="col">Linestop Action</th>
+                                <th scope="col">Advance Reasons</th>
+                                <th scope="col">Linestop Reasons</th>
 
                                 <th scope="col">Creator</th>
                                 <th scope="col">Time Created</th>
                                 <th scope="col">Updated By</th>
                                 <th scope="col">Production Action</th>
-                                
+
+                                <th scope="col">Target</th>
+                                <th scope="col">Compliance Rate</th>
                             </tr>
                         </thead>
                     </table>
@@ -372,7 +413,7 @@
     </div>
 
     <div id="stopProductionModal" class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header border-0">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Causes & Actions</h1>
@@ -382,75 +423,24 @@
                     <div>
                         <div class="d-flex flex-column content-group p-2 rounded-3 h-100">
                             <h5>Advance / Delay</h5>
-                            <div class="d-flex h-100">
-                                <div class="container text-center">
-                                    <div class="row">
-                                        <div class="col">
-                                        <select class="js-example-basic-single" name="state">
-                                            <option value="AL">Alabama</option>
-                                                ...
-                                            <option value="WY">Wyoming</option>
-                                        </select>
-                                        </div>
-                                        <div class="col">
-                                        Column
-                                        </div>
-                                        <div class="col">
-                                        Column
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- <div class="d-flex gap-2 w-100">
-                                    <div class="d-flex flex-column w-50">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <span class="section-details-label">Reason</span>
-                                            <?php echo $advanceCauseCategories; ?>
-                                        </div>
-                                        <?php 
-                                            echo $advanceCause
-                                        ?>
-                                    </div>
-                                    <div class="d-flex flex-column w-50">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <span class="section-details-label">Action</span>
-                                            <?php echo $advanceActionCategories; ?>
-                                        </div>
-                                        
-                                        <?php 
-                                            echo $advanceAction
-                                        ?>
-                                    </div>
-                                    
-                                </div> -->
+                            <div class="w-100 d-flex justify-content-start">
+                                <h5 class="w-50">Causes</h5>
+                                <h5 class="w-50">Actions</h5>
+                            </div>
+                            <div id="advance-container" class="d-flex flex-column gap-2 h-100">
+
                             </div>
                         </div>
                     </div>
                     <div>
                         <div class="d-flex flex-column content-group p-2 rounded-3 h-100">
                             <h5>Linestop / Abnormality Detail</h5>
-                            <div class="d-flex h-100">
-                                <div class="d-flex gap-2 w-100">
-                                    <div class="d-flex flex-column w-50">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <span class="section-details-label">Reason</span>
-                                            <?php echo $linestopCauseCategories; ?>
-                                        </div>
-                                        <?php 
-                                            echo $linestopCause
-                                        ?>
-                                    </div>
-                                    <div class="d-flex flex-column w-50">
-                                        <div class="d-flex align-items-center justify-content-between">
-                                            <span class="section-details-label">Action</span>
-                                            <?php echo $linestopActionCategories; ?>
-                                        </div>
-                                        
-                                        <?php 
-                                            echo $linestopAction
-                                        ?>
-                                    </div>
-                                    
-                                </div>
+                            <div class="w-100 d-flex justify-content-start">
+                                <h5 class="w-50">Causes</h5>
+                                <h5 class="w-50">Actions</h5>
+                            </div>
+                            <div id="linestop-container" class="d-flex flex-column gap-2 h-100">
+
                             </div>
                         </div>
                     </div>
@@ -483,5 +473,7 @@
     </div>
 </body>
 
-<script defer type="module" src="/homs/js/functions/page-scripts/detailsPOSelection.js"></script>
+<!-- <script defer type="module" src="/homs/js/functions/page-scripts/detailsPOSelection.js"></script> -->
+
 <script defer type="module" src="/homs/js/functions/flatpickr.js"></script>
+<script defer type="module" src="/homs/js/functions/page-scripts/mainProduction.js"></script>

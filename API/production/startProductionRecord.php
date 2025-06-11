@@ -1,11 +1,15 @@
 <?php
 require_once __DIR__ . "/../API.php";
 require_once __DIR__ ."/../../controllers/ProductionController.php";
+require_once __DIR__ ."/../../controllers/ESPController.php";
 
 class StartInsertRecord extends API
 {
+    private $espController;
     public function __construct() {
         parent::__construct(new ProductionController());
+        $this->espController = new ESPController();
+
     }
 
     public function index($data){
@@ -27,6 +31,9 @@ class StartInsertRecord extends API
             "direct_operators",
             "start_time",
             "creator",
+
+            "esp_id",
+            "hourly_plan"
         ];
         
         $this->validation->requiredFields($data, $requiredFields);
@@ -35,7 +42,22 @@ class StartInsertRecord extends API
         if(strtolower($data["section"]) === "bps"){
             $data["section"] = "TC";
         }
+
+        $esp_details = $this->espController->get("id = '{$data["esp_id"]}'");
+
+        $esp_id = $esp_details["id"] ?? 0;
+        $espUpdate = [
+            "line_name" => $data["line_name"],
+            "area" => $data["area"],
+            "po" => $data["po"],
+            "isrunning" => 1,
+            "creator" => $data["creator"],
+            "po_id" => $data["po_id"],
+        ];
         
+        $this->espController->update($esp_id, $espUpdate);
+        
+        unset($data["esp_id"]);
         $this->post($data);
     }
 }

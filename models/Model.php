@@ -3,7 +3,7 @@ require_once __DIR__ . '/../interfaces/IModel.php';
 
 abstract class Model implements IModel {
     protected PDO $conn;
-    private static array $allowedTables = ['pol', 'test_table', 'pt_pol', 'tc_pol','reasons', 'production_records', 'workcenters', 'st_management', 'edit_history']; // ✅ Prevents SQL Injection
+    private static array $allowedTables = ['pol', 'test_table', 'pt_pol', 'tc_pol','reasons', 'production_records', 'workcenters', 'st_management', 'edit_history', 'esp_management']; // ✅ Prevents SQL Injection
     private static string $host = '10.248.1.152';
     private static string $username = 'postgres';
     private static string $password = '1234';
@@ -69,12 +69,21 @@ abstract class Model implements IModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function get(string $where) {
+    public function getAllWhere(string $where , string $additionalConditions = "ORDER BY id DESC") {
+        $table = $this->getTableName();
+        $this->validateTableName($table);
+
+        $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE $where $additionalConditions");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function get(string $where , string $additionalConditions = "ORDER BY id DESC") {
 
         $table = $this->getTableName();
         $this->validateTableName($table);
-        $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE $where ORDER BY id DESC");
-        /* var_dump($stmt); */
+        $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE $where $additionalConditions");
+        /* var_dump($stmt) */
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -141,7 +150,7 @@ abstract class Model implements IModel {
         return $stmt->execute();
     }
 
-    private function sanitizeData(array $data): array {
+    public function sanitizeData(array $data): array {
         foreach ($data as $key => $value) {
             if (is_string($value)) {
                 $data[$key] = htmlspecialchars(strip_tags($value));
@@ -227,9 +236,8 @@ abstract class Model implements IModel {
         }
     }
     
-    
 
-    private function remapForUpdate(array $data): array {
+    public function remapForUpdate(array $data): array {
         $map = [
             'creator' => 'updated_by',
             'time_created' => 'time_updated',

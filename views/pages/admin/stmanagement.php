@@ -31,10 +31,10 @@
     $section = $select->primarySelect("register-section", "", [
         "PR1" => "Printer 1",
         "PR2" => "Printer 2",
-        "Ink Head" => "Ink Head",
+        "IH" => "Ink Head",
         "P-Touch" => "P-Touch",
-        "Tape Cassette" => "Tape Cassette",
-        "Ink Cartridge" => "Ink Cartridge",
+        "TC" => "Tape Cassette",
+        "IC" => "Ink Cartridge",
         "BPS" => "BPS",
         "Toner" => "Toner",
     ]);
@@ -64,10 +64,10 @@
     $editSection = $select->primarySelect("edit-section", "", [
         "PR1" => "Printer 1",
         "PR2" => "Printer 2",
-        "Ink Head" => "Ink Head",
+        "IH" => "Ink Head",
         "P-Touch" => "P-Touch",
-        "Tape Cassette" => "Tape Cassette",
-        "Ink Cartridge" => "Ink Cartridge",
+        "TC" => "Tape Cassette",
+        "IC" => "Ink Cartridge",
         "BPS" => "BPS",
         "Toner" => "Toner",
     ]);

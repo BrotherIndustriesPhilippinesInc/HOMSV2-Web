@@ -10,6 +10,7 @@
   $reasons = $button->navButton("Reasons & Actions", "/homs/admin/reasons", "text-center pt-2");
   $workcenters = $button->navButton("Workcenters", "/homs/admin/workcenters", "text-center pt-2");
   $st_management = $button->navButton("St Management", "/homs/admin/st", "text-center pt-2");
+  $esp_management = $button->navButton("ESP Management", "/homs/admin/esp_management", "text-center pt-2");
 
   $confirmation = $button->navButton("Confirmation", "/homs/confirmation");
   $graphs = $button->navButton("Graphs", "/homs/graphs");
@@ -88,6 +89,7 @@
                 echo $reasons;
                 echo $workcenters;
                 echo $st_management;
+                echo $esp_management;
               ?>
             </div>
           </div>

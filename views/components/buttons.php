@@ -8,14 +8,18 @@ class Buttons
     {
         $spanClass = '';
         $imageExists = '';
-        if($imgSource != '' && $text != ''){
+        $textExists = '';
+        if($imgSource != '' || $text != ''){
             $spanClass = "ps-2";
             $imageExists = "<img src='{$imgSource}' alt='{$alt}'>";
+        }
+        if($text != ''){
+            $textExists = "<span class='{$name}-span btn-span {$spanClass}'>$text</span>";
         }
         $html = <<<HTML
         <button type="button" class='{$name} btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary {$class} glow' $buttonAttributes>
             $imageExists
-            <span class="{$name}-span btn-span {$spanClass}">$text</span>
+            $textExists
         </button>
         HTML;
         return $html;

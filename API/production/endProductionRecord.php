@@ -1,11 +1,13 @@
 <?php
 require_once __DIR__ . "/../API.php";
 require_once __DIR__ ."/../../controllers/ProductionController.php";
+require_once __DIR__ ."/../../controllers/ESPController.php";
 
 class EndInsertRecord extends API
 {
     public function __construct() {
         parent::__construct(new ProductionController());
+        $this->espController = new ESPController();
     }
 
     public function index($data){
@@ -28,6 +30,9 @@ class EndInsertRecord extends API
             "direct_operators",
             "end_time",
             "creator",
+
+            "esp_id",
+            "hourly_plan"
         ];
         
         $this->validation->requiredFields($data, $requiredFields);
@@ -39,6 +44,22 @@ class EndInsertRecord extends API
         
         try {
             $debugData = $this->debugRequestData($data); // Capture request data
+
+            $esp_details = $this->espController->get("id = '{$data["esp_id"]}'");
+
+            $esp_id = $esp_details["id"] ?? 0;
+            $espUpdate = [
+                "line_name" => "N/A",
+                "area" => "N/A",
+                "po" => "N/A",
+                "isrunning" => 0,
+                "creator" => $data["creator"],
+                "po_id" => $data["po_id"],
+            ];
+            $this->espController->update($esp_id, $espUpdate);
+        
+            unset($data["esp_id"]);
+
             $response = $this->controller->evaluatedUpdate($data);
             $this->checkError($response);
 

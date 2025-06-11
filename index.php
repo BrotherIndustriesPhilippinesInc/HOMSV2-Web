@@ -91,6 +91,9 @@
         '/homs/production/details' => function() {
             include __DIR__ . '/views/pages/production/details.php';
         },
+        '/homs/production/history' => function() {
+            include __DIR__ . '/views/pages/production/edit_history.php';
+        },
         '/homs/graphs' => function() {
             include __DIR__ . '/views/pages/graphs/graphs.php';
         },
@@ -106,8 +109,8 @@
         '/homs/admin/st' => function() {
             include __DIR__ . '/views/pages/admin/stmanagement.php';
         },
-        '/homs/production/history' => function() {
-            include __DIR__ . '/views/pages/production/edit_history.php';
+        '/homs/admin/esp_management' => function() {
+            include __DIR__ . '/views/pages/admin/esp_management.php';
         },
     ];
 

@@ -35,4 +35,32 @@ class ProductionModel extends Model
             "all"
         );
     }
+
+    public function updateActualQuantityViaESPModel($id, $data){
+        date_default_timezone_set('Asia/Manila');
+
+        if (!is_numeric($id)) {
+            throw new Exception("Invalid ID");
+        }
+    
+        $table = $this->getTableName();
+        $this->validateTableName($table);
+    
+        if (!isset($data['time_created'])) {
+            $data['time_created'] = date('Y-m-d H:i:s'); // Current timestamp
+        }
+
+        // 🔄 Remap fields for update context
+        $data = $this->remapForUpdate($data);
+    
+        $fields = implode(", ", array_map(fn($key) => "$key = :$key", array_keys($data)));
+    
+        $sql = "UPDATE {$table} SET {$fields} WHERE id = :id";
+        $stmt = $this->conn->prepare($sql);
+    
+        $data['id'] = (int)$id;
+        $stmt->execute($this->sanitizeData($data));
+    
+        return ["status" => "success"];
+    }
 }

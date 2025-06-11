@@ -2,7 +2,7 @@
 require_once __DIR__ . "/../API.php";
 require_once __DIR__ ."/../../controllers/WorkcenterController.php";
 
-class GetWorkcenters extends API
+class GetWorkcenterDetails extends API
 {
 
     public function __construct() {
@@ -11,12 +11,10 @@ class GetWorkcenters extends API
 
 
     public function index($data = ""){
-        if(isset($data["workcenter"])){
-            $this->get("workcenter = '$data[workcenter]'");
-        }else{
-            $this->get();
-        }
+
+        $this->getAllWhere("workcenter = '$data[work_center]'");
+
     }
 }
-$api = new GetWorkcenters();
+$api = new GetWorkcenterDetails();
 $api->index($_GET);

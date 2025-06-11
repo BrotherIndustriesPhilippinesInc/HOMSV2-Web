@@ -93,7 +93,6 @@ class POLController extends Controller
                     continue;
                 }
 
-
                 $polData[] = [
                     "work_center"   => trim($sheet->getCell("A$row")->getCalculatedValue()),
                     "line_name"     => trim($sheet->getCell("B$row")->getCalculatedValue()),
@@ -259,11 +258,10 @@ class POLController extends Controller
             $this->setTableName($section);
             
             $pol = $this->model->get("id = '$po'");
-
             $data=[
                 "po_id"=> $pol["id"],
                 "work_center"=> $pol["work_center"],
-                "line_name"=> $pol["line_name"],
+                "pol_line_name"=> $pol["line_name"],
                 "pc_status"=> $pol["pc_status"],
                 "prod_status"=> $pol["prod_status"],
                 "prd_order_no"=> $pol["prd_order_no"],

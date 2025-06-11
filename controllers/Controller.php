@@ -17,6 +17,14 @@ abstract class Controller implements IController {
         }
     }
 
+    public function getAllWhere(string $where) {
+        try {
+            return $this->model->getAllWhere($where);
+        } catch (Exception $e) {
+            return $this->errorResponse($e);
+        }
+    }
+
     public function get(string $where) {
         try {
             return $this->model->get($where);
