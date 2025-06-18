@@ -17,7 +17,9 @@ export function search(container, input, className) {
 
 export function formatTimeOnlyToPostgres(timeString) {
     const [timePart, modifier] = timeString.trim().split(' ');
-    let [hours, minutes] = timePart.split(':').map(Number);
+    let [hours, minutes, seconds] = timePart.split(':').map(Number);
+
+    seconds = seconds ?? 0; // Default to 0 if seconds aren't provided
 
     if (modifier.toLowerCase() === 'pm' && hours !== 12) {
         hours += 12;
@@ -26,11 +28,12 @@ export function formatTimeOnlyToPostgres(timeString) {
     }
 
     const now = new Date();
-    now.setHours(hours, minutes, 0);
+    now.setHours(hours, minutes, seconds);
 
     const pad = n => n.toString().padStart(2, '0');
-    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(hours)}:${pad(minutes)}:00`;
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
+
 
 export function switchModals(hideId, showId) {
     const currentModal = bootstrap.Modal.getInstance(document.getElementById(hideId));

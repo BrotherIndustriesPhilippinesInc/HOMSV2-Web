@@ -15,6 +15,8 @@
   $confirmation = $button->navButton("Confirmation", "/homs/confirmation");
   $graphs = $button->navButton("Graphs", "/homs/graphs");
 
+  $om = $button->navButton("Manual", "/homs/manual");
+
     // Get the current path
   $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
@@ -94,12 +96,23 @@
             </div>
           </div>
       </li>
-
+      <!-- GRAPHS -->
       <li class="nav-item d-flex">
           <div class="nav-status <?php echo isActive('/graphs', $currentPath); ?>" style="width: 8px; height: auto;"></div>
           <div class="w-100">
             <div class="nav-link w-100 text-primary fs-5 fw-medium">
               <?php echo $graphs; ?>
+            </div>
+            
+          </div>
+      </li>
+
+      <!-- OM -->
+      <li class="nav-item d-flex">
+          <div class="nav-status <?php echo isActive('/om', $currentPath); ?>" style="width: 8px; height: auto;"></div>
+          <div class="w-100">
+            <div class="nav-link w-100 text-primary fs-5 fw-medium">
+              <?php echo $om; ?>
             </div>
             
           </div>

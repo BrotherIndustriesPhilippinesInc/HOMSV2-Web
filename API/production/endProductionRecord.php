@@ -58,8 +58,6 @@ class EndInsertRecord extends API
             ];
             $this->espController->update($esp_id, $espUpdate);
         
-            unset($data["esp_id"]);
-
             $response = $this->controller->evaluatedUpdate($data);
             $this->checkError($response);
 

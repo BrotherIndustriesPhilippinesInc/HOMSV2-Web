@@ -73,7 +73,11 @@ class ProductionController extends Controller
                 "advance_reasons"=> $production_record["advance_reasons"],
                 "linestop_reasons"=> $production_record["linestop_reasons"],
 
-                "esp_id"=> $assignedESP ? $assignedESP["id"] : null,
+                "target"=> $production_record["target"],
+
+                "esp_id"=> $assignedESP ? $assignedESP["id"] : 0,
+                "esp_name"=> $assignedESP ? $assignedESP["esp_name"] : "Manual",
+                "esp_sensor_name"=> $assignedESP ? $assignedESP["sensor_name"] : "Input",
                 
             ];
             return $data;
@@ -82,10 +86,11 @@ class ProductionController extends Controller
         }
     }
 
-
     public function evaluatedUpdate($data){
-        $end_time = date("Y-m-d", strtotime($data["end_time"])) ;
+        $end_time = date("Y-m-d", strtotime($data["end_time"]));
+        
         $latestData = $this->get("time_created::date = '{$end_time}' AND section = '{$data['section']}' AND work_center = '{$data['work_center']}' AND po_id = '{$data['po_id']}'");
+        $this->model->update($latestData["id"], ["actual_quantity"=>0, "variance"=>0]);
 
         return $this->model->insert($data);
     }
@@ -102,7 +107,6 @@ class ProductionController extends Controller
         /* $id = $data["id"]; */
         /* GET CURRENT DATA */
         $latestRun = $this->get("po = '{$data['po']}'");
-
         if($latestRun["production_action"] === "start"){
             /* Update Quantity */
             $data = [
@@ -116,4 +120,5 @@ class ProductionController extends Controller
             throw new Exception("No production record found for this PO.");
         }
     }
+
 }

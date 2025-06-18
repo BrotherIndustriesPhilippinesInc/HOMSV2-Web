@@ -56,8 +56,7 @@ class StartInsertRecord extends API
         ];
         
         $this->espController->update($esp_id, $espUpdate);
-        
-        unset($data["esp_id"]);
+
         $this->post($data);
     }
 }

@@ -19,6 +19,8 @@ class ESPController extends Controller
 
         $filteredESP = [];
 
+
+
         if($isAlreadyRunning === "true") {
             // Filter ESPs that are already running in the specified section
             $filteredESP = array_filter($allESP, function($esp) use ($section, $po_id) {
@@ -27,6 +29,7 @@ class ESPController extends Controller
         } else {
 
             $filteredESP = array_filter($allESP, function($esp) use ($section) {
+
                 return $esp["assigned_section"] == $section && isset($esp["isrunning"]) && $esp["isrunning"] === false;
             });
         }

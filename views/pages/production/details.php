@@ -33,7 +33,7 @@
     $hourlyTime = $select->primarySelect("hourlyTime", "Hourly Time", ["06:00 - 08:00", "08:00 - 10:00", "10:00 - 12:00", "12:00 - 14:00", "14:00 - 16:00", "16:00 - 18:00", "18:00 - 20:00", "20:00 - 22:00", "22:00 - 24:00"], "");
     $directOperations = $textbox->primaryTextbox("directOperations", "secondary-background p-1 text-center", "", 0);
 
-    $startTime = $textbox->timeSelect("startTime", "", "");
+    $startTime = $textbox->timeSelect("startTime", "", "disabled");
     $endTime = $textbox->timeSelect("endTime", "", "");
 
     $breaktime = $textbox->primaryTextbox("breaktime", "secondary-background p-1 text-center");
@@ -62,7 +62,7 @@
     $lineStopPopOver = $button->primaryButton("lineStop-popOver", "Line Stop", "/homs/resources/icons/front_hand.svg", "line_stop", "", "w-100 border border-danger text-danger danger");
     $breaktimePopOver = $button->primaryButton("breaktime-popOver", "Breaktime", "/homs/resources/icons/fork_spoon.svg", "breaktime", "", "w-100");
 
-    $complianceRate = $textbox->primaryTextbox("complianceRate", "plan-detail-textbox secondary-background p-1", "0%", "0", "text");
+    $complianceRate = $textbox->primaryTextbox("complianceRate", "plan-detail-textbox secondary-background p-1", "0.00%", "0.00%", "text");
 
     $target = $textbox->primaryTextbox("target", "plan-detail-textbox secondary-background p-1", "0", "0", "number");
 ?>
@@ -183,7 +183,7 @@
                             ?>
                         </div>
                         <div class="d-flex align-items-center">
-                            <span class="section-details-label">Start Time</span>
+                            <span class="section-details-label">Time</span>
                             <?php 
                                 echo $startTime
                             ?>
@@ -249,17 +249,17 @@
                                 ?>
                             </div>
 
-                            <div class="countInputs">
-                                <span class="plan-details section-details-label">Target</span>
-                                <?php
-                                    echo $target;
-                                ?>
-                            </div>
-
                             <div>
                                 <span class="plan-details section-details-label">Takt Time</span>
                                 <?php
                                     echo $taktTime;
+                                ?>
+                            </div>
+
+                            <div class="countInputs">
+                                <span class="plan-details section-details-label">Target</span>
+                                <?php
+                                    echo $target;
                                 ?>
                             </div>
 
@@ -305,7 +305,9 @@
                                 <th scope="col">Plan Quantity</th>
                                 <th scope="col">Hourly Plan Quantity</th>
                                 <th scope="col">Takt Time</th>
+                                <th scope="col">Target</th>
                                 <th scope="col">Actual Quantity</th>
+                                <th scope="col">Compliance Rate</th>
                                 <th scope="col">Variance</th>
                                 <th scope="col">Shift</th>
                                 <th scope="col">Hourly Time</th>
@@ -320,8 +322,7 @@
                                 <th scope="col">Updated By</th>
                                 <th scope="col">Production Action</th>
 
-                                <th scope="col">Target</th>
-                                <th scope="col">Compliance Rate</th>
+                                
                             </tr>
                         </thead>
                     </table>

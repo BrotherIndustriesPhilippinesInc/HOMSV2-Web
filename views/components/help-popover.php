@@ -1,4 +1,4 @@
-<div id="help-popover" popover class="rounded-4 border-2 px-3 py-2 text-light">
+<div id="help-popover" popover class="rounded-4 border-2 px-3 py-2 text-light" >
     <h1 class="fw-bold">Need help?</h1>
     <div class="d-flex flex-column gap-3">
         <span id="popover-desc" class="fw-light">For any inquiries or concerns don’t, hesitate to call or email us. </span>
@@ -26,5 +26,4 @@
             </div>
         </div>
     </div>
-    
 </div>

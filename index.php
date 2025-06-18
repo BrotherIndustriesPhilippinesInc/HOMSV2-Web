@@ -112,6 +112,10 @@
         '/homs/admin/esp_management' => function() {
             include __DIR__ . '/views/pages/admin/esp_management.php';
         },
+
+        '/homs/manual' => function() {
+            include __DIR__ . '/views/pages/manual/manual.php';
+        },
     ];
 
     // Get the current path
