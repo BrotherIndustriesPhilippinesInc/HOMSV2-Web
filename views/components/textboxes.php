@@ -35,7 +35,7 @@ class Textboxes{
 
     public function timeSelect($name, $class = "", $attributes = ""){
         $html = <<<HTML
-            <input id="{$name}" class="flatpickr-no-calendar glow {$class}" type="text" placeholder="00:00" readonly="readonly" {$attributes}>
+            <input id="{$name}" class="flatpickr-no-calendar glow {$class}" type="text" placeholder="00:00" {$attributes}>
         HTML;
         return $html;
     }

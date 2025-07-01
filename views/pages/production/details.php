@@ -8,6 +8,8 @@
 
     $search = $textbox->searchTextbox("searchPO");
 
+    $dateSelect = $textbox->timeSelect("dateSelect", "h-100 bg-custom-tertiary text-primary fw-medium ", "");
+
     $selectPO = $button->primaryButton("po-button-modal", "Select PO", "/homs/resources/icons/shopping_cart.svg", "po_cart", "data-bs-toggle='modal' data-bs-target='#poModal' style='z-index: 99'");
     $selectESP = $select->primarySelect("espSelect", "ESP32", ["Line 1", "Line 2", "Line 3"], "");
 
@@ -115,6 +117,11 @@
                 <!-- CONTROLS -->
                 <div class=" d-flex justify-content-between w-100">
                     <div class="d-flex gap-2">
+                        <div class="d-flex align-items-center">
+                            <?php
+                                echo $dateSelect; 
+                            ?>
+                        </div>
                         <div>
                             <?php
                                 echo $selectPO; 
@@ -317,10 +324,13 @@
                                 <th scope="col">Advance Reasons</th>
                                 <th scope="col">Linestop Reasons</th>
 
-                                <th scope="col">Creator</th>
+                                <th scope="col">Started By</th>
+                                <th scope="col">Ended By</th>
                                 <th scope="col">Time Created</th>
                                 <th scope="col">Updated By</th>
                                 <th scope="col">Production Action</th>
+
+
 
                                 
                             </tr>

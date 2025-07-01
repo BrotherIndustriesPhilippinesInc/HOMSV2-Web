@@ -13,7 +13,7 @@ class ESPController extends Controller
     public function getESPSBySection($section, $isAlreadyRunning, $po_id = null) { 
 
         if($section == "BPS"){
-            $section= "TC";
+            $section= "Tape Cassette";
         }
         $allESP = $this->getAll();
 

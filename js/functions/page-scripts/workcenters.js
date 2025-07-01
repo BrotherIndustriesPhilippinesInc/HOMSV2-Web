@@ -29,7 +29,7 @@ $(async function () {
             topEnd: ['search', 'pageLength'],
         },
         columns: [
-            { data: "section" },
+            { data: "section", visible: false},
             { data: "costcenter", visible: false },
             { data: "costcenter_name" },
             { data: "plant"},
@@ -37,6 +37,9 @@ $(async function () {
             { data: "line_name"},
             { data: "folder_name", visible: false  },
             { data: "pattern"},
+
+            { data: "dpr_template"},
+
             { data: "creator", visible: false },
             { data: "time_created", visible: false},
             { data: "updated_by", visible: false },
@@ -46,8 +49,11 @@ $(async function () {
                 title: "Actions",
                 render: function (data, type, row) {
                     return `
-                        <button class="btn btn-primary edit-workcenter" data-workcenter_id="${row.id}" data-bs-toggle="modal" data-bs-target="#workcenterEditModal">Edit</button>
-                        <button class="btn danger delete-workcenter" data-workcenter_id="${row.id}">Delete</button>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary edit-workcenter" data-workcenter_id="${row.id}" data-bs-toggle="modal" data-bs-target="#workcenterEditModal">Edit</button>
+                            <button class="btn danger delete-workcenter" data-workcenter_id="${row.id}">Delete</button>
+                        </div>
+                        
                     `;
                 }
             }
@@ -79,12 +85,15 @@ $(async function () {
         $(".edit-section").val(workcenter.section).trigger("change"),
         $(".edit-costcenter").val(workcenter.costcenter).trigger("change"),
         $(".edit-plant").val(workcenter.plant).trigger("change"),
+
         $(".edit-pattern").val(workcenter.pattern).trigger("change"),
 
         $("#edit-costcenter-name").val(workcenter.costcenter_name),
         $("#edit-workcenter-name").val(workcenter.workcenter),
         $("#edit-line-name").val(workcenter.line_name),
         $("#edit-folder-name").val(workcenter.folder_name),
+
+        $("#edit-dpr-template").val(workcenter.dpr_template),
 
         $(".save").attr("data-workcenter_id", workcenterId);
         editingID = workcenterId;
@@ -138,6 +147,8 @@ $(async function () {
             workcenter: $("#register-workcenter-name").val(),
             line_name: $("#register-line-name").val(),
             folder_name: $("#register-folder-name").val(),
+
+            dpr_template: $("#register-dpr-template").val(),
     
             creator: user["EmpNo"],
         };
@@ -185,6 +196,8 @@ $(async function () {
             workcenter: $("#edit-workcenter-name").val(),
             line_name: $("#edit-line-name").val(),
             folder_name: $("#edit-folder-name").val(),
+
+            dpr_template: $("#edit-dpr-template").val(),
     
             creator: user["EmpNo"],
         };

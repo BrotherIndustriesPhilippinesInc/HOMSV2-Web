@@ -27,6 +27,7 @@ class WorkcenterController extends Controller
             if (empty($wcData)) throw new Exception("No data provided.");
     
             foreach ($wcData as $key => $value) {
+            
                 try {
                     $result = $this->model->upsertMultiple(["workcenter", "line_name"], $value);
                     
@@ -87,6 +88,7 @@ class WorkcenterController extends Controller
                     "line_name"   => trim($sheet->getCell("F$row")->getCalculatedValue()),
                     "folder_name"      => trim($sheet->getCell("G$row")->getCalculatedValue()),
                     "pattern"   => trim($sheet->getCell("H$row")->getCalculatedValue()),
+                    "dpr_template"   => trim($sheet->getCell("I$row")->getCalculatedValue()),
                     "creator"       => $user,
                     "time_created"  => $time_created,
                     "updated_by"    => null,

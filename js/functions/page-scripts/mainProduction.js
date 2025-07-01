@@ -15,6 +15,22 @@ $(function () {
     let oldRowData = null;
     let poDetailsInterval = null;
 
+    const dateSelect = flatpickr("#dateSelect", {
+        enableTime: false,
+        noCalendar: false,
+        disableMobile: true,
+        allowInput: true,
+        hourIncrement: 1,
+        minuteIncrement: 1,
+        enableSeconds: true,
+        defaultDate: new Date(), // Crucial for pre-filling and populating selectedDates
+        // Add an onReady hook to confirm when it's ready
+        //dateFormat: "h:i:s K", // h: 12-hour, i: minutes, K: AM/PM
+        onReady: function(selectedDates, dateStr, instance) {
+            console.log("Flatpickr for #dateSelect is ready. Selected dates:", selectedDates);
+        }
+    });
+
     const startTime = flatpickr("#startTime", {
         enableTime: true,
         noCalendar: true,
@@ -319,8 +335,9 @@ $(function () {
         }
 
         /* COLLECT DATA */
-        let advanceReason = JSON.stringify(collectAdvanceReasonData());
-        let linestopReason = JSON.stringify(collectLinestopReasonData());
+
+        let advanceReason = collectAdvanceReasonData();
+        let linestopReason = collectLinestopReasonData();
 
         let data = {
             "production_action": "end",
@@ -426,10 +443,11 @@ $(function () {
     }
 
     function createTable(){
+        let date = dateSelect.input.value;
         const params = {
             resposive: true,
             ajax: {
-                url: `/homs/api/production/getSectionProduction.php?section=${section}&po=${selectedPOData.prd_order_no}`, // your endpoint
+                url: `/homs/api/production/getSectionProduction.php?section=${section}&po=${selectedPOData.prd_order_no}&date=${date}`, // your endpoint
                 method: "GET",
                 dataSrc: function (json) {
                     return json.data; // extract the data array from your JSON
@@ -443,15 +461,15 @@ $(function () {
             },
             columns: [
                 { data: 'id' },
-                { data: "po", visible: false},
+                { data: "po", visible: true},
                 { data: "section", visible: false},
                 { data: "work_center", visible: false},
                 { data: "line_name", visible: false},
                 { data: "area", visible: false},
                 { data: "material", visible: false},
                 { data: "description", visible: false},
-                { data: "plan_quantity"},
-                { data: "hourly_plan", visible: true},
+                { data: "plan_quantity", visible: false},
+                { data: "hourly_plan", visible: false},
                 { data: "takt_time", visible: false},
                 { data: "target", visible: true},
                 { data: "actual_quantity"},
@@ -462,10 +480,67 @@ $(function () {
                 { data: "direct_operators", visible: false},
                 { data: "start_time"},
                 { data: "end_time"},
-                { data: "advance_reasons", visible: false},
-                { data: "linestop_reasons", visible: false},
+
+                {
+                    data: "advance_reasons",
+                    visible: true,
+                    render: function(data, type, row, meta) {
+                        if (!data || data.length === 0) return "-";
+
+                        let parsed = Array.isArray(data) ? data : JSON.parse(data);
+                        let raw = JSON.stringify(parsed).replace(/"/g, '&quot;'); // escape quotes
+
+                        return `
+                            <div class="reason-render" data-json="${raw}">
+                                ${parsed.map(item => `
+                                    <div class="mb-1">
+                                        <strong>${item.action_label}</strong><br>
+                                        <small>${item.action_notes}</small><br>
+                                        <em>${item.reason_label}</em><br>
+                                        <small>${item.reason_notes}</small>
+                                    </div>
+                                `).join("")}
+                            </div>
+                        `;
+                    }
+                },
+                {
+                    data: "linestop_reasons",
+                    visible: true,
+                    render: function(data, type, row, meta) {
+                        if (!data || data.length === 0) return "-";
+
+                        let parsed = Array.isArray(data) ? data : JSON.parse(data);
+                        let raw = JSON.stringify(parsed).replace(/"/g, '&quot;'); // escape quotes
+
+                        return `
+                            <div class="reason-render" data-json="${raw}">
+                                ${parsed.map(item => `
+                                    <div class="mb-1">
+                                        <strong>${item.action_label}</strong><br>
+                                        <small>${item.action_notes}</small><br>
+                                        <em>${item.reason_label}</em><br>
+                                        <small>${item.reason_notes}</small>
+                                    </div>
+                                `).join("")}
+                            </div>
+                        `;
+                    }
+                },
+
+
+
+
+
+
+
+
+
+
+
 
                 { data: "creator", visible: false},
+                { data: "ended_by", visible: false},
                 { data: "time_created", visible: false},
                 { data: "updated_by", visible: false},
                 { data: "production_action", visible: false},
@@ -1111,11 +1186,10 @@ $(function () {
                 row.data(newRowData).invalidate();
             }
 
-            let data = {"creator": userId, "old_data": JSON.stringify(oldRowData), "new_data": JSON.stringify(newRowData)};
+            let data = {"creator": userId, "old_data": oldRowData, "new_data": newRowData};
 
-            await apiCall('/homs/API/production/submitedithistory.php', 'POST', data);
+            await apiCall('/homs/API/production/submitEditHistory.php', 'POST', data);
             
-            /* FORGOTTEN TO UPDATE THE DB */
             let updatedData = {
                 "id": newRowData["id"],
                 "po": newRowData["po"],
@@ -1134,8 +1208,8 @@ $(function () {
                 "direct_operators": newRowData["direct_operators"],
                 "start_time": newRowData["start_time"],
                 "end_time": newRowData["end_time"],
-                "advance_reasons": newRowData["advance_reasons"],
-                "linestop_reasons": newRowData["linestop_reasons"],
+                "advance_reasons": JSON.parse(newRowData["advance_reasons"]),
+                "linestop_reasons": JSON.parse(newRowData["linestop_reasons"]),
                 "creator": userId,
 
                 "esp_id": newRowData["esp_id"],
@@ -1153,6 +1227,8 @@ $(function () {
             console.log("No changes detected in this row");
         }
     }
+
+    
 
     async function realTimeUpdateOfPODetails(poId) {
         console.log("Realtime update of PO details");

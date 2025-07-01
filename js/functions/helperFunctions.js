@@ -164,3 +164,18 @@ export function resetFields(fields)
         }
     });
 }
+
+export function formatTime(dateString) {
+    const date = new Date(dateString);
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    hours = hours % 12 || 12; // Convert to 12-hour format
+    hours = String(hours).padStart(2, '0');
+    minutes = String(minutes).padStart(2, '0');
+    seconds = String(seconds).padStart(2, '0');
+
+    return `${hours}:${minutes}:${seconds} ${ampm}`;
+}

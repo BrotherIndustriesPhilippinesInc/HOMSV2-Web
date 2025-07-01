@@ -10,20 +10,19 @@ class GetHO extends API
 
     public function index($data)
     {
-        /* $this->validation->requiredFields($data, ["section"]);
+        try {
+            $filename = $this->controller->generateHOFile($data["wc"], $data["date"]); // Dynamically choose if needed
+            $filepath = __DIR__ . "/../../resources/HO/Templates/" . $filename;
 
-        if (strtolower($data["section"]) === "bps") {
-            $data["section"] = "TC";
-        } */
-
-        $filename = "HO_Template.xlsx"; // Dynamically choose if needed
-        $filepath = __DIR__ . "/../../resources/HO/Templates/" . $filename;
-
-        if (!file_exists($filepath)) {
-            http_response_code(404);
-            echo "File not found.";
-            exit;
+            if (!file_exists($filepath)) {
+                http_response_code(404);
+                echo "File not found.";
+                exit;
+            }
+        } catch (Exception $e) {
+            
         }
+        
 
         // Force file download
         header('Content-Description: File Transfer');

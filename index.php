@@ -116,6 +116,10 @@
         '/homs/manual' => function() {
             include __DIR__ . '/views/pages/manual/manual.php';
         },
+
+        '/homs/admin/breaktime_management' => function() {
+            include __DIR__ . '/views/pages/admin/breaktime_management.php';
+        },
     ];
 
     // Get the current path

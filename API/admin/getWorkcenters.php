@@ -9,14 +9,17 @@ class GetWorkcenters extends API
         parent::__construct(new WorkcenterController());
     }
 
-
     public function index($data = ""){
+
+        $this->validation->requiredFields($data, ["section", "workcenter"]);
+
         if(isset($data["workcenter"])){
-            $this->get("workcenter = '$data[workcenter]'");
+            $this->get("workcenter ILIKE  '$data[workcenter]' AND section ILIKE '$data[section]'");
         }else{
             $this->get();
         }
     }
 }
+
 $api = new GetWorkcenters();
 $api->index($_GET);

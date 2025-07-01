@@ -9,12 +9,12 @@
     $create = $button->primaryButton("create","Register", "", "", "data-bs-toggle='modal' data-bs-target='#workcenterCreateModal'");
     $submit = $button->primaryButton("submit","Submit", "btn btn-primary bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "", "data-bs-dismiss='modal'");
     $section = $select->primarySelect("register-section", "", [
-        "PR1" => "Printer 1",
-        "PR2" => "Printer 2",
-        "IH" => "Ink Head",
+        "Printer 1" => "Printer 1",
+        "Printer 2" => "Printer 2",
+        "Ink Head" => "Ink Head",
         "P-Touch" => "P-Touch",
-        "TC" => "Tape Cassette",
-        "IC" => "Ink Cartridge",
+        "Tape Cassette" => "Tape Cassette",
+        "Ink Cartridge" => "Ink Cartridge",
         "BPS" => "BPS",
         "Toner" => "Toner",
     ]);
@@ -81,12 +81,12 @@
     /* EDITING WORKCENTER */
     $save = $button->primaryButton("save","Save", "btn btn-primary bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "", "data-bs-dismiss='modal'");
     $editSection = $select->primarySelect("edit-section", "", [
-        "PR1" => "Printer 1",
-        "PR2" => "Printer 2",
-        "IH" => "Ink Head",
+        "Printer 1" => "Printer 1",
+        "Printer 2" => "Printer 2",
+        "Ink Head" => "Ink Head",
         "P-Touch" => "P-Touch",
-        "TC" => "Tape Cassette",
-        "IC" => "Ink Cartridge",
+        "Tape Cassette" => "Tape Cassette",
+        "Ink Cartridge" => "Ink Cartridge",
         "BPS" => "BPS",
         "Toner" => "Toner",
     ]);
@@ -144,13 +144,16 @@
     $editLine_name = $textbox->primaryTextbox("edit-line-name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
     $editFolder_name = $textbox->primaryTextbox("edit-folder-name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
     $editPattern = $select->primarySelect("edit-pattern", "", [
-        "A" => "Pattern A",
-        "B" => "Pattern B",
-        "C" => "Pattern C",
-        "D" => "Pattern D",
+        "Pattern A" => "Pattern A",
+        "Pattern B" => "Pattern B",
+        "Pattern C" => "Pattern C",
+        "Pattern D" => "Pattern D",
     ]);
 
     $upload = $button->primaryButton("upload","Upload", "", "", "data-bs-toggle='modal' data-bs-target='#workcenterUploadModal'");
+
+    $register_dpr_template = $textbox->primaryTextbox("register-dpr-template", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+    $edit_dpr_template = $textbox->primaryTextbox("edit-dpr-template", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
 ?>
 
 <title>HOMS - Workcenters</title>
@@ -180,6 +183,8 @@
                     <th scope="col">Line Name</th>
                     <th scope="col">Folder Name</th>
                     <th scope="col">Pattern</th>
+
+                    <th scope="col">DPR Template</th>
 
                     <th scope="col">Creator</th>
                     <th scope="col">Date Created</th>
@@ -259,6 +264,13 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div>
+                                <label for="register-costcenter-name" class="form-label">DPR Template Name</label>
+                                <?php echo $register_dpr_template ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer border-0">
@@ -333,6 +345,12 @@
                                     </div>
 
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div>
+                                <label for="register-costcenter-name" class="form-label">DPR Template Name</label>
+                                <?php echo $edit_dpr_template ?>
                             </div>
                         </div>
                     </div>

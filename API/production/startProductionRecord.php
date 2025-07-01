@@ -57,6 +57,9 @@ class StartInsertRecord extends API
         
         $this->espController->update($esp_id, $espUpdate);
 
+
+        /* GENERATE UNIQUE SESSION ID */
+        $data["unique_session"] = uniqid("session_", true);
         $this->post($data);
     }
 }

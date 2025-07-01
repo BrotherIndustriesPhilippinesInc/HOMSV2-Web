@@ -9,7 +9,7 @@ class GetSectionProduction extends API
     }
 
     public function index($data){
-        $this->validation->requiredFields($data, ["section"]);
+        $this->validation->requiredFields($data, ["section", "date", "po"]);
 
         if(strtolower($data["section"]) === "bps"){
             $data["section"] = "TC";

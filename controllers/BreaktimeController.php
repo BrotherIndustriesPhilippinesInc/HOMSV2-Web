@@ -1,0 +1,95 @@
+<?php 
+require __DIR__ ."/../vendor/autoload.php";
+
+require_once __DIR__ ."/Controller.php";
+require_once __DIR__ ."/../models/BreaktimeModel.php";
+require_once __DIR__ ."/../models/ProductionModel.php";
+
+class BreaktimeController extends Controller
+{
+    private $productionModel;
+
+    public function __construct() {
+        parent::__construct(new BreaktimeModel());
+
+        $this->productionModel = new ProductionModel();
+    }
+
+
+    public function computeRestTime($section, $start_time = null, $end_time = null) {
+        $section_rest_times = $this->getAllWhere("section = '{$section}'");
+
+        $start_seconds = null;
+        $end_seconds = null;
+
+        if ($start_time && $end_time) {
+            $start_dt = DateTime::createFromFormat('H:i', $start_time);
+            $end_dt = DateTime::createFromFormat('H:i', $end_time);
+
+            if (!$start_dt || !$end_dt) {
+                throw new Exception("Invalid time format. Use HH:mm.");
+            }
+
+            $start_seconds = ($start_dt->format('H') * 3600) + ($start_dt->format('i') * 60);
+            $end_seconds = ($end_dt->format('H') * 3600) + ($end_dt->format('i') * 60);
+
+            if ($start_seconds >= $end_seconds) {
+                throw new Exception("Start time must be earlier than end time.");
+            }
+        }
+
+        $total_rest_time = 0;
+        $used_breaks = [];
+
+        foreach ($section_rest_times as $rest_time) {
+            $break_id = $rest_time['id'];
+            $break_type = $rest_time['break_type'];
+            $break_start_time = DateTime::createFromFormat('Y-m-d H:i:s', $rest_time['start_time']);
+            $break_end_time = DateTime::createFromFormat('Y-m-d H:i:s', $rest_time['end_time']);
+
+            $break_start_seconds = $this->toSecondsFromMidnight($break_start_time);
+            $break_end_seconds = $this->toSecondsFromMidnight($break_end_time);
+
+            if ($start_seconds !== null && $end_seconds !== null) {
+                $overlap_start = max($start_seconds, $break_start_seconds);
+                $overlap_end = min($end_seconds, $break_end_seconds);
+                $overlap_duration = $overlap_end - $overlap_start;
+
+                $min_overlap_seconds = 10 * 60;
+                if ($overlap_duration >= $min_overlap_seconds && !isset($used_breaks[$break_type])) {
+                    $break_duration = ($break_end_seconds - $break_start_seconds) / 60;
+
+                    $total_rest_time += $break_duration;
+
+                    $used_breaks[$break_type] = [
+                        'id' => $break_id,
+                        'duration' => round($break_duration, 2),
+                        'start_time' => $break_start_time->format('H:i'),
+                        'end_time' => $break_end_time->format('H:i')
+                    ];
+                }
+            }
+        }
+
+        /* Reverse used breaks */
+        $used_breaks = array_reverse($used_breaks);
+        return [
+            'section' => $section,
+            'start_time' => $start_time,
+            'end_time' => $end_time,
+            'total_rest_time' => $total_rest_time,
+            'used_breaks' => $used_breaks
+        ];
+    }
+
+
+    private function toSecondsFromMidnight($dateTime) {
+        if (!$dateTime) {
+            return 0;
+        }
+        return ($dateTime->format('H') * 3600) + ($dateTime->format('i') * 60);
+    }
+
+    
+
+}

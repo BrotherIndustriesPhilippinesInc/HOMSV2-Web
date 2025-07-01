@@ -19,4 +19,4 @@ class UpdateProductionRecord extends API
 $rawInput = file_get_contents("php://input");
 $data = json_decode($rawInput, true);
 $api = new UpdateProductionRecord();
-$api->index($data);
+$api->index($data); 

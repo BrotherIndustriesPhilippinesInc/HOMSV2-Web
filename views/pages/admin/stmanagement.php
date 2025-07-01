@@ -29,12 +29,12 @@
     $delete_sign = $textbox->primaryTextbox("register-delete-sign", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
 
     $section = $select->primarySelect("register-section", "", [
-        "PR1" => "Printer 1",
-        "PR2" => "Printer 2",
-        "IH" => "Ink Head",
+        "Printer 1" => "Printer 1",
+        "Printer 2" => "Printer 2",
+        "Ink Head" => "Ink Head",
         "P-Touch" => "P-Touch",
-        "TC" => "Tape Cassette",
-        "IC" => "Ink Cartridge",
+        "Tape Cassette" => "Tape Cassette",
+        "Ink Cartridge" => "Ink Cartridge",
         "BPS" => "BPS",
         "Toner" => "Toner",
     ]);

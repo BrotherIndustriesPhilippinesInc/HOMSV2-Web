@@ -1,9 +1,14 @@
 import dataTablesInitialization from './../dataTablesInitialization.js';
 import apiCall from './../apiCall.js';
+import { receiveFromWebView, sendToWebView } from '../WebViewInteraction.js';
+
+
 
 $(async function () {
-    const section = JSON.parse(localStorage.getItem('user'))['Section']; 
-
+    const section = JSON.parse(localStorage.getItem('user'))['Section'];
+    const userId = JSON.parse(localStorage.getItem('user'))["EmpNo"];
+    const work_center = localStorage.getItem('wc');
+    
     const params = {
         ajax: {
             url: `/homs/api/production/getHistory.php?section=${section}`, // your endpoint
@@ -41,17 +46,55 @@ $(async function () {
     let table = dataTablesInitialization("#data-table", params);
 
     $(document).on("click", ".ho-export", function(){
-        generateHO();
-    })
-    $(document).on("click", ".dpr-export", function(){
-        generateDPR();
-    })
+        let wc = $(this).data("reason_id").split("+")[0];
+        let date = $(this).data("reason_id").split("+")[1];
+        generateHO(wc, date);
+    });
 
-    function generateHO(){
-        window.location.href = '/homs/API/production/getHO.php';
+    $(document).on("click", ".dpr-export", function(){
+        let wc = $(this).data("reason_id").split("+")[0];
+        let date = $(this).data("reason_id").split("+")[1];
+        generateDPR(wc, date);
+    });
+
+    receiveFromWebView((data) => {
+
+        if (data.generatedFilePath) {
+            window.location.href = `http://apbiphbpsts01:8080/homs/resources/DPR/Generated/${data.generatedFilePath}`;
+            Swal.fire({
+                title: 'Success!',
+                text: 'DPR has been generated.',
+                icon: 'success',
+                timer: 1000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            })
+        }
+    });
+
+    function generateHO(wc, date){
+        apiCall(`/homs/API/production/getHO.php?wc=${wc}&date=${date}&section=${section}&user_id=${userId}`, 'GET').then((result) => {
+            Swal.fire({
+                title: 'Success!',
+                text: 'HO has been generated.',
+                icon: 'success',
+                timer: 1000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            })
+        });
     }
 
-    function generateDPR(){
-        window.location.href = '/homs/API/production/getDPR.php';
+    function generateDPR(wc, date){
+
+        apiCall(`/homs/API/production/getDPRDetails.php?wc=${wc}&date=${date}&section=${section}&user_id=${userId}`, 'GET').then((result) => {
+            sendToWebView("generateDPR", result.data);
+        });
+
+        /* LOADING */
+        Swal.fire({
+            title: 'Generating DPR...',
+            showConfirmButton: false
+        })
     }
 });

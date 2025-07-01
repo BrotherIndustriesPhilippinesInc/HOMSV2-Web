@@ -3,7 +3,19 @@ require_once __DIR__ . '/../interfaces/IModel.php';
 
 abstract class Model implements IModel {
     protected PDO $conn;
-    private static array $allowedTables = ['pol', 'test_table', 'pt_pol', 'tc_pol','reasons', 'production_records', 'workcenters', 'st_management', 'edit_history', 'esp_management']; // ✅ Prevents SQL Injection
+    private static array $allowedTables = [
+        'pol', 
+        'test_table', 
+        'pt_pol', 
+        'tc_pol', 
+        'reasons', 
+        'production_records', 
+        'workcenters', 
+        'st_management', 
+        'edit_history', 
+        'esp_management',
+        'breaktime_management',
+    ]; // ✅ Prevents SQL Injection
     private static string $host = '10.248.1.152';
     private static string $username = 'postgres';
     private static string $password = '1234';
@@ -236,7 +248,6 @@ abstract class Model implements IModel {
         }
     }
     
-
     public function remapForUpdate(array $data): array {
         $map = [
             'creator' => 'updated_by',

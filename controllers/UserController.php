@@ -18,6 +18,5 @@ class UserController extends Controller
         } catch (Exception $e) {
             return $this->errorResponse($e);
         }
-
     }
 }

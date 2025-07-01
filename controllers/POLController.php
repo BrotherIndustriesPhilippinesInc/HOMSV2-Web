@@ -20,7 +20,7 @@ class POLController extends Controller
             case "BPS":
                 $this->model->setTableName("tc");
                 break;
-            case 'TC':
+            case 'Tape Cassette':
                 $this->model->setTableName("tc");
                 break;
             case 'PT':

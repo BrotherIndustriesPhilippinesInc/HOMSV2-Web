@@ -1,15 +1,16 @@
-<?php
+<?php 
     global $button;
     global $textbox;
     global $select;
-    
-    $date = $textbox->dateSelect("date");
 
     /* REGISTRATION */
-    $create = $button->primaryButton("create","Register ESP", "", "", "data-bs-toggle='modal' data-bs-target='#espCreateModal'");
+    $create = $button->primaryButton("create","Register Breaktime", "", "", "data-bs-toggle='modal' data-bs-target='#breaktimeCreateModal'");
     $submit = $button->primaryButton("submit","Submit", "btn btn-primary bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "", "data-bs-dismiss='modal'");
     $createName = $textbox->primaryTextbox("create-name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
-    $createMacAddress = $textbox->primaryTextbox("create-mac_address", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+    
+    $createStartTime = $textbox->timeSelect("create-start_time", "bg-custom-tertiary");
+    $createEndTime = $textbox->timeSelect("create-end_time", "bg-custom-tertiary");
+
     $createAssignedSection = $select->primarySelect("create-assigned_section", "", [
         "Printer 1" => "Printer 1",
         "Printer 2" => "Printer 2",
@@ -23,12 +24,28 @@
     ]);
     $createLineName = $textbox->primaryTextbox("create-line_name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
     $createArea = $textbox->primaryTextbox("create-area", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
-    $createSensorName = $textbox->primaryTextbox("create-sensor_name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+    $createShift = $textbox->primaryTextbox("create-shift", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+
+    $createBreakType = $select->primarySelect("create-break_type", "", [
+        "AM" => "AM Break",
+        "NOON_MIDNIGHT" => "Noon / Midnight Break",
+        "PM" => "PM Break",
+        "OT" => "Overtime Break",
+    ]);
+
+    $createIsOvertime = $select->primarySelect("create-is_overtime", "", [
+        "true" => "Yes",
+        "false" => "No",
+    ]);
 
     /* EDIT */
+    $edit = $button->primaryButton("edit","Register Breaktime", "", "", "data-bs-toggle='modal' data-bs-target='#breaktimeEditModal'");
     $save = $button->primaryButton("save","Save", "btn btn-primary bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "", "data-bs-dismiss='modal'");
     $editName = $textbox->primaryTextbox("edit-name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
-    $editMacAddress = $textbox->primaryTextbox("edit-mac_address", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+    
+    $editStartTime = $textbox->timeSelect("edit-start_time", "bg-custom-tertiary");
+    $editEndTime = $textbox->timeSelect("edit-end_time", "bg-custom-tertiary");
+
     $editAssignedSection = $select->primarySelect("edit-assigned_section", "", [
         "Printer 1" => "Printer 1",
         "Printer 2" => "Printer 2",
@@ -42,11 +59,22 @@
     ]);
     $editLineName = $textbox->primaryTextbox("edit-line_name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
     $editArea = $textbox->primaryTextbox("edit-area", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
-    $editSensorName = $textbox->primaryTextbox("edit-sensor_name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
-    
+    $editShift = $textbox->primaryTextbox("edit-shift", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+
+    $editBreakType = $select->primarySelect("edit-break_type", "", [
+        "AM" => "AM Break",
+        "NOON_MIDNIGHT" => "Noon / Midnight Break",
+        "PM" => "PM Break",
+        "OT" => "Overtime Break",
+    ]);
+
+    $editIsOvertime = $select->primarySelect("edit-is_overtime", "", [
+        "true" => "Yes",
+        "false" => "No",
+    ]);
 ?>
 
-<title>HOMS - ESP Management</title>
+<title>HOMS - Breaktime Management</title>
 
 <body class="bg-custom text-light container-fluid">
     <?php 
@@ -54,7 +82,7 @@
         require_once __DIR__ . '/../../components/navbar.php';
     ?>
     <div class="bg-custom-secondary container-fluid rounded-3">
-        <h1>ESP Management</h1>
+        <h1>Breaktime Management</h1>
         <div>
             <?php echo $create; ?>
         </div>
@@ -62,13 +90,15 @@
             <thead>
                 <tr>
                     <th scope="col">Name</th>
-                    <th scope="col">Mac Address</th>
-                    <th scope="col">Sensor Name</th>
+                    <th scope="col">Shift</th>
+                    <th scope="col">Break Type</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">End</th>
                     <th scope="col">Section</th>
                     <th scope="col">Line</th>
                     <th scope="col">Area</th>
-                    <th scope="col">PO</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">Is Overtime Break</th>
+                
                     <th scope="col">Creator</th>
                     <th scope="col">Time Create</th>
                     <th scope="col">Updated By</th>
@@ -82,11 +112,11 @@
     </div>
     
     <!-- Modal -->
-    <div id="espCreateModal" class="modal fade" data-bs-keyboard="false" tabindex="-1">
+    <div id="breaktimeCreateModal" class="modal fade" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Register ESP32</h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Register Breaktime</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -94,25 +124,43 @@
                     <div class="d-flex flex-column gap-3">
                         <div>
                             <div>
-                                <label for="create-name" class="form-label">ESP Name</label>
+                                <label for="create-name" class="form-label">Breaktime Name</label>
                             </div>
                             <?php echo $createName; ?>
+                        </div>
+                        <div>
+                            <div>
+                                <label for="create-shift" class="form-label">Shift</label>
+                            </div>
+                            <?php echo $createShift; ?>
+                        </div>
+                        <div>
+                            <div>
+                                <label for="create-break_type" class="form-label">Break Type</label>
+                            </div>
+                            <?php echo $createBreakType; ?>
                         </div>
                         <div class="d-flex justify-content-between">
                             <div>
                                 <div>
-                                    <label for="create-mac_address" class="form-label">Mac Address</label>
+                                    <label for="create-start_time" class="form-label">Start Time</label>
                                 </div>
-                                <?php echo $createMacAddress; ?>
+                                <?php echo $createStartTime; ?>
                             </div>
                             <div>
                                 <div>
-                                    <label for="create-sensor_name" class="form-label">Sensor Name</label>
+                                    <label for="create-end_time" class="form-label">End Time</label>
                                 </div>
-                                <?php echo $createSensorName; ?>
+                                <?php echo $createEndTime; ?>
                             </div>
                         </div>
                         
+                        <div>
+                            <div>
+                                <label for="create-is_overtime" class="form-label">Is Overtime Break</label>
+                            </div>
+                            <?php echo $createIsOvertime; ?>
+                        </div>
                         <div>
                             <div>
                                 <label for="create-assigned_section" class="form-label">Section</label>
@@ -133,12 +181,7 @@
                                 <?php echo $createArea; ?>
                             </div>
                         </div>
-                        <div id="create-legend-container" class="d-none">
-                            <div>
-                                <label for="create-legend" class="form-label">Loss Factor Legend</label>
-                            </div>
-                            <?php echo $createLegend; ?>
-                        </div>
+                        
                     </div>
                     
                 </div>
@@ -149,11 +192,12 @@
         </div>
     </div>
 
-    <div id="espEditModal" class="modal fade" data-bs-keyboard="false" tabindex="-1">
+
+    <div id="breaktimeEditModal" class="modal fade" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Register ESP32</h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Breaktime</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -161,25 +205,43 @@
                     <div class="d-flex flex-column gap-3">
                         <div>
                             <div>
-                                <label for="edit-name" class="form-label">ESP Name</label>
+                                <label for="edit-name" class="form-label">Breaktime Name</label>
                             </div>
                             <?php echo $editName; ?>
+                        </div>
+                        <div>
+                            <div>
+                                <label for="edit-shift" class="form-label">Shift</label>
+                            </div>
+                            <?php echo $editShift; ?>
+                        </div>
+                        <div>
+                            <div>
+                                <label for="edit-break_type" class="form-label">Break Type</label>
+                            </div>
+                            <?php echo $editBreakType; ?>
                         </div>
                         <div class="d-flex justify-content-between">
                             <div>
                                 <div>
-                                    <label for="edit-mac_address" class="form-label">Mac Address</label>
+                                    <label for="edit-start_time" class="form-label">Start Time</label>
                                 </div>
-                                <?php echo $editMacAddress; ?>
+                                <?php echo $editStartTime; ?>
                             </div>
                             <div>
                                 <div>
-                                    <label for="edit-sensor_name" class="form-label">Sensor Name</label>
+                                    <label for="edit-end_time" class="form-label">End Time</label>
                                 </div>
-                                <?php echo $editSensorName; ?>
+                                <?php echo $editEndTime; ?>
                             </div>
                         </div>
                         
+                        <div>
+                            <div>
+                                <label for="edit-is_overtime" class="form-label">Is Overtime Break</label>
+                            </div>
+                            <?php echo $editIsOvertime; ?>
+                        </div>
                         <div>
                             <div>
                                 <label for="edit-assigned_section" class="form-label">Section</label>
@@ -200,12 +262,7 @@
                                 <?php echo $editArea; ?>
                             </div>
                         </div>
-                        <div id="edit-legend-container" class="d-none">
-                            <div>
-                                <label for="edit-legend" class="form-label">Loss Factor Legend</label>
-                            </div>
-                            <?php echo $editLegend; ?>
-                        </div>
+                        
                     </div>
                     
                 </div>
@@ -218,4 +275,4 @@
     
 </body>
 
-<script defer type="module" src="/homs/js/functions/page-scripts/espManagement.js"></script>
+<script defer type="module" src="/homs/js/functions/page-scripts/breaktimeManagement.js"></script>

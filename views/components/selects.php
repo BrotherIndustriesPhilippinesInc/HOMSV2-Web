@@ -12,7 +12,7 @@ class Selects
         }
         $html = <<<HTML
             <select class="{$name} form-select bg-custom-tertiary text-primary fw-bold glow primary-border {$class}" aria-label="Default select example" $attributes>
-                <option disabled selected class="text-primary fw-bold">{$text}</option>
+                <option disabled selected value="{$text}" class="text-primary fw-bold">{$text}</option>
                 {$optionsHtml}
             </select>
         HTML;
