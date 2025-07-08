@@ -10,10 +10,7 @@ class GetLastRunning extends API
 
     public function index($data){
         
-        $this->validation->requiredFields($data, ["section", "work_center", "po"]);
-        if(strtolower($data["section"]) === "bps"){
-            $data["section"] = "TC";
-        }
+        $this->validation->requiredFields($data, ["section", "work_center", "po", "date"]);
 
         try {
             $debugData = $this->debugRequestData($data); // Capture request data

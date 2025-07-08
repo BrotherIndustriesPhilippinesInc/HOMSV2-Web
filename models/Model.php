@@ -15,6 +15,7 @@ abstract class Model implements IModel {
         'edit_history', 
         'esp_management',
         'breaktime_management',
+        'settings',
     ]; // ✅ Prevents SQL Injection
     private static string $host = '10.248.1.152';
     private static string $username = 'postgres';
@@ -78,6 +79,7 @@ abstract class Model implements IModel {
         $this->validateTableName($table);
 
         $stmt = $this->conn->query("SELECT * FROM {$table} ORDER BY id ASC");
+        /* var_dump($stmt->fetchAll(PDO::FETCH_ASSOC)); */
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 

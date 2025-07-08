@@ -8,12 +8,9 @@ class GetSectionProduction extends API
         parent::__construct(new ProductionController());
     }
 
+
     public function index($data){
         $this->validation->requiredFields($data, ["section", "date", "po"]);
-
-        if(strtolower($data["section"]) === "bps"){
-            $data["section"] = "TC";
-        }
 
         try {
             $debugData = $this->debugRequestData($data); // Capture request data

@@ -48,6 +48,7 @@
     <script defer src="/homs/non_module_libraries/select2/select2.min.js"></script>
 
 </head>
+
 <body>
     <?php
     //Initialize Components
@@ -70,45 +71,59 @@
         '/homs/' => function() {
             include __DIR__ . '/views/pages/home.php';
         },
+        
         '/homs/comptest' => function() {
             include __DIR__ . '/tests/components-view.php';
         },
+
         '/homs/contact' => function() {
             echo "Contact us at: contact@example.com";
         },
+
         '/homs/production/upload_pol' => function() {
             include __DIR__ . '/views/pages/production/upload_pol.php';
         },
+
         '/homs/production/work_center' => function() {
             include __DIR__ . '/views/pages/production/wc_selection.php';
         },
+
         '/homs/production/export_reports' => function() {
             include __DIR__ . '/views/pages/production/export_reports.php';
         },
+
         '/homs/production/wc_selection' => function() {
             include __DIR__ . '/views/pages/production/wc_selection.php';
         },
+
         '/homs/production/details' => function() {
             include __DIR__ . '/views/pages/production/details.php';
         },
+
         '/homs/production/history' => function() {
             include __DIR__ . '/views/pages/production/edit_history.php';
         },
+
         '/homs/graphs' => function() {
             include __DIR__ . '/views/pages/graphs/graphs.php';
         },
+
         '/homs/production/output' => function() {
             include __DIR__ . '/views/pages/production/hourly_output_view.php';
         },
+
         '/homs/admin/reasons' => function() {
             include __DIR__ . '/views/pages/admin/reasons.php';
         },
+
         '/homs/admin/workcenters' => function() {
             include __DIR__ . '/views/pages/admin/workcenters.php';
         },
+
         '/homs/admin/st' => function() {
             include __DIR__ . '/views/pages/admin/stmanagement.php';
         },
+
         '/homs/admin/esp_management' => function() {
             include __DIR__ . '/views/pages/admin/esp_management.php';
         },
@@ -119,6 +134,10 @@
 
         '/homs/admin/breaktime_management' => function() {
             include __DIR__ . '/views/pages/admin/breaktime_management.php';
+        },
+
+        '/homs/admin/settings' => function() {
+            include __DIR__ . '/views/pages/admin/settings.php';
         },
     ];
 

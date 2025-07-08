@@ -17,19 +17,15 @@ $(function () {
 
     const dateSelect = flatpickr("#dateSelect", {
         enableTime: false,
-        noCalendar: false,
+        dateFormat: "Y-m-d",
         disableMobile: true,
         allowInput: true,
-        hourIncrement: 1,
-        minuteIncrement: 1,
-        enableSeconds: true,
-        defaultDate: new Date(), // Crucial for pre-filling and populating selectedDates
-        // Add an onReady hook to confirm when it's ready
-        //dateFormat: "h:i:s K", // h: 12-hour, i: minutes, K: AM/PM
+        defaultDate: new Date(),
         onReady: function(selectedDates, dateStr, instance) {
-            console.log("Flatpickr for #dateSelect is ready. Selected dates:", selectedDates);
+            console.log("Flatpickr ready. Date:", dateStr);
         }
     });
+
 
     const startTime = flatpickr("#startTime", {
         enableTime: true,
@@ -73,11 +69,13 @@ $(function () {
     let producedUnits = 0;
     let taktTimer = null;
 
+    let selectedPOID;
+
     getPOList();
     popoverInitialize();
 
-    addReasonRow();
-    addLinestopReasonRow();
+    addReasonRow("#advance-container");
+    addLinestopReasonRow("#linestop-container");
 
     /* EVENTS */
     $(".homsView").on("click", function (e) {
@@ -94,19 +92,38 @@ $(function () {
         loading("show");
 
         const poId = $(this).data("po-id");
-
+        selectedPOID = poId;
         /* HIDE UNNECESSARY DATAS */
         $(".stopProduction").hide();
         $(".countInputs").hide();
 
         $.when(
-            await setup(poId),
+            await setup(poId, $("#dateSelect").val()),
         ).done(function () {
             loading("hide");
             createTable();
         }).fail(function () {
             alert('Error loading data.');
         });
+    });
+
+    $("#dateSelect").on("change", async function () {
+        if(selectedPOID ){
+            loading("show");
+
+            $(".stopProduction").hide();
+            $(".countInputs").hide();
+
+            $.when(
+                await setup(selectedPOID, $("#dateSelect").val()),
+            ).done(function () {
+                loading("hide");
+                createTable();
+            }).fail(function () {
+                alert('Error loading data.');
+            });
+        }
+        
     });
 
     $(".startProduction").on("click", function () {  
@@ -161,7 +178,8 @@ $(function () {
                     "variance": $("#variance").val().trim() === "" ? 0 : Number($("#variance").val()),
                     "shift": $(".shiftSelect").val(),
                     "direct_operators": $("#directOperations").val(),
-                    "start_time": formatTimeOnlyToPostgres(startTime.input.value),
+                    /* "start_time": formatTimeOnlyToPostgres(startTime.input.value), */
+                    "start_time": $("#dateSelect").val() + " " + startTime.input.value,
                     "end_time": null,
                     "creator": userId,
 
@@ -228,24 +246,24 @@ $(function () {
     });
 
     $(document).on("click", ".advanceAddLayer", function(){
-        addReasonRow();
+        addReasonRow("#advance-container");
         updateAddButtons();
     });
 
     $(document).on("click", ".advanceRemoveLayer", function () {
-    const $row = $(this).closest(".reason-action-row");
+        const $row = $(this).closest(".reason-action-row");
 
-    // Only remove if there is more than one row left
-    if ($(".reason-action-row").length > 1) {
-        $row.remove();
-        updateAddButtons();
-    } else {
-        alert("At least one reason/action row must remain.");
-    }
+        // Only remove if there is more than one row left
+        if ($(".reason-action-row").length > 1) {
+            $row.remove();
+            updateAddButtons();
+        } else {
+            alert("At least one reason/action row must remain.");
+        }
     });
 
     $(document).on("click", ".linestopAddLayer", function(){
-        addLinestopReasonRow();
+        addLinestopReasonRow("#linestop-container");
         updateLinestopAddButtons();
     });
 
@@ -256,6 +274,40 @@ $(function () {
         if ($(".linestop-reason-action-row").length > 1) {
             $row.remove();
             updateLinestopAddButtons();
+        } else {
+            alert("At least one reason/action row must remain.");
+        }
+    });
+
+    $(document).on("click", ".edit-advanceAddLayer", function () {
+        addReasonRow("#edit-advance-container", true);
+        updateAddButtons(true);
+    });
+
+    $(document).on("click", ".edit-advanceRemoveLayer", function () {
+        const $row = $(this).closest(".edit-reason-action-row");
+
+        // Only remove if there is more than one row left
+        if ($(".edit-reason-action-row").length > 1) {
+            $row.remove();
+            updateAddButtons(true);
+        } else {
+            alert("At least one reason/action row must remain.");
+        }
+    });
+
+    $(document).on("click", ".edit-linestopAddLayer", function () {
+        addLinestopReasonRow("#edit-linestop-container", true);
+        updateLinestopAddButtons(true);
+    });
+
+    $(document).on("click", ".edit-linestopRemoveLayer", function () {
+        const $row = $(this).closest(".edit-linestop-reason-action-row");
+
+        // Only remove if there is more than one row left
+        if ($(".edit-linestop-reason-action-row").length > 1) {
+            $row.remove();
+            updateLinestopAddButtons(true);
         } else {
             alert("At least one reason/action row must remain.");
         }
@@ -428,6 +480,10 @@ $(function () {
     $(document).on('blur', '#data-table tbody td[contenteditable]', function () {
         watchEdit(this, table, oldRowData);
     });
+
+    $(document).on("click", ".edit-reason", function () {
+        clearAllAdvanceRows(true);
+    });
     
     /* FUNCTIONS */
     async function getPOList() {
@@ -480,64 +536,65 @@ $(function () {
                 { data: "direct_operators", visible: false},
                 { data: "start_time"},
                 { data: "end_time"},
-
+                
                 {
                     data: "advance_reasons",
                     visible: true,
                     render: function(data, type, row, meta) {
                         if (!data || data.length === 0) return "-";
-
+                        
                         let parsed = Array.isArray(data) ? data : JSON.parse(data);
-                        let raw = JSON.stringify(parsed).replace(/"/g, '&quot;'); // escape quotes
+                        
+                        let contentHtml = parsed.map(item => `
+                            <div class="mb-2">
+                                <strong>${item.reason_label}</strong><br>
+                                <small>${item.reason_notes}</small><br>
+                                <em>${item.action_label}</em><br>
+                                <small>${item.action_notes}</small>
+                            </div>
+                        `).join("");
 
                         return `
-                            <div class="reason-render" data-json="${raw}">
-                                ${parsed.map(item => `
-                                    <div class="mb-1">
-                                        <strong>${item.action_label}</strong><br>
-                                        <small>${item.action_notes}</small><br>
-                                        <em>${item.reason_label}</em><br>
-                                        <small>${item.reason_notes}</small>
-                                    </div>
-                                `).join("")}
+                            <div contenteditable="false" style="height: 100px; overflow-y: auto;">
+                                ${contentHtml}
+                            </div>
+                            <div contenteditable="false" class="mt-1">
+                                <button data-bs-toggle="modal" data-bs-target="#reasonEditModal" class="btn btn-sm btn-outline-secondary edit-reason text-primary" 
+                                        data-id='${row.id} data-type="advance'>Edit</button>
                             </div>
                         `;
                     }
+
                 },
+
                 {
                     data: "linestop_reasons",
                     visible: true,
                     render: function(data, type, row, meta) {
                         if (!data || data.length === 0) return "-";
-
+                        
                         let parsed = Array.isArray(data) ? data : JSON.parse(data);
-                        let raw = JSON.stringify(parsed).replace(/"/g, '&quot;'); // escape quotes
+                        
+                        let contentHtml = parsed.map(item => `
+                            <div class="mb-2">
+                                <strong>${item.reason_label}</strong><br>
+                                <small>${item.reason_notes}</small><br>
+                                <em>${item.action_label}</em><br>
+                                <small>${item.action_notes}</small>
+                            </div>
+                        `).join("");
 
                         return `
-                            <div class="reason-render" data-json="${raw}">
-                                ${parsed.map(item => `
-                                    <div class="mb-1">
-                                        <strong>${item.action_label}</strong><br>
-                                        <small>${item.action_notes}</small><br>
-                                        <em>${item.reason_label}</em><br>
-                                        <small>${item.reason_notes}</small>
-                                    </div>
-                                `).join("")}
+                            <div contenteditable="false" style="height: 100px; overflow-y: auto;">
+                                ${contentHtml}
+                            </div>
+                            <div contenteditable="false" class="mt-1">
+                                <button data-bs-toggle="modal" data-bs-target="#reasonEditModal" class="btn btn-sm btn-outline-secondary edit-reason text-primary" 
+                                        data-id='${row.id} data-type="advance'>Edit</button>
                             </div>
                         `;
                     }
                 },
-
-
-
-
-
-
-
-
-
-
-
 
                 { data: "creator", visible: false},
                 { data: "ended_by", visible: false},
@@ -601,9 +658,10 @@ $(function () {
         
     }
 
-    async function setup(poId){
+    async function setup(poId, date){
 
-        let lastRun = await getLatestRun(poId);
+        let lastRun = await getLatestRun(poId, date);
+
 
         let poDetails = await apiCall(`/homs/API/uploading/getPODetails.php?section=${section}&poID=${poId}`, 'GET');
         assignPODetails(poDetails.data);
@@ -624,13 +682,13 @@ $(function () {
         updateVariance();
     }
 
-    async function getLatestRun(poId){
+    async function getLatestRun(poId, date){
         let now = new Date();
         let localDateTime = now.toLocaleString('en-PH', {
             timeZone: 'Asia/Manila'
         });
 
-        let details = await apiCall(`/homs/API/production/getLastRunning.php?section=${section}&work_center=${work_center}&po=${poId}`, 'GET');
+        let details = await apiCall(`/homs/API/production/getLastRunning.php?section=${section}&work_center=${work_center}&po=${poId}&date=${date}`, 'GET');
         selectedPOData = details.data;
         
         return details;
@@ -655,7 +713,7 @@ $(function () {
     }
 
     function assignPODetails(poDetails) {
-        $("#po_number span").text(poDetails.prd_order_no);
+        $("#po_number p").text(poDetails.prd_order_no);
         $("#material span").text(poDetails.material);
         $("#description span").text(poDetails.description);
 
@@ -825,7 +883,7 @@ $(function () {
     /* END OF COMPUTATION FUNCTIONS */
 
     /* REASONS */
-    function addReasonRow() {
+    function addReasonRow(containerID, isEdit = false) {
         let componentString = `
             <div class="reason-action-row d-flex gap-2 text-center w-100">
                 <div class="d-flex flex-column gap-2 text-start w-100">
@@ -850,12 +908,51 @@ $(function () {
                 </div>
             </div>
         `;
-        $("#advance-container").append(componentString);
-        initAllDynamicSelect2sAdvanceReasons();
-        initAllDynamicSelect2sAdvanceActions();
+
+        let componentStringEdit = `
+            <div class="edit-reason-action-row d-flex gap-2 text-center w-100">
+                <div class="d-flex flex-column gap-2 text-start w-100">
+                    <select class="edit-dynamic-select2-advance-reasons w-100" name="state">
+                        <option></option>
+                    </select>
+                    <textarea class="advanceCause secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks..."></textarea>
+                </div>
+                <div class="d-flex flex-column gap-2 text-start w-100">
+                    <select class="edit-dynamic-select2-advance-actions w-100" name="state">
+                        <option></option>
+                    </select>
+                    <textarea class="advanceAction secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks..."></textarea>
+                </div>
+                <div class="d-flex flex-column gap-2 justify-content-between">
+                    <button type="button" class="edit-advanceRemoveLayer btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary d-flex justify-content-center align-items-center p-1 danger glow">
+                        <img src="/homs/resources/icons/delete.svg" alt="remove_layer">
+                    </button>
+                    <button type="button" class="edit-advanceAddLayer btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary d-flex justify-content-center align-items-center p-1 glow">
+                        <img src="/homs/resources/icons/add.svg" alt="add_layer">
+                    </button>
+                </div>
+            </div>
+        `;
+
+        /* If isEdit is true, append to edit container */
+
+
+        /* $("#advance-container").append(componentString); */
+        $(containerID).append(isEdit ? componentStringEdit : componentString);
+
+
+        if (isEdit){ 
+            initAllDynamicSelect2sAdvanceReasons('.edit-dynamic-select2-advance-reasons', $('#reasonEditModal'));
+            initAllDynamicSelect2sAdvanceActions('.edit-dynamic-select2-advance-actions', $('#reasonEditModal'));
+        }
+        else{ 
+            initAllDynamicSelect2sAdvanceReasons('.dynamic-select2-advance-reasons', $('#stopProductionModal'));
+            initAllDynamicSelect2sAdvanceActions('.dynamic-select2-advance-actions', $('#stopProductionModal'));
+        }
+        
     }
 
-    function addLinestopReasonRow() {
+    function addLinestopReasonRow(containerID, isEdit = false) {
         let componentString = `
             <div class="linestop-reason-action-row d-flex gap-2 text-center w-100">
                 <div class="d-flex flex-column gap-2 text-start w-100">
@@ -881,17 +978,48 @@ $(function () {
             </div>
         `;
 
-        $("#linestop-container").append(componentString);
-        initAllDynamicSelect2sLinestopReasons();
-        initAllDynamicSelect2sLinestopActions();
+        let componentStringEdit = `
+            <div class="edit-linestop-reason-action-row d-flex gap-2 text-center w-100">
+                <div class="d-flex flex-column gap-2 text-start w-100">
+                    <select class="edit-dynamic-select2-linestop-reasons w-100" name="state">
+                        <option></option>
+                    </select>
+                    <textarea class="linestopCause secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks..."></textarea>
+                </div>
+                <div class="d-flex flex-column gap-2 text-start w-100">
+                    <select class="edit-dynamic-select2-linestop-actions w-100" name="state">
+                        <option></option>
+                    </select>
+                    <textarea class="linestopAction secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks..."></textarea>
+                </div>
+                <div class="d-flex flex-column gap-2 justify-content-between">
+                    <button type="button" class="edit-linestopRemoveLayer btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary d-flex justify-content-center align-items-center p-1 danger glow">
+                        <img src="/homs/resources/icons/delete.svg" alt="remove_layer">
+                    </button>
+                    <button type="button" class="edit-linestopAddLayer btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary d-flex justify-content-center align-items-center p-1 glow">
+                        <img src="/homs/resources/icons/add.svg" alt="add_layer">
+                    </button>
+                </div>
+            </div>
+        `;
 
+        /* $("#linestop-container").append(componentString); */
+        $(containerID).append(isEdit ? componentStringEdit : componentString);
+
+        if(isEdit){
+            initAllDynamicSelect2sLinestopReasons('.edit-dynamic-select2-linestop-reasons', $('#reasonEditModal'));
+            initAllDynamicSelect2sLinestopActions('.edit-dynamic-select2-linestop-actions', $('#reasonEditModal'));
+        }else{
+            initAllDynamicSelect2sLinestopReasons('.dynamic-select2-linestop-reasons', $('#stopProductionModal'));
+            initAllDynamicSelect2sLinestopActions('.dynamic-select2-linestop-actions', $('#stopProductionModal'));
+        }
     }
 
-    function initAllDynamicSelect2sAdvanceReasons() {
-        $('.dynamic-select2-advance-reasons:not(.select2-hidden-accessible)').select2({
+    function initAllDynamicSelect2sAdvanceReasons(elementID, parent) {
+        $(elementID + ':not(.select2-hidden-accessible)').select2({
             placeholder: "Select Reason...",
             allowClear: true,
-            dropdownParent: $('#stopProductionModal'), // adjust as needed
+            dropdownParent: parent, // adjust as needed
             ajax: {
                 url: '/homs/API/admin/getReasons.php',
                 dataType: 'json',
@@ -915,11 +1043,11 @@ $(function () {
         });
     }
 
-    function initAllDynamicSelect2sAdvanceActions() {
-        $('.dynamic-select2-advance-actions:not(.select2-hidden-accessible)').select2({
+    function initAllDynamicSelect2sAdvanceActions(elementID, parent) {
+        $(elementID + ':not(.select2-hidden-accessible)').select2({
             placeholder: "Select Action...",
             allowClear: true,
-            dropdownParent: $('#stopProductionModal'), // adjust as needed
+            dropdownParent: parent, // adjust as needed
             ajax: {
                 url: '/homs/API/admin/getReasons.php',
                 dataType: 'json',
@@ -943,11 +1071,11 @@ $(function () {
         });
     }
 
-    function initAllDynamicSelect2sLinestopReasons() {
-        $('.dynamic-select2-linestop-reasons:not(.select2-hidden-accessible)').select2({
+    function initAllDynamicSelect2sLinestopReasons(elementID, parent) {
+        $(elementID + ':not(.select2-hidden-accessible)').select2({
             placeholder: "Select Reason...",
             allowClear: true,
-            dropdownParent: $('#stopProductionModal'), // adjust as needed
+            dropdownParent: parent, // adjust as needed
             ajax: {
                 url: '/homs/API/admin/getReasons.php',
                 dataType: 'json',
@@ -971,11 +1099,11 @@ $(function () {
         });
     }
 
-    function initAllDynamicSelect2sLinestopActions() {
-        $('.dynamic-select2-linestop-actions:not(.select2-hidden-accessible)').select2({
+    function initAllDynamicSelect2sLinestopActions(elementID, parent) {
+        $(elementID + ':not(.select2-hidden-accessible)').select2({
             placeholder: "Select Action...",
             allowClear: true,
-            dropdownParent: $('#stopProductionModal'), // adjust as needed
+            dropdownParent: parent, // adjust as needed
             ajax: {
                 url: '/homs/API/admin/getReasons.php',
                 dataType: 'json',
@@ -999,14 +1127,24 @@ $(function () {
         });
     }
 
-    function updateAddButtons() {
-        $(".advanceAddLayer").hide().removeClass("d-flex");
-        $(".advanceAddLayer").last().show().addClass("d-flex");
+    function updateAddButtons(isEdit = false) {
+        if (!isEdit) {
+            $(".advanceAddLayer").hide().removeClass("d-flex");
+            $(".advanceAddLayer").last().show().addClass("d-flex");
+        }else {
+            $(".edit-advanceAddLayer").hide().removeClass("d-flex");
+            $(".edit-advanceAddLayer").last().show().addClass("d-flex");
+        }
     }
 
-    function updateLinestopAddButtons() {
-        $(".linestopAddLayer").hide().removeClass("d-flex");
-        $(".linestopAddLayer").last().show().addClass("d-flex");
+    function updateLinestopAddButtons(isEdit = false) {
+        if (!isEdit) {
+            $(".linestopAddLayer").hide().removeClass("d-flex");
+            $(".linestopAddLayer").last().show().addClass("d-flex");
+        }else {
+            $(".edit-linestopAddLayer").hide().removeClass("d-flex");
+            $(".edit-linestopAddLayer").last().show().addClass("d-flex");
+        }
     }
 
     function collectAdvanceReasonData() {
@@ -1063,12 +1201,22 @@ $(function () {
         return result;
     }
 
-    function clearAllAdvanceRows() {
-        $("#advance-container").empty(); // remove all rows
-        addReasonRow(); // add one fresh default row
+    function clearAllAdvanceRows(isEdit = false) {
+        if (!isEdit) {
+            $("#advance-container").empty(); // remove all rows
+            addReasonRow("#advance-container"); // add one fresh default row
 
-        $("#linestop-container").empty(); // remove all rows
-        addLinestopReasonRow(); // add one fresh default row
+            $("#linestop-container").empty(); // remove all rows
+            addLinestopReasonRow("#linestop-container"); // add one fresh default row
+        } 
+        else {
+            $("#edit-advance-container").empty(); // remove all rows
+            addReasonRow("#edit-advance-container", true); // add one fresh default row
+
+            $("#edit-linestop-container").empty();
+            addLinestopReasonRow("#edit-linestop-container", true); // add one fresh default row
+        }
+        
     }
     /* END OF REASONS FUNCTIONS */
 
@@ -1123,6 +1271,17 @@ $(function () {
             if(lastRunData.esp_id != 0){
                 realTimeUpdateOfPODetails(lastRunData.po_id);
             }
+
+        }else{
+            $(".startProduction").show();
+            $(".stopProduction").hide();
+
+            $(".po-button-modal").show();
+
+            $(".espSelect").attr("disabled", false);
+            $(".lineSelect").attr("disabled", false);
+            $(".areaSelect").attr("disabled", false);
+            $(".shiftSelect").attr("disabled", false);
         }
     }
 
@@ -1190,6 +1349,7 @@ $(function () {
 
             await apiCall('/homs/API/production/submitEditHistory.php', 'POST', data);
             
+            /* FORGOTTEN TO UPDATE THE DB */
             let updatedData = {
                 "id": newRowData["id"],
                 "po": newRowData["po"],
@@ -1227,8 +1387,6 @@ $(function () {
             console.log("No changes detected in this row");
         }
     }
-
-    
 
     async function realTimeUpdateOfPODetails(poId) {
         console.log("Realtime update of PO details");

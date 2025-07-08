@@ -12,6 +12,7 @@
   $st_management = $button->navButton("St Management", "/homs/admin/st", "text-center pt-2");
   $esp_management = $button->navButton("ESP Management", "/homs/admin/esp_management", "text-center pt-2");
   $breaktime_management = $button->navButton("Breaktime Management", "/homs/admin/breaktime_management", "text-center pt-2");
+  $settings = $button->navButton("Settings", "/homs/admin/settings", "text-center pt-2");
 
   $confirmation = $button->navButton("Confirmation", "/homs/confirmation");
   $graphs = $button->navButton("Graphs", "/homs/graphs");
@@ -88,12 +89,13 @@
               <img class="arrow d-none" src="/homs/resources/icons/arrow_up.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
             </div>
             <div class="nav-submenu">
-              <?php 
+              <?php
                 echo $reasons;
                 echo $workcenters;
                 echo $st_management;
                 echo $esp_management;
                 echo $breaktime_management;
+                echo $settings;
               ?>
             </div>
           </div>

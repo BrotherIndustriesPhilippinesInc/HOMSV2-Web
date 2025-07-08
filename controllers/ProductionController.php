@@ -35,9 +35,10 @@ class ProductionController extends Controller
         $section = $data["section"];
         $work_center = $data["work_center"];
         $po = $data["po"];
+        $date = $data["date"];
 
-        $pol = $this->POLController->getPODetails($section, $po);
-        $production_record = $this->get("section = '{$section}' AND work_center = '{$work_center}' AND po_id = '{$pol['po_id']}'");
+        $pol = $this->POLController->getPODetails($section, $po, $date);
+        $production_record = $this->get("section = '{$section}' AND work_center = '{$work_center}' AND po_id = '{$pol['po_id']}' AND time_created::date = '{$date}'");
 
         $assignedESP = $this->espController->get("assigned_section = '{$section}' AND po_id = '{$pol['po_id']}' AND isrunning = true");
         
@@ -100,7 +101,9 @@ class ProductionController extends Controller
         
         $latestData = $this->get("time_created::date = '{$end_time}' AND section = '{$data['section']}' AND work_center = '{$data['work_center']}' AND po_id = '{$data['po_id']}'");
         return $this->model->update($latestData["id"], [
-            "actual_quantity"=>$data["actual_quantity"], "variance"=>$data["variance"],
+            "actual_quantity"=>$data["actual_quantity"], 
+            "target"=>$data["target"],
+            "variance"=>$data["variance"],
             "direct_operators"=>$data["direct_operators"],
             "end_time"=>$data["end_time"], 
             "advance_reasons"=>$data["advance_reasons"],

@@ -11,7 +11,7 @@ class GetWorkcenters extends API
 
     public function index($data = ""){
 
-        $this->validation->requiredFields($data, ["section", "workcenter"]);
+        /* $this->validation->requiredFields($data, ["section", "workcenter"]); */
 
         if(isset($data["workcenter"])){
             $this->get("workcenter ILIKE  '$data[workcenter]' AND section ILIKE '$data[section]'");

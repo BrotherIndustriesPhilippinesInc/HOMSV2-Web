@@ -26,6 +26,30 @@ abstract class API implements IAPI {
         return null;
     }
 
+    public function handleRequest() {
+        $method = $_SERVER['REQUEST_METHOD'];
+        $input = file_get_contents("php://input");
+        $data = json_decode($input, true) ?? $_GET;
+
+        switch ($method) {
+            case 'GET':
+                return isset($_GET['id']) ? $this->get($_GET['id']) : $this->get();
+            case 'POST':
+                return $this->post($data);
+            case 'PUT':
+                return $this->put($_GET['id'] ?? null, $data);
+            case 'PATCH':
+                return $this->patch($_GET['id'] ?? null, $data);
+            case 'DELETE':
+                return $this->delete($_GET['id'] ?? null);
+            default:
+                http_response_code(405);
+                echo json_encode(["status" => "error", "message" => "Method Not Allowed"]);
+                exit;
+        }
+    }
+
+
     public function get(string $where = null) {
         try {
             $debugData = $this->debugRequestData($where);

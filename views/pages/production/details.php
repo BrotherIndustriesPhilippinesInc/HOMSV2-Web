@@ -78,7 +78,7 @@
     ?>
     
     <div class="d-flex flex-column bg-custom-secondary container-fluid rounded-3 pb-2"> 
-        <div class="d-flex align-items-center justify-content-between gap-3">
+        <div class="d-flex align-items-center justify-content-between gap-3 pt-4">
 
             <div class="d-flex align-items-center gap-2 justify-content-between">
                 <div>
@@ -87,19 +87,22 @@
             </div>
 
             <div id="" class="initial initial-setup">
-                <div class="d-flex gap-5"  style="color : #8DCEE3; font-size: 12px;">
-                    <div id="po_number" class="gap-2 align-items-center">
-                        <i class="fa-solid fa-paste" style="font-size: 24px; margin-right: 5px;"></i>
-                        <span class="fw-bold">po_number</span>
+                <div class="d-flex flex-column gap-4"  style="color : #8DCEE3;">
+                    <div id="po_number" class="d-flex align-items-center justify-content-center gap-2 align-items-center">
+                        <i class="fa-solid fa-paste" style="font-size: 32px; margin-right: 5px; "></i>
+                        <p class="fw-bold m-0" style="font-size: 24px; text-decoration: underline" >po_number</p>
                     </div>
-                    <div id="material" class="gap-2 align-items-center">
-                        <i class="fa-solid fa-box" style="font-size: 24px; margin-right: 5px;"></i>
-                        <span class="fw-bold">material</span>
+                    <div class="d-flex gap-2">
+                        <div id="material" class="gap-2 align-items-center">
+                            <i class="fa-solid fa-box" style="font-size: 24px; margin-right: 5px;"></i>
+                            <span class="fw-bold">material</span>
+                        </div>
+                        <div id="description" class="gap-2 align-items-center">
+                                <i class="fa-solid fa-info" style="font-size: 24px; margin-right: 5px;"></i>
+                            <span class="fw-bold">description</span>
+                        </div>
                     </div>
-                    <div id="description" class="gap-2 align-items-center">
-                            <i class="fa-solid fa-info" style="font-size: 24px; margin-right: 5px;"></i>
-                        <span class="fw-bold">description</span>
-                    </div>
+                    
                 </div>
             </div>
             
@@ -115,7 +118,7 @@
         <div class="h-100 d-flex justify-content-between gap-3">
             <div class="w-100 d-flex flex-column gap-2">
                 <!-- CONTROLS -->
-                <div class=" d-flex justify-content-between w-100">
+                <div class=" d-flex justify-content-between w-100 pt-2">
                     <div class="d-flex gap-2">
                         <div class="d-flex align-items-center">
                             <?php
@@ -463,6 +466,44 @@
                             <?php 
                                 echo $save;
                             ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- REASON EDIT MODAL -->
+    <div id="reasonEditModal" class="modal fade" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Edit Reason</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="reasonEditModalBody" class="modal-body">
+                    <div>
+                        <div class="d-flex flex-column content-group p-2 rounded-3 h-100">
+                            <h5>Advance / Delay</h5>
+                            <div class="w-100 d-flex justify-content-start">
+                                <h5 class="w-50">Causes</h5>
+                                <h5 class="w-50">Actions</h5>
+                            </div>
+                            <div id="edit-advance-container" class="d-flex flex-column gap-2 h-100">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex flex-column content-group p-2 rounded-3 h-100">
+                            <h5>Linestop / Abnormality Detail</h5>
+                            <div class="w-100 d-flex justify-content-start">
+                                <h5 class="w-50">Causes</h5>
+                                <h5 class="w-50">Actions</h5>
+                            </div>
+                            <div id="edit-linestop-container" class="d-flex flex-column gap-2 h-100">
+
+                            </div>
                         </div>
                     </div>
                 </div>
