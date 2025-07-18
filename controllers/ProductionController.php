@@ -31,6 +31,7 @@ class ProductionController extends Controller
 
     }
 
+
     public function lastRun($data){
         $section = $data["section"];
         $work_center = $data["work_center"];
@@ -55,7 +56,9 @@ class ProductionController extends Controller
                 "sales_order"=> $pol["sales_order"],
                 "material"=> $pol["material"],
                 "description"=> $pol["description"],
-                "plan_quantity"=> $pol["plan_quantity"],
+
+                "plan_quantity"=> $production_record["plan_quantity"],
+                
                 "pol_creator"=> $pol["pol_creator"],
                 "pol_time_created"=> $pol["pol_time_created"],
                 "pol_updated_by"=> $pol["pol_updated_by"],
@@ -96,27 +99,40 @@ class ProductionController extends Controller
         }
     }
 
-    public function evaluatedUpdate($data){
-        $end_time = date("Y-m-d", strtotime($data["end_time"]));
+    public function evaluatedUpdate($data) {
+        // Get the current (latest) record
+        $latestData = $this->get("time_created::date = '{$data['end_time']}' AND section = '{$data['section']}' AND work_center = '{$data['work_center']}' AND po_id = '{$data['po_id']}'", "ORDER BY id DESC LIMIT 1");
         
-        $latestData = $this->get("time_created::date = '{$end_time}' AND section = '{$data['section']}' AND work_center = '{$data['work_center']}' AND po_id = '{$data['po_id']}'");
+        // Get the record *before* the latest one
+        $previousData = $this->get("time_created::date = '{$data['end_time']}' AND section = '{$data['section']}' AND work_center = '{$data['work_center']}' AND po_id = '{$data['po_id']}' AND id < {$latestData['id']}", "ORDER BY id DESC LIMIT 1");
+
+        // Initialize cumulative values
+        $prevPlan = $previousData && isset($previousData['commulative_plan']) ? $previousData['commulative_plan'] : 0;
+        $prevActual = $previousData && isset($previousData['commulative_actual']) ? $previousData['commulative_actual'] : 0;
+
+
+        // Calculate new cumulative values
+        $newCummulativePlan = $prevPlan + $data['target'];
+        $newCummulativeActual = $prevActual + $data['actual_quantity'];
+
+        // Update current row
         return $this->model->update($latestData["id"], [
-            "actual_quantity"=>$data["actual_quantity"], 
-            "target"=>$data["target"],
-            "variance"=>$data["variance"],
-            "direct_operators"=>$data["direct_operators"],
-            "end_time"=>$data["end_time"], 
-            "advance_reasons"=>$data["advance_reasons"],
-            "linestop_reasons"=>$data["linestop_reasons"],
 
-            "ended_by"=>$data["creator"],
-
-            "production_action"=> "end",
-        
+            "compliance_rate"      => $data["compliance_rate"],
+            "actual_quantity"      => $data["actual_quantity"], 
+            "target"               => $data["target"],
+            "variance"             => $data["variance"],
+            "direct_operators"     => $data["direct_operators"],
+            "end_time"             => $data["end_time"], 
+            "advance_reasons"      => $data["advance_reasons"],
+            "linestop_reasons"     => $data["linestop_reasons"],
+            "ended_by"             => $data["creator"],
+            "production_action"    => "end",
+            "commulative_plan"     => $newCummulativePlan,
+            "commulative_actual"   => $newCummulativeActual,
         ]);
-
-        
     }
+
 
     public function getHistory($data){
         return $this->model->getHistory($data);

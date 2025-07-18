@@ -25,9 +25,9 @@ abstract class Controller implements IController {
         }
     }
 
-    public function get(string $where) {
+    public function get(string $where, string $additionalConditions = "ORDER BY id DESC") {
         try {
-            return $this->model->get($where);
+            return $this->model->get($where, $additionalConditions = "ORDER BY id DESC");
         } catch (Exception $e) {
             return $this->errorResponse($e);
         }

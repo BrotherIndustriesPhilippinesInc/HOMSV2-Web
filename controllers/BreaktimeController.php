@@ -43,6 +43,11 @@ class BreaktimeController extends Controller
     $total_rest_time = 0;
     $used_breaks = [];
 
+    $shift_duration_minutes = null;
+    if ($start_seconds !== null && $end_seconds !== null) {
+        $shift_duration_minutes = ($end_seconds - $start_seconds) / 60;
+    }
+
     foreach ($section_rest_times as $rest_time) {
         $break_id = $rest_time['id'];
         $break_type = $rest_time['break_type'];
@@ -51,6 +56,13 @@ class BreaktimeController extends Controller
 
         $break_start_seconds = $this->toSecondsFromMidnight($break_start_time);
         $break_end_seconds = $this->toSecondsFromMidnight($break_end_time);
+
+        $is_ot_break = $rest_time['isovertime']; // assuming this is a boolean or 0/1
+
+        // Skip OT break if duration is not over 3 hours
+        if ($is_ot_break && $shift_duration_minutes !== null && $shift_duration_minutes <= 180) {
+            continue;
+        }
 
         // Adjust breaks if they're also overnight relative to shift
         if ($is_overnight && $break_end_seconds < $start_seconds) {

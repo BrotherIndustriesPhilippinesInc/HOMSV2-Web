@@ -8,7 +8,7 @@ class UserController extends Controller
         parent::__construct(new UserModel());
     }
 
-    public function get(string $where = null) {
+    public function get(string $where = null, string $additionalConditions = null) {
         try {
             if ($where === null) {
                 return $this->model->getAll();

@@ -86,8 +86,19 @@
             </div>
         </div>
     </div>
-    
 
+    <div class="toast-container  position-fixed bottom-0 end-0 p-3">
+        <div id="update-toast" class="toast glow" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header d-flex gap-2">
+                <i class="fa-solid fa-clock"></i>
+                <strong class="me-auto">Hourly Update</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Hourly updates settings updated successfully.
+            </div>
+        </div>
+    </div>
 </body>
 
 <script defer type="module" src="/homs/js/functions/page-scripts/settings.js"></script>

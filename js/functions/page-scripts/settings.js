@@ -9,6 +9,13 @@ $(async function () {
     const userId = JSON.parse(localStorage.getItem('user'))["EmpNo"];
     const work_center = localStorage.getItem('wc');
     const user = JSON.parse(localStorage.getItem("user"));
+    const myToastEl = $('#update-toast');
+    const toast = new bootstrap.Toast(myToastEl, {
+        autohide: true,
+        animation: true,
+        delay: 5000
+    });
+    
 
     let globalSettings;
     await getGlobalSettings();
@@ -25,7 +32,7 @@ $(async function () {
             "Printer 1": $("#printer1ID").is(":checked"),
             "Printer 2": $("#printer2ID").is(":checked"),
             "P-Touch": $("#pTouchID").is(":checked"),
-            "Ink Cartridge": $("#inkCartridgeID").is(":checked"),
+            "Ink Cartridge": $("#inkID").is(":checked"),
             "Tape Cassette": $("#tapeCassetteID").is(":checked")
         };
         /* UPDATE HOURLY UPDATES */
@@ -56,7 +63,7 @@ $(async function () {
         sections["Printer 1"]? $("#printer1ID").prop("checked", true) : $("#printer1ID").prop("checked", false);
         sections["Printer 2"]? $("#printer2ID").prop("checked", true) : $("#printer2ID").prop("checked", false);
         sections["P-Touch"]? $("#pTouchID").prop("checked", true) : $("#pTouchID").prop("checked", false);
-        sections["Ink Cartridge"]? $("#inkCartridgeID").prop("checked", true) : $("#inkCartridgeID").prop("checked", false);
+        sections["Ink Cartridge"]? $("#inkID").prop("checked", true) : $("#inkID").prop("checked", false);
         sections["Tape Cassette"]? $("#tapeCassetteID").prop("checked", true) : $("#tapeCassetteID").prop("checked", false);
     }
 
@@ -71,7 +78,7 @@ $(async function () {
                 if (result['status'] === 'error') {
                     alert(result['message']);
                 } else {
-                    alert("Hourly updates settings updated successfully.");
+                    toast.show();
                 }
             })
             .catch(error => {

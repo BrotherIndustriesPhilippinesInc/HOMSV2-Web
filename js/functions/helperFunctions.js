@@ -179,3 +179,26 @@ export function formatTime(dateString) {
 
     return `${hours}:${minutes}:${seconds} ${ampm}`;
 }
+
+export function convertTo24Hour(timeStr) {
+    // Example: "06:56:52 AM" => "06:56:52"
+    let [time, modifier] = timeStr.split(' ');
+    let [hours, minutes, seconds] = time.split(':');
+
+    if (modifier === 'PM' && hours !== '12') {
+        hours = String(parseInt(hours, 10) + 12);
+    }
+    if (modifier === 'AM' && hours === '12') {
+        hours = '00';
+    }
+
+    return `${hours.padStart(2, '0')}:${minutes}:${seconds}`;
+}
+
+export function getTodayDateString() {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+}

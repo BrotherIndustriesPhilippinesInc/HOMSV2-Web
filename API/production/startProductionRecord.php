@@ -33,7 +33,10 @@ class StartInsertRecord extends API
             "creator",
 
             "esp_id",
-            "hourly_plan"
+            "hourly_plan",
+
+            "commulative_plan",
+            "commulative_actual",
         ];
         
         $this->validation->requiredFields($data, $requiredFields);

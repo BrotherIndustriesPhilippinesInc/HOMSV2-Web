@@ -1,10 +1,11 @@
 import appendParameterToURL from "../appendParameterToUrl.js";
 import redirect from "../redirect.js";
 import apiCall from "../apiCall.js";
-import { search, formatTimeOnlyToPostgres, switchModals } from "../helperFunctions.js";
+import { search, formatTimeOnlyToPostgres, switchModals, getTodayDateString } from "../helperFunctions.js";
 import dataTablesInitialization from "../dataTablesInitialization.js";
+import { convertTo24Hour} from "../helperFunctions.js";
 
-$(function () {
+$(async function () {
 
     /* INITIALIZATION */
     const section = JSON.parse(localStorage.getItem('user'))['Section'];
@@ -15,6 +16,12 @@ $(function () {
     let oldRowData = null;
     let poDetailsInterval = null;
 
+    let globalSettings = {};
+
+    let hourlyUpdates = false;
+    let startProductionTime = null;
+    let lastUpdateTime = null;
+    
     const dateSelect = flatpickr("#dateSelect", {
         enableTime: false,
         dateFormat: "Y-m-d",
@@ -26,23 +33,36 @@ $(function () {
         }
     });
 
-
     const startTime = flatpickr("#startTime", {
         enableTime: true,
-        noCalendar: true,
+        noCalendar: true, // hides calendar from UI
         disableMobile: true,
         allowInput: true,
         hourIncrement: 1,
         minuteIncrement: 1,
         enableSeconds: true,
-        defaultDate: new Date(), // Crucial for pre-filling and populating selectedDates
-        // Add an onReady hook to confirm when it's ready
-         dateFormat: "h:i:s K", // h: 12-hour, i: minutes, K: AM/PM
+        defaultDate: new Date(),
+        dateFormat: "h:i:s K", // shown format: "12:34:56 PM"
+
+        onChange: function(selectedDates, dateStr, instance) {
+            if (selectedDates.length > 0) {
+                const fullDate = selectedDates[0];
+
+                // Build full datetime string in ISO format
+                const isoString = fullDate.toISOString().slice(0, 19).replace('T', ' '); // e.g. "2025-07-10 18:35:28"
+                
+                // Store this somewhere safe
+                startProductionTime = isoString;
+
+                console.log("Actual full datetime stored:", startProductionTime);
+            }
+        },
+
         onReady: function(selectedDates, dateStr, instance) {
-            console.log("Flatpickr for #startTime is ready. Selected dates:", selectedDates);
+            console.log("Flatpickr ready. Selected:", selectedDates);
         }
     });
-    
+
     startSyncingFlatpickrToNow(startTime);
     
     const endTime = flatpickr("#endTime", {
@@ -76,6 +96,12 @@ $(function () {
 
     addReasonRow("#advance-container");
     addLinestopReasonRow("#linestop-container");
+
+    /* FEATURE CHECKS */
+    startFeatureChecks();
+
+    
+
 
     /* EVENTS */
     $(".homsView").on("click", function (e) {
@@ -159,6 +185,24 @@ $(function () {
             cancelButtonText: 'No, cancel!'
         }).then(async (result) => {
             if (result.isConfirmed) {
+                
+                /* CHECK INPUTS IF COMPLETE */
+                if(
+                    $(".espSelect").val() !== "0" ||
+                    $(".lineSelect").val() === "0" ||
+                    $(".shiftSelect").val() === "Shift"
+                ){
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Please complete the form before starting production.',
+                        timer: 1000,
+                        timerProgressBar: true
+                    });
+                    return;
+                }
+
+
                 $("#startTime").val(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
                 $(".shiftSelect").val(selectedShift);
 
@@ -172,14 +216,14 @@ $(function () {
                     "area":$(".areaSelect option:selected").text(),
                     "material": selectedPOData.material,
                     "description": selectedPOData.description,
-                    "plan_quantity": selectedPOData.plan_quantity,
+                    "plan_quantity": $("#planQuantity").val(),
                     "takt_time": $("#taktTime").val(),
                     "actual_quantity": $("#actualQuantity").val().trim() === "" ? 0 : Number($("#actualQuantity").val()),
                     "variance": $("#variance").val().trim() === "" ? 0 : Number($("#variance").val()),
                     "shift": $(".shiftSelect").val(),
                     "direct_operators": $("#directOperations").val(),
-                    /* "start_time": formatTimeOnlyToPostgres(startTime.input.value), */
-                    "start_time": $("#dateSelect").val() + " " + startTime.input.value,
+                    "start_time": formatTimeOnlyToPostgres(startTime.input.value),
+                    /* "start_time": $("#dateSelect").val() + " " + startTime.input.value, */
                     "end_time": null,
                     "creator": userId,
 
@@ -187,6 +231,9 @@ $(function () {
                     "hourly_plan": $("#hourlyPlanQuantity").val(),
                     "target": $("#target").val(),
                     "compliance_rate": $("#complianceRate").val().replace('%', ''),
+
+                    "commulative_plan": $("#target").val(),
+                    "commulative_actual": $("#actualQuantity").val().trim() === "" ? 0 : Number($("#actualQuantity").val()),
                 }
                 let result = await apiCall('/homs/API/production/startProductionRecord.php', 'POST', data).then((response) => {
                     /* ACKNOWLEDGEMENT */
@@ -224,6 +271,8 @@ $(function () {
                         if (espSelectID !== "0") {
                             realTimeUpdateOfPODetails(selectedPOData.po_id);
                         }
+
+                        startProductionTime = $("#dateSelect").val() + " " + convertTo24Hour(startTime.input.value);
                     });
                     table.ajax.reload(null, false);
                 });
@@ -401,7 +450,7 @@ $(function () {
             "area":$(".areaSelect option:selected").text(),
             "material": selectedPOData.material,
             "description": selectedPOData.description,
-            "plan_quantity": selectedPOData.plan_quantity,
+            "plan_quantity": $("#planQuantity").val(),
             "takt_time": $("#taktTime").val(),
             "actual_quantity": $("#actualQuantity").val(),
             "variance": $("#variance").val(),
@@ -451,6 +500,7 @@ $(function () {
                 $(".lineSelect").val("").trigger("change");
                 $(".shiftSelect").val("Shift").trigger("change");
                 
+                $("#planQuantity").val($("#planQuantity").val() - $("#actualQuantity").val());
                 $("#hourlyPlanQuantity").val(0);
                 $("#target").val(0);
                 $("#actualQuantity").val(0);
@@ -481,8 +531,12 @@ $(function () {
         watchEdit(this, table, oldRowData);
     });
 
-    $(document).on("click", ".edit-reason", function () {
-        clearAllAdvanceRows(true);
+    $(document).on("click", ".edit-reason", async function () {
+        $("#edit-advance-container").empty(); // remove all rows
+        $("#edit-linestop-container").empty();
+
+        let rowID = $(this).data("id");
+        await showEditAdvanceReason(rowID);
     });
     
     /* FUNCTIONS */
@@ -527,8 +581,13 @@ $(function () {
                 { data: "plan_quantity", visible: false},
                 { data: "hourly_plan", visible: false},
                 { data: "takt_time", visible: false},
+
                 { data: "target", visible: true},
+                { data: "commulative_plan", visible: true},
+
                 { data: "actual_quantity"},
+                { data: "commulative_actual", visible: true},
+
                 { data: "compliance_rate", visible: true},
                 { data: "variance"},
                 { data: "shift", visible: false},
@@ -560,7 +619,7 @@ $(function () {
                             </div>
                             <div contenteditable="false" class="mt-1">
                                 <button data-bs-toggle="modal" data-bs-target="#reasonEditModal" class="btn btn-sm btn-outline-secondary edit-reason text-primary" 
-                                        data-id='${row.id} data-type="advance'>Edit</button>
+                                        data-id='${row.id}' data-type='advance'>Edit</button>
                             </div>
                         `;
                     }
@@ -590,7 +649,7 @@ $(function () {
                             </div>
                             <div contenteditable="false" class="mt-1">
                                 <button data-bs-toggle="modal" data-bs-target="#reasonEditModal" class="btn btn-sm btn-outline-secondary edit-reason text-primary" 
-                                        data-id='${row.id} data-type="advance'>Edit</button>
+                                        data-id='${row.id}' data-type='advance'>Edit</button>
                             </div>
                         `;
                     }
@@ -661,7 +720,7 @@ $(function () {
     async function setup(poId, date){
 
         let lastRun = await getLatestRun(poId, date);
-
+        startProductionTime = lastRun.data.start_time;
 
         let poDetails = await apiCall(`/homs/API/uploading/getPODetails.php?section=${section}&poID=${poId}`, 'GET');
         assignPODetails(poDetails.data);
@@ -679,6 +738,7 @@ $(function () {
 
         checkIfAlreadyStarted(lastRun.data);
 
+        $("#planQuantity").val(lastRun.data.plan_quantity);
         updateVariance();
     }
 
@@ -722,7 +782,7 @@ $(function () {
 
     function assignLineListValues(lineList) {
         const lineSelect = $(".lineSelect").empty();
-        lineSelect.append(new Option("Select Line...", "", true, true));
+        lineSelect.append(new Option("Select Line...", "0", true, true));
 
         // Allow user to open the dropdown and select an option
         lineSelect.on("change", function () {
@@ -786,6 +846,19 @@ $(function () {
         }
 
         $("#complianceRate").val(complianceRate.toFixed(2) + "%");
+    }
+
+    function calculateComplianceRateWithValues(actualQuantity, target){
+        
+        let complianceRate = 0;
+
+        complianceRate = actualQuantity / target * 100;
+
+        if(isNaN(complianceRate)){
+            complianceRate = 0;
+        }
+
+        return complianceRate.toFixed(2);
     }
 
     function calculateVariancePercent(plan, actual) {
@@ -883,7 +956,7 @@ $(function () {
     /* END OF COMPUTATION FUNCTIONS */
 
     /* REASONS */
-    function addReasonRow(containerID, isEdit = false) {
+    function addReasonRow(containerID, isEdit = false, data = {}) {
         let componentString = `
             <div class="reason-action-row d-flex gap-2 text-center w-100">
                 <div class="d-flex flex-column gap-2 text-start w-100">
@@ -913,15 +986,15 @@ $(function () {
             <div class="edit-reason-action-row d-flex gap-2 text-center w-100">
                 <div class="d-flex flex-column gap-2 text-start w-100">
                     <select class="edit-dynamic-select2-advance-reasons w-100" name="state">
-                        <option></option>
+                        <option value="${data?.reason_id || ''}" selected>${data?.reason_label || ''}</option>
                     </select>
-                    <textarea class="advanceCause secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks..."></textarea>
+                    <textarea class="advanceCause secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks...">${data?.reason_notes || ''}</textarea>
                 </div>
                 <div class="d-flex flex-column gap-2 text-start w-100">
                     <select class="edit-dynamic-select2-advance-actions w-100" name="state">
-                        <option></option>
+                        <option value="${data?.action_id || ''}" selected>${data?.action_label || ''}</option>
                     </select>
-                    <textarea class="advanceAction secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks..."></textarea>
+                    <textarea class="advanceAction secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks...">${data?.action_notes || ''}</textarea>
                 </div>
                 <div class="d-flex flex-column gap-2 justify-content-between">
                     <button type="button" class="edit-advanceRemoveLayer btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary d-flex justify-content-center align-items-center p-1 danger glow">
@@ -933,6 +1006,7 @@ $(function () {
                 </div>
             </div>
         `;
+
 
         /* If isEdit is true, append to edit container */
 
@@ -952,7 +1026,7 @@ $(function () {
         
     }
 
-    function addLinestopReasonRow(containerID, isEdit = false) {
+    function addLinestopReasonRow(containerID, isEdit = false, data = {}) {
         let componentString = `
             <div class="linestop-reason-action-row d-flex gap-2 text-center w-100">
                 <div class="d-flex flex-column gap-2 text-start w-100">
@@ -982,15 +1056,15 @@ $(function () {
             <div class="edit-linestop-reason-action-row d-flex gap-2 text-center w-100">
                 <div class="d-flex flex-column gap-2 text-start w-100">
                     <select class="edit-dynamic-select2-linestop-reasons w-100" name="state">
-                        <option></option>
+                        <option value="${data.reason_id || ''}" selected>${data.reason_label || ''}</option>
                     </select>
-                    <textarea class="linestopCause secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks..."></textarea>
+                    <textarea class="linestopCause secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks...">${data.reason_notes || ''}</textarea>
                 </div>
                 <div class="d-flex flex-column gap-2 text-start w-100">
                     <select class="edit-dynamic-select2-linestop-actions w-100" name="state">
-                        <option></option>
+                        <option value="${data.action_id || ''}" selected>${data.action_label || ''}</option>
                     </select>
-                    <textarea class="linestopAction secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks..."></textarea>
+                    <textarea class="linestopAction secondary-background p-1 form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="Input Remarks...">${data.action_notes || ''}</textarea>
                 </div>
                 <div class="d-flex flex-column gap-2 justify-content-between">
                     <button type="button" class="edit-linestopRemoveLayer btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary d-flex justify-content-center align-items-center p-1 danger glow">
@@ -1265,6 +1339,8 @@ $(function () {
 
             $(".countInputs").show();
 
+            isAlreadyRunning = true;
+
             startTaktTimer();
 
             /* REALTIME UPDATES IF ESP IS SELECTED */
@@ -1316,41 +1392,73 @@ $(function () {
         const colIndex = table.cell(cell).index().column;
         const colName = table.settings()[0].aoColumns[colIndex].data;
         const newValue = $(cell).text().trim();
-    
+
         const oldValueStr = (oldRowData[colName] ?? '').toString().trim();
         const newValueStr = newValue.toString().trim();
-    
+
+        
+        const excludedColumns = ["advance_reasons", "linestop_reasons"];
+        if (excludedColumns.includes(colName)) {
+            console.log(`Change ignored for column: ${colName}`);
+            return; // early exit
+        }
+
         const changedFields = [];
-    
+
+
         if (oldValueStr !== newValueStr) {
             changedFields.push({
                 column: colName,
                 oldValue: oldValueStr,
                 newValue: newValueStr
             });
-    
-            // Update internal DataTable state
-            newRowData[colName] = newValue;
-            row.data(newRowData).invalidate();
-    
-            console.log('Row edited:', {
-                oldRowData,
-                newRowData,
-                changedFields
-            });
-            if(changedFields[0]["column"] == "hourly_plan" || changedFields[0]["column"] == "actual_quantity"){
 
-                newRowData["variance"] = parseInt(newRowData["actual_quantity"]) - newRowData["hourly_plan"];
-                
-                row.data(newRowData).invalidate();
+            newRowData[colName] = newValue;
+
+            // Target recalculation
+            if (colName === "start_time" || colName === "end_time") {
+                const taktTime = parseFloat($("#taktTime").val());
+                const hourlyPlan = parseInt($("#hourlyPlanQuantity").val());
+
+                const computedTarget = computeTargetBasedOnTime(
+                    newRowData["start_time"],
+                    newRowData["end_time"],
+                    taktTime,
+                    hourlyPlan
+                );
+
+                newRowData["target"] = computedTarget;
+
+                // Optional: Update variance if actual_quantity exists
+                if (!isNaN(parseInt(newRowData["actual_quantity"]))) {
+                    newRowData["variance"] = parseInt(newRowData["actual_quantity"]) - (parseInt(newRowData["target"]) || 0);
+
+                    newRowData["commulative_plan"] = Math.abs((parseInt(oldRowData["target"]) - (parseInt(newRowData["target"]) || 0) ) - parseInt(newRowData["commulative_plan"]));
+
+                    newRowData["compliance_rate"] = calculateComplianceRateWithValues(parseInt(newRowData["actual_quantity"]), parseInt(newRowData["target"]));
+                }
             }
 
-            let data = {"creator": userId, "old_data": oldRowData, "new_data": newRowData};
+                // Variance calculation if hourly_plan or actual_quantity edited
+            if (colName === "hourly_plan" || colName === "actual_quantity") {
+                newRowData["variance"] = parseInt(newRowData["actual_quantity"]) - (parseInt(newRowData["target"]) || 0);
 
-            await apiCall('/homs/API/production/submitEditHistory.php', 'POST', data);
-            
-            /* FORGOTTEN TO UPDATE THE DB */
-            let updatedData = {
+                newRowData["commulative_plan"] = Math.abs((parseInt(oldRowData["target"]) - (parseInt(newRowData["target"]) || 0) ) - parseInt(newRowData["commulative_plan"]));
+
+                newRowData["compliance_rate"] = calculateComplianceRateWithValues(parseInt(newRowData["actual_quantity"]), parseInt(newRowData["target"]));
+            }
+
+            // Defensively parse JSON fields
+            const parseSafe = (val) => {
+                try {
+                    return typeof val === "string" ? JSON.parse(val) : val;
+                } catch (e) {
+                    console.warn("JSON parse failed:", val);
+                    return [];
+                }
+            };
+
+            const updatedData = {
                 "id": newRowData["id"],
                 "po": newRowData["po"],
                 "section": newRowData["section"],
@@ -1368,21 +1476,31 @@ $(function () {
                 "direct_operators": newRowData["direct_operators"],
                 "start_time": newRowData["start_time"],
                 "end_time": newRowData["end_time"],
-                "advance_reasons": JSON.parse(newRowData["advance_reasons"]),
-                "linestop_reasons": JSON.parse(newRowData["linestop_reasons"]),
+                "advance_reasons": parseSafe(newRowData["advance_reasons"]),
+                "linestop_reasons": parseSafe(newRowData["linestop_reasons"]),
                 "creator": userId,
 
                 "esp_id": newRowData["esp_id"],
                 "hourly_plan": newRowData["hourly_plan"],
                 "target": newRowData["target"],
 
+                "compliance_rate": (newRowData["compliance_rate"] || "").replace('%', ''),
+
+                "commulative_plan": newRowData["commulative_plan"],
+                "commulative_actual": newRowData["commulative_actual"],
             };
 
-            await apiCall('/homs/API/production/updateProductionRecord.php', 'POST', updatedData)
-            .then((response) => {
-                /* console.log(response); */
-            });
+            // Update DataTable row once at the end
+            row.data(newRowData).invalidate();
 
+            // Submit edit history
+            const data = { creator: userId, old_data: oldRowData, new_data: newRowData };
+            await apiCall('/homs/API/production/submitEditHistory.php', 'POST', data);
+
+            // Update the backend record
+            await apiCall('/homs/API/production/updateProductionRecord.php', 'POST', updatedData);
+
+            console.log('Row edited:', { oldRowData, newRowData, changedFields });
         } else {
             console.log("No changes detected in this row");
         }
@@ -1428,6 +1546,291 @@ $(function () {
 
     function updateActualQuantity(quantity) {
         $("#actualQuantity").val(quantity).trigger("input");
+    }
+
+    async function getGlobalSettings() {
+        const result = await apiCall('/homs/api/admin/getGlobalSettings.php', 'GET');
+        if (result['status'] === 'error') {
+            alert(result['message']);
+            return;
+        }
+        return result;
+    }
+
+    async function startFeatureChecks() {
+
+        setInterval(async() => {
+            globalSettings = await getGlobalSettings();
+            /* console.table(globalSettings.data[0].settings.hourlyUpdates.sections); */
+
+            /* START HOURLY UPDATE CHECK */
+            hourlyUpdatesCheck();
+        }, 1000);
+    }
+
+    function stopFeatureChecks() {
+        if (featureChecksInterval) {
+            clearInterval(featureChecksInterval);
+            featureChecksInterval = null;
+        }
+    }
+
+    function hourlyUpdatesCheck() {
+        let isHourlyUpdateEnabledForSection = globalSettings.data[0].settings.hourlyUpdates.sections[section];
+
+        if (isHourlyUpdateEnabledForSection) {
+            // 👇 just use it directly
+            if (hasMinutesPassed(startProductionTime, 60)) {
+                console.log("Start Production Time has passed 2 hours, starting hourly updates");
+
+                if (isAlreadyRunning) {
+                    stopProduction();
+                }
+            }
+        }
+    }
+
+
+    function hasMinutesPassed(startTime, minutesThreshold) {
+        let now = new Date();
+        let start = new Date(startTime);
+
+        let diffMs = now - start;
+        let diffMinutes = diffMs / (1000 * 60);
+
+        return diffMinutes >= minutesThreshold;
+    }
+
+    function hasSecondsPassed(startTimeString, secondsThreshold) {
+        let now = new Date();
+        let start = new Date(startTimeString); // this works directly now!
+
+        if (isNaN(start.getTime())) {
+            console.error("Invalid start time:", startTimeString);
+            return false;
+        }
+
+        let diffMs = now - start;
+        let diffSeconds = diffMs / 1000;
+
+        return diffSeconds >= secondsThreshold;
+    }
+
+    async function stopProduction(){
+        $("#endTime").val(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+    
+        const hourlyTime = {
+            "0": {"from": "06:00", "to": "08:00"},
+            "1": {"from": "08:00", "to": "10:00"},
+            "2": {"from": "10:00", "to": "12:00"},
+            "3": {"from": "12:00", "to": "14:00"},
+            "4": {"from": "14:00", "to": "16:00"},
+            "5": {"from": "16:00", "to": "18:00"},
+            "6": {"from": "18:00", "to": "20:00"},
+            "7": {"from": "20:00", "to": "22:00"},
+            "8": {"from": "22:00", "to": "24:00"},
+        };
+
+        let now = new Date();
+        let selectedHourly = null;
+    
+        // Loop through the hourly time object and find the matching shift
+        for (const [key, value] of Object.entries(hourlyTime)) {
+            const from = toTimeObj(value.from);
+            const to = toTimeObj(value.to);
+    
+            if (now >= from && now <= to) {
+                selectedHourly = key;
+                break;
+            }
+        }
+    
+        if (!selectedHourly) {
+            alert("No matching shift found for the current time.");
+            return;
+        }
+    
+        $(".hourlyTime").val(selectedHourly);
+
+
+        /* Check if variance is 10% of plan */
+        let planQuantity = parseInt($("#hourlyPlanQuantity").val());
+        let actualQuantity = parseInt($("#actualQuantity").val());
+
+        let variancePercent = calculateVariancePercent(planQuantity, actualQuantity);
+
+        // Get reasons
+        let advanceReasonCheck = collectAdvanceReasonData();
+        let linestopReasonCheck = collectLinestopReasonData();
+
+        // Clean empty data
+        if (advanceReasonCheck.length === 1 &&
+            advanceReasonCheck[0].reason_notes === "" &&
+            advanceReasonCheck[0].action_notes === "") {
+            advanceReasonCheck = [];
+        }
+
+        if (linestopReasonCheck.length === 1 &&
+            linestopReasonCheck[0].reason_notes === "" &&
+            linestopReasonCheck[0].action_notes === "") {
+            linestopReasonCheck = [];
+        }
+
+        // Check variance and reasons
+        // if (
+        //     Math.abs(variancePercent) >= 10 &&
+        //     (advanceReasonCheck.length === 0 || linestopReasonCheck.length === 0)
+        // ) {
+        //     Swal.fire({
+        //         icon: "error",
+        //         title: "Error",
+        //         text: "Variance is more than 10% of plan quantity. Please select a reason.",
+        //     });
+        //     return;
+        // }
+
+        /* COLLECT DATA */
+
+        let advanceReason = [
+            {
+                "action_id": 89,
+                "reason_id": 90,
+                "action_label": "NO UPDATE",
+                "action_notes": "Forgot to stop production",
+                "reason_label": "",
+                "reason_notes": ""
+            }
+        ];
+        let linestopReason = [
+            {
+                "action_id": 91,
+                "reason_id": 92,
+                "action_label": "NO UPDATE",
+                "action_notes": "Forgot to stop production",
+                "reason_label": "",
+                "reason_notes": ""
+            }
+        ];
+
+        let data = {
+            "production_action": "end",
+            "po_id": selectedPOData.po_id, 
+            "po": selectedPOData.prd_order_no, 
+            "section": section,
+            "work_center": work_center,
+            "line_name": $(".lineSelect option:selected").text(),
+            "area":$(".areaSelect option:selected").text(),
+            "material": selectedPOData.material,
+            "description": selectedPOData.description,
+            "plan_quantity": $("#planQuantity").val(),
+            "takt_time": $("#taktTime").val(),
+            "actual_quantity": $("#actualQuantity").val(),
+            "variance": $("#variance").val(),
+            "shift": $(".shiftSelect").val(),
+            "hourly_time": $(".hourlyTime").val(),
+            "direct_operators": $("#directOperations").val(),
+            "start_time": null,
+            "end_time": formatTimeOnlyToPostgres(endTime.input.value),
+            "advance_reasons": advanceReason,
+            "linestop_reasons": linestopReason,
+            "creator": userId,
+
+            "hourly_plan": $("#hourlyPlanQuantity").val(),
+            "target": $("#target").val(),
+            "compliance_rate": $("#complianceRate").val().replace('%', ''),
+            "esp_id": $(".espSelect").val()
+        }
+
+        let result = await apiCall('/homs/API/production/endProductionRecord.php', 'POST', data).then((response) => {
+            /* CONFIRMATION */
+            Swal.fire({
+                title: 'Stopped!',
+                text: 'Production has been stopped.',
+                icon: 'success',
+                timer: 1000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            }).then(async () => {
+
+                stopRealTimePODetails();
+                stopTaktTimer();
+
+                $(".startProduction").show();
+                $(".stopProduction").hide();
+
+                /* RESET FIELDS */
+                $(".espSelect").attr("disabled", false);
+                $(".lineSelect").attr("disabled", false);
+                $(".areaSelect").attr("disabled", false);
+                $(".shiftSelect").attr("disabled", false);
+
+                $(".po-button-modal").show();
+
+                let espList = await apiCall(`/homs/API/admin/getESPSBySection.php?section=${section}&po=${selectedPOData.po_id}&isAlreadyRunning=false`, 'GET');
+                assignESPListValues(espList.data);
+                $(".espSelect").val("").trigger("change");
+                $(".lineSelect").val("").trigger("change");
+                $(".shiftSelect").val("Shift").trigger("change");
+                
+                $("#hourlyPlanQuantity").val(0);
+                $("#target").val(0);
+                $("#actualQuantity").val(0);
+                $("#complianceRate").val(0);
+                $("#variance").val(0);
+
+                computeHourlyPlan();
+                setTarget();
+                updateVariance();
+                calculateComplianceRate();
+
+                /* $(".countInputs").hide(); */
+
+                table.ajax.reload(null, false);
+            });
+        });
+        clearAllAdvanceRows();
+        isAlreadyRunning = false;
+    }
+
+    async function showEditAdvanceReason(rowID){
+        const reasons = await apiCall(`/homs/API/production/getAdvanceReasons.php?row_id=${rowID}`, 'GET');
+        /* console.table(advanceReason.data); */
+
+        reasons.data.advance_reasons.forEach(element => {
+            addReasonRow("#edit-advance-container", true, element);
+        });
+
+        reasons.data.linestop_reasons.forEach(element => {
+            addLinestopReasonRow("#edit-linestop-container", true, element);
+        });
+    }
+
+    function computeTargetBasedOnTime(start_time_str, end_time_str, taktTime, hourlyPlan) {
+        const startTime = new Date(start_time_str);
+        const endTime = new Date(end_time_str);
+
+        if (isNaN(startTime.getTime()) || isNaN(endTime.getTime())) {
+            console.error("Invalid start or end time.");
+            return 0;
+        }
+
+        if (isNaN(taktTime) || taktTime <= 0 || isNaN(hourlyPlan) || hourlyPlan <= 0) {
+            console.error("Invalid taktTime or hourlyPlan");
+            return 0;
+        }
+
+        const durationInMinutes = (endTime - startTime) / 1000 / 60;
+        if (durationInMinutes <= 0) {
+            console.warn("Duration is zero or negative.");
+            return 0;
+        }
+
+        const units = Math.min(Math.floor(durationInMinutes / taktTime), hourlyPlan);
+        return units;
+    }
+
+    function hideInputsWhenPastDatesAreSelected(){
+        
     }
 
 });

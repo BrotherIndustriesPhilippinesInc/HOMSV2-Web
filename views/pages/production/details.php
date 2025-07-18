@@ -315,8 +315,13 @@
                                 <th scope="col">Plan Quantity</th>
                                 <th scope="col">Hourly Plan Quantity</th>
                                 <th scope="col">Takt Time</th>
+
                                 <th scope="col">Target</th>
+                                <th scope="col">Commulative Plan</th>
+
                                 <th scope="col">Actual Quantity</th>
+                                <th scope="col">Commulative Actual</th>
+
                                 <th scope="col">Compliance Rate</th>
                                 <th scope="col">Variance</th>
                                 <th scope="col">Shift</th>
@@ -333,9 +338,6 @@
                                 <th scope="col">Updated By</th>
                                 <th scope="col">Production Action</th>
 
-
-
-                                
                             </tr>
                         </thead>
                     </table>
