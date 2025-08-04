@@ -16,7 +16,8 @@ class GetWorkcenters extends API
         if(isset($data["workcenter"])){
             $this->get("workcenter ILIKE  '$data[workcenter]' AND section ILIKE '$data[section]'");
         }else{
-            $this->get();
+             $response = $this->controller->getWorkcentersFromViews();
+             return $this->jsonResponse($response);
         }
     }
 }

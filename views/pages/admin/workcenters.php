@@ -153,7 +153,11 @@
     $upload = $button->primaryButton("upload","Upload", "", "", "data-bs-toggle='modal' data-bs-target='#workcenterUploadModal'");
 
     $register_dpr_template = $textbox->primaryTextbox("register-dpr-template", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+    $register_breaktime_line = $textbox->primaryTextbox("register-breaktime-line-name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+
     $edit_dpr_template = $textbox->primaryTextbox("edit-dpr-template", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+
+    $edit_breaktime_line_name = $textbox->primaryTextbox("edit-breaktime-line-name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
 ?>
 
 <title>HOMS - Workcenters</title>
@@ -185,6 +189,15 @@
                     <th scope="col">Pattern</th>
 
                     <th scope="col">DPR Template</th>
+
+                    <th scope="col">Breaktime Name</th>
+                    <th scope="col">Break Start Time</th>
+                    <th scope="col">Break End Time</th>
+                    <th scope="col">Shift</th>
+                    <th scope="col">Is Overtime</th>
+                    <th scope="col">Area</th>
+                    <th scope="col">Line</th>
+                    <th scope="col">Break Type</th>
 
                     <th scope="col">Creator</th>
                     <th scope="col">Date Created</th>
@@ -271,6 +284,12 @@
                                 <?php echo $register_dpr_template ?>
                             </div>
                         </div>
+                        <div class="row">
+                            <div>
+                                <label for="register-costcenter-name" class="form-label">Breaktime Line Name</label>
+                                <?php echo $register_breaktime_line ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer border-0">
@@ -351,6 +370,13 @@
                             <div>
                                 <label for="register-costcenter-name" class="form-label">DPR Template Name</label>
                                 <?php echo $edit_dpr_template ?>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div>
+                                <label for="edit-breaktime-line-name" class="form-label">Breaktime Line Name</label>
+                                <?php echo $edit_breaktime_line_name ?>
                             </div>
                         </div>
                     </div>

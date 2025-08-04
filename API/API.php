@@ -76,6 +76,7 @@ abstract class API implements IAPI {
 
     public function post(array $data) {
         try {
+            $data = $this->trimData($data);
             $debugData = $this->debugRequestData($data); // Capture request data
             $response = $this->controller->create($data);
             $this->checkError($response);
@@ -88,6 +89,7 @@ abstract class API implements IAPI {
 
     public function put($id, array $data) {
         try {
+            $data = $this->trimData($data);
             $debugData = $this->debugRequestData($data);
             $response = $this->controller->update($id, $data);
             $this->checkError($response);
@@ -100,6 +102,7 @@ abstract class API implements IAPI {
 
     public function patch($id, array $data) {
         try {
+            $data = $this->trimData($data);
             $debugData = $this->debugRequestData($data);
             $response = $this->controller->partialUpdate($id, $data);
             $this->checkError($response);
@@ -166,5 +169,15 @@ abstract class API implements IAPI {
                 throw new Exception($message);
             }
         }
+    }
+
+    protected function trimData($data) {
+        if (is_string($data)) {
+            return trim($data);
+        } elseif (is_array($data)) {
+            return array_map([$this, 'trimData'], $data);
+        }
+        // Return other data types unchanged
+        return $data;
     }
 }

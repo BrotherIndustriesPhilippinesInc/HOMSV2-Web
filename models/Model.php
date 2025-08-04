@@ -268,6 +268,7 @@ abstract class Model implements IModel {
 
     public function executePrepared(string $query, array $params = [], string $mode = 'all') {
         $stmt = $this->conn->prepare($query);
+        
         $stmt->execute($params);
     
         switch ($mode) {

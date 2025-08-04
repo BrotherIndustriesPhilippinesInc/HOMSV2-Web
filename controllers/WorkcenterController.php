@@ -5,11 +5,14 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 require_once __DIR__ ."/Controller.php";
 require_once __DIR__ ."/../models/WorkcenterModel.php";
+require_once __DIR__ ."/../models/BreaktimeModel.php";
 
 class WorkcenterController extends Controller
 {
+    private $breaktimeModel;
     public function __construct() {
         parent::__construct(new WorkcenterModel());
+        $this->breaktimeModel = new BreaktimeModel();
     }
 
     public function uploadWorkcenters(array $data) {
@@ -100,6 +103,36 @@ class WorkcenterController extends Controller
         } catch (Exception $e) {
             echo "Error reading Excel file: " . $e->getMessage();
             return [];
+        }
+    }
+
+    public function updateWorkcenterBreaktime($section, $line_name, $workcenter) {
+        $matchedBreaktime = $this->breaktimeModel->getAllWhere("section = '$section' AND line = '$line_name'");
+        $wc = $this->model->getAllWhere("workcenter = '$workcenter'");
+
+        /* var_dump($wc); */
+        if (empty($matchedBreaktime)) {
+            throw new Exception("No matching breaktime found for section '$section' and line '$line_name'.");
+        }
+        if (empty($wc)) {
+            throw new Exception("No workcenter found for workcenter '$workcenter'.");
+        }
+        foreach ($wc as $key => $value) {
+            $this->update($value["id"], ["breaktime_id" => $matchedBreaktime[0]["id"]]);
+        }
+    }
+
+    public function getWorkcentersFromViews(){
+        $result = $this->model->executePrepared("SELECT * FROM public.\"getWorkcentersView\";");
+        return $result;
+    }
+
+    public function updateWorkcenter($id, array $data) {
+        try {
+            $this->update($id, $data);
+            $this->updateWorkcenterBreaktime($data["section"], $data["breaktime_line_name"], $data["workcenter"]);
+        } catch (Exception $th) {
+            return $this->errorResponse($th);
         }
     }
 

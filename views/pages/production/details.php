@@ -3,6 +3,7 @@
     $textbox = new Textboxes();
     $dropdown = new Dropdowns();
     $select = new Selects();
+    $checkbox = new Checkbox();
 
     $wcName = $_GET['wc'];
 
@@ -67,6 +68,10 @@
     $complianceRate = $textbox->primaryTextbox("complianceRate", "plan-detail-textbox secondary-background p-1", "0.00%", "0.00%", "text");
 
     $target = $textbox->primaryTextbox("target", "plan-detail-textbox secondary-background p-1", "0", "0", "number");
+
+    $editSave = $button->primaryButtonAlt("editSave", "Save Changes", "fa-solid fa-floppy-disk", "data-bs-dismiss='modal'", "success");
+
+    $islinestop = $checkbox->primaryCheckbox("islinestop", "linestop", "Is Linestop?");
 ?>
 
 <title>HOMS - WC Selection</title>
@@ -469,6 +474,11 @@
                                 echo $save;
                             ?>
                         </div>
+                        <div class="d-flex">
+                            <?php 
+                                echo $islinestop;
+                            ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -509,6 +519,16 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="modal-footer border-0 d-flex justify-content-between">
+                    <div class="d-flex gap-2">
+                        <div>
+                            <?php 
+                                echo $editSave;
+                            ?>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -522,6 +542,23 @@
 
             <div class="d-none">
                 <?php echo $lineStopPopOver ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOASTS -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="watchEdit" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex justify-content-between toast-header">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-bell"></i>
+                    <strong class="me-auto">Data Updated</strong>
+                </div>
+                
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                The data has been successfully updated.
             </div>
         </div>
     </div>

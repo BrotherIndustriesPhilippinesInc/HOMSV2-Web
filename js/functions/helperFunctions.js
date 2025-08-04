@@ -202,3 +202,17 @@ export function getTodayDateString() {
     const dd = String(now.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
 }
+
+export function popoverInitialize(popoverTriggerClass, popoverId, defaultPlacement = 'bottom') {
+    const popoverTrigger = document.querySelector(popoverTriggerClass);
+    const content = document.querySelector(`${popoverId}`).innerHTML;
+    const placement = popoverTrigger.getAttribute('data-bs-placement') || defaultPlacement;
+
+    new bootstrap.Popover(popoverTrigger, {
+        html: true,
+        sanitize: false,
+        placement: placement,
+        content: () => content
+    });
+}
+

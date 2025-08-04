@@ -46,7 +46,6 @@
     <!-- SELECT2 -->
     <link href="/homs/non_module_libraries/select2/select2.min.css" rel="stylesheet" />
     <script defer src="/homs/non_module_libraries/select2/select2.min.js"></script>
-
 </head>
 
 <body>
@@ -57,11 +56,13 @@
     require_once __DIR__ . '/views/components/selects.php';
     require_once __DIR__ . '/views/components/dropdowns.php';
     require_once __DIR__ . '/helpers/MSQLServer.php';
+    require_once __DIR__ . '/views/components/checkbox.php';
     
     $button = new Buttons();
     $textbox = new Textboxes();
     $select = new Selects();
     $dropdown = new Dropdowns();
+    $checkbox = new Checkbox();
 
 
     // Router

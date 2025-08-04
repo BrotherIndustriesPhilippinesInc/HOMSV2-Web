@@ -10,16 +10,15 @@ class GetComputedRestTime extends API
 
     public function index($data)
     {
-        $this->validation->requiredFields($data, ["section", "start_time", "end_time"]);
+        $this->validation->requiredFields($data, ["section", "workcenter", "day_night", "start_time", "end_time"]);
 
         try {
-            $restTime = $this->controller->computeRestTime($data["section"], $data["start_time"], $data["end_time"]); // Dynamically choose if needed
+            $restTime = $this->controller->computeRestTime($data["section"], $data["workcenter"], $data["day_night"], $data["start_time"], $data["end_time"]); // Dynamically choose if needed
 
             return $this->jsonResponse($restTime);
-        } catch (Throwable $th) {
+        } catch (Exception $th) {
             return $this->errorResponse($th);
         }
-        
     }
 }
 $api = new GetComputedRestTime();

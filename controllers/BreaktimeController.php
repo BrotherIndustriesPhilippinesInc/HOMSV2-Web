@@ -4,20 +4,34 @@ require __DIR__ ."/../vendor/autoload.php";
 require_once __DIR__ ."/Controller.php";
 require_once __DIR__ ."/../models/BreaktimeModel.php";
 require_once __DIR__ ."/../models/ProductionModel.php";
+require_once __DIR__ ."/../models/WorkcenterModel.php";
 
 class BreaktimeController extends Controller
 {
     private $productionModel;
-
+    private $workcenterModel;
     public function __construct() {
         parent::__construct(new BreaktimeModel());
+        // Initialize the models
 
         $this->productionModel = new ProductionModel();
+        $this->workcenterModel = new WorkcenterModel();
     }
 
 
-    public function computeRestTime($section, $start_time = null, $end_time = null) {
-    $section_rest_times = $this->getAllWhere("section = '{$section}'");
+
+    public function computeRestTime($section, $workcenter, $dayNight, $start_time = null, $end_time = null) {
+        $dayNight = strtolower($dayNight);
+        if($dayNight === "day") {
+            $breaktime_id = $this->workcenterModel->getAllWhere("workcenter = '$workcenter' AND (line_name LIKE '%(B)' OR line_name LIKE '% (B)')")[0]["breaktime_id"];
+        } else {
+            $breaktime_id = $this->workcenterModel->getAllWhere("workcenter = '$workcenter' AND (line_name LIKE '%(Y)' OR line_name LIKE '% (Y)')")[0]["breaktime_id"];
+        }
+        
+        $line_name = $this->get("id = {$breaktime_id}")["line"];
+        
+    $section_rest_times = $this->getAllWhere("line = '{$line_name}'");
+    /* var_dump($section_rest_times); */
 
     $start_seconds = null;
     $end_seconds = null;
@@ -101,16 +115,10 @@ class BreaktimeController extends Controller
         'used_breaks' => $used_breaks
     ];
 }
-
-
-
     private function toSecondsFromMidnight($dateTime) {
         if (!$dateTime) {
             return 0;
         }
         return ($dateTime->format('H') * 3600) + ($dateTime->format('i') * 60);
     }
-
-    
-
 }

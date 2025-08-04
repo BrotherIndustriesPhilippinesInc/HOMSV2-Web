@@ -21,6 +21,8 @@ $(async function () {
     let hourlyUpdates = false;
     let startProductionTime = null;
     let lastUpdateTime = null;
+
+    const toastWatchEdit = document.getElementById('watchEdit')
     
     const dateSelect = flatpickr("#dateSelect", {
         enableTime: false,
@@ -99,9 +101,6 @@ $(async function () {
 
     /* FEATURE CHECKS */
     startFeatureChecks();
-
-    
-
 
     /* EVENTS */
     $(".homsView").on("click", function (e) {
@@ -466,7 +465,9 @@ $(async function () {
             "hourly_plan": $("#hourlyPlanQuantity").val(),
             "target": $("#target").val(),
             "compliance_rate": $("#complianceRate").val().replace('%', ''),
-            "esp_id": $(".espSelect").val()
+            "esp_id": $(".espSelect").val(),
+
+            "islinestop": $("#islinestop").is(":checked") ? true : false
         }
 
         let result = await apiCall('/homs/API/production/endProductionRecord.php', 'POST', data).then((response) => {
@@ -537,6 +538,11 @@ $(async function () {
 
         let rowID = $(this).data("id");
         await showEditAdvanceReason(rowID);
+        $(".editSave").data("id", rowID);
+    });
+
+    $(".editSave").on("click", async function () {
+        editSave();
     });
     
     /* FUNCTIONS */
@@ -1501,6 +1507,8 @@ $(async function () {
             await apiCall('/homs/API/production/updateProductionRecord.php', 'POST', updatedData);
 
             console.log('Row edited:', { oldRowData, newRowData, changedFields });
+
+            showToast();
         } else {
             console.log("No changes detected in this row");
         }
@@ -1564,7 +1572,10 @@ $(async function () {
             /* console.table(globalSettings.data[0].settings.hourlyUpdates.sections); */
 
             /* START HOURLY UPDATE CHECK */
-            hourlyUpdatesCheck();
+            await hourlyUpdatesCheck();
+
+            /* LINE STOP NOTIFICATION */
+            await lineStopCheck();
         }, 1000);
     }
 
@@ -1575,16 +1586,16 @@ $(async function () {
         }
     }
 
-    function hourlyUpdatesCheck() {
+    async function hourlyUpdatesCheck() {
         let isHourlyUpdateEnabledForSection = globalSettings.data[0].settings.hourlyUpdates.sections[section];
 
         if (isHourlyUpdateEnabledForSection) {
             // 👇 just use it directly
             if (hasMinutesPassed(startProductionTime, 60)) {
-                console.log("Start Production Time has passed 2 hours, starting hourly updates");
+                console.log("Start Production Time has passed 1 hour, starting hourly updates");
 
                 if (isAlreadyRunning) {
-                    stopProduction();
+                    await stopProduction();
                 }
             }
         }
@@ -1738,7 +1749,9 @@ $(async function () {
             "hourly_plan": $("#hourlyPlanQuantity").val(),
             "target": $("#target").val(),
             "compliance_rate": $("#complianceRate").val().replace('%', ''),
-            "esp_id": $(".espSelect").val()
+            "esp_id": $(".espSelect").val(),
+
+            "islinestop": true
         }
 
         let result = await apiCall('/homs/API/production/endProductionRecord.php', 'POST', data).then((response) => {
@@ -1830,6 +1843,105 @@ $(async function () {
     }
 
     function hideInputsWhenPastDatesAreSelected(){
+        
+    }
+
+    function collectEditAdvanceReasonData() {
+        const result = [];
+
+        $(".edit-reason-action-row").each(function () {
+            const row = $(this);
+
+            const reason = row.find(".edit-dynamic-select2-advance-reasons").val(); // ID of selected reason
+            const reasonText = row.find(".edit-dynamic-select2-advance-reasons option:selected").text();
+            const reasonNotes = row.find("textarea.advanceCause").val();
+
+            const action = row.find(".edit-dynamic-select2-advance-actions").val(); // ID of selected action
+            const actionText = row.find(".edit-dynamic-select2-advance-actions option:selected").text();
+            const actionNotes = row.find("textarea.advanceAction").val();
+
+            result.push({
+                reason_id: reason,
+                reason_label: reasonText,
+                reason_notes: reasonNotes,
+                action_id: action,
+                action_label: actionText,
+                action_notes: actionNotes
+            });
+        });
+
+        return result;
+    }
+
+    function collectEditLinestopReasonData() {
+        const result = [];
+
+        $(".edit-linestop-reason-action-row").each(function () {
+            const row = $(this);
+
+            const reason = row.find(".edit-dynamic-select2-linestop-reasons").val(); // ID of selected reason
+            const reasonText = row.find(".edit-dynamic-select2-linestop-reasons option:selected").text();
+            const reasonNotes = row.find("textarea.linestopCause").val();
+
+            const action = row.find(".edit-dynamic-select2-linestop-actions").val(); // ID of selected action
+            const actionText = row.find(".edit-dynamic-select2-linestop-actions option:selected").text();
+            const actionNotes = row.find("textarea.linestopAction").val();
+
+            result.push({
+                reason_id: reason,
+                reason_label: reasonText,
+                reason_notes: reasonNotes,
+                action_id: action,
+                action_label: actionText,
+                action_notes: actionNotes
+            });
+        });
+
+        return result;
+    }
+
+    function editSave(){
+        let advanceReason = collectEditAdvanceReasonData();
+        let linestopReason = collectEditLinestopReasonData();
+        let id = $(".editSave").data("id");
+        /* console.log("Advance Reasons:", advanceReason);
+        console.log("Linestop Reasons:", linestopReason); */
+
+        const data = {
+            id: id,
+            advance_reasons: advanceReason,
+            linestop_reasons: linestopReason,
+            creator: userId
+        };
+
+        const response = apiCall('/homs/API/production/editReasons.php', 'POST', data);
+        response.then((result) => {
+            if (result.status === "success") {
+                showToast();
+            } else {
+                Swal.fire({
+                    title: 'Error',
+                    text: result.message,
+                    icon: 'error'
+                });
+            }
+        }).catch((error) => {
+            console.error("Error saving changes:", error);
+            Swal.fire({
+                title: 'Error',
+                text: 'An error occurred while saving changes.',
+                icon: 'error'
+            });
+        });
+        console.log(response);
+    }
+
+    function showToast(){
+        const toast = new bootstrap.Toast(toastWatchEdit);
+        toast.show();
+    }
+
+    async function lineStopCheck() {
         
     }
 

@@ -40,6 +40,15 @@ $(async function () {
 
             { data: "dpr_template"},
 
+            { data: "breaktime_name", visible: false   },
+            { data: "start_time" },
+            { data: "end_time" },
+            { data: "shift" },
+            { data: "isovertime", visible: false   },
+            { data: "area", visible: false   },
+            { data: "line" },
+            { data: "break_type", visible: false   },
+
             { data: "creator", visible: false },
             { data: "time_created", visible: false},
             { data: "updated_by", visible: false },
@@ -50,17 +59,17 @@ $(async function () {
                 render: function (data, type, row) {
                     return `
                         <div class="d-flex gap-2">
-                            <button class="btn btn-primary edit-workcenter" data-workcenter_id="${row.id}" data-bs-toggle="modal" data-bs-target="#workcenterEditModal">Edit</button>
-                            <button class="btn danger delete-workcenter" data-workcenter_id="${row.id}">Delete</button>
+                            <button class="btn btn-primary edit-workcenter" data-workcenter_id="${row.workcenters_id}" data-bs-toggle="modal" data-bs-target="#workcenterEditModal">Edit</button>
+                            <button class="btn danger delete-workcenter" data-workcenter_id="${row.workcenters_id}">Delete</button>
                         </div>
-                        
                     `;
                 }
             }
         ],
+
         createdRow: function(row, data, dataIndex) {
             $(row).addClass('reason-row');
-            $(row).attr('data-reason-id', data["id"]);
+            $(row).attr('data-reason-id', data["workcenters_id"]);
         }
     };
     
@@ -80,7 +89,7 @@ $(async function () {
 
     $(document).on("click", ".edit-workcenter", function (e) {
         let workcenterId = $(this).data("workcenter_id");
-        let workcenter = table.rows().data().toArray().find(r => r.id == workcenterId);
+        let workcenter = table.rows().data().toArray().find(r => r.workcenters_id == workcenterId);
 
         $(".edit-section").val(workcenter.section).trigger("change"),
         $(".edit-costcenter").val(workcenter.costcenter).trigger("change"),
@@ -94,6 +103,8 @@ $(async function () {
         $("#edit-folder-name").val(workcenter.folder_name),
 
         $("#edit-dpr-template").val(workcenter.dpr_template),
+
+        $("#edit-breaktime-line-name").val(workcenter.line),
 
         $(".save").attr("data-workcenter_id", workcenterId);
         editingID = workcenterId;
@@ -151,6 +162,8 @@ $(async function () {
             dpr_template: $("#register-dpr-template").val(),
     
             creator: user["EmpNo"],
+
+            breaktime_line: $("#register-breaktime-line-name").val()
         };
     
         apiCall("/homs/api/admin/submitWorkcenter.php", "POST", workcenter)
@@ -198,6 +211,9 @@ $(async function () {
             folder_name: $("#edit-folder-name").val(),
 
             dpr_template: $("#edit-dpr-template").val(),
+    
+            breaktime_line_name: $("#edit-breaktime-line-name").val(),
+
     
             creator: user["EmpNo"],
         };

@@ -1,5 +1,6 @@
 <?php 
     include_once __DIR__ . "/help-popover.php";
+    
 ?>
 <div id="header" class="row justify-content-center py-3 sticky-top">
     
@@ -13,9 +14,25 @@
 
         <!-- Second Column -->
         <div class="col d-flex justify-content-end align-items-center gap-3">
+
+
+            <button class="notification-popover-trigger bg-custom border-0 position-relative"
+                data-bs-placement="bottom"
+                data-bs-html="true"
+            >
+
+                <img src="/homs/resources/icons/bell-solid-full.svg"  alt="bell-icon" class="" style="width: 24px; height: 24px;">
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    99+
+                    <span class="visually-hidden">unread messages</span>
+                </span>
+            </button>
+
+
             <button class="bg-custom border-0" popovertarget="help-popover">
                 <img src="/homs/resources/icons/Help.svg"  alt="help-icon" class="">
             </button>
+
             <span>
                 <a href="/homs/settings"><img src="/homs/resources/icons/settings.svg" alt="settings-icon" class=""></a>
             </span>
@@ -32,3 +49,8 @@
             
         </div>
 </div>
+<script defer type="module">
+    import { popoverInitialize } from "/homs/js/functions/helperFunctions.js";
+
+    popoverInitialize(".notification-popover-trigger","#notification-popover", "bottom");
+</script>

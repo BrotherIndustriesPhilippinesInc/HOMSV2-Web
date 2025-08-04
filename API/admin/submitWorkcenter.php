@@ -10,7 +10,7 @@ class SubmitWorkcenter extends API
 
     public function index($data){
         
-        $this->validation->requiredFields($data, ["section", "costcenter", "plant", "pattern", "costcenter_name", "workcenter", "line_name", "folder_name", "creator"]);
+        $this->validation->requiredFields($data, ["section", "costcenter", "plant", "pattern", "costcenter_name", "workcenter", "line_name", "folder_name", "creator", "breaktime_line"]);
         $this->post($data);
     }
 }

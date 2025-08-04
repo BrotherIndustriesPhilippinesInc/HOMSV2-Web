@@ -123,8 +123,11 @@ $(async function () {
                 title: "Actions",
                 render: function (data, type, row) {
                     return `
-                        <button class="btn btn-primary edit-breaktime" data-breaktime="${row.id}" data-bs-toggle="modal" data-bs-target="#breaktimeEditModal">Edit</button>
-                        <button class="btn danger delete-breaktime" data-breaktime_id="${row.id}">Delete</button>
+                        <div class="d-flex gap-2">
+
+                            <button class="btn btn-primary edit-breaktime" data-breaktime="${row.id}" data-bs-toggle="modal" data-bs-target="#breaktimeEditModal">Edit</button>
+                            <button class="btn danger delete-breaktime" data-breaktime_id="${row.id}">Delete</button>
+                        </div>
                     `;
                 }
             }

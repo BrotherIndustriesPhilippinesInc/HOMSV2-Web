@@ -27,3 +27,20 @@
         </div>
     </div>
 </div>
+
+<div id="notification-popover" popover class="rounded-4 border-2 px-3 py-2">
+    <div class="d-flex flex-column gap-2 border-1 p-2 glow secondary-background">
+        <span class="fw-bold text-start">Linestop</span>
+        <div class ="d-flex gap-1">
+            <div class ="d-flex gap-2">
+                <span class="fw-bold">Workcenter: </span>
+                <span>C4120</span>
+            </div>
+            <div class ="d-flex gap-2">
+                <span class="fw-bold">PO: </span>
+                <span>000118932016</span>
+            </div>
+            
+        </div>
+    </div>
+</div>

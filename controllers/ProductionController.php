@@ -117,7 +117,6 @@ class ProductionController extends Controller
 
         // Update current row
         return $this->model->update($latestData["id"], [
-
             "compliance_rate"      => $data["compliance_rate"],
             "actual_quantity"      => $data["actual_quantity"], 
             "target"               => $data["target"],
@@ -130,6 +129,7 @@ class ProductionController extends Controller
             "production_action"    => "end",
             "commulative_plan"     => $newCummulativePlan,
             "commulative_actual"   => $newCummulativeActual,
+            "islinestop"           => $data["islinestop"]
         ]);
     }
 

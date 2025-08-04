@@ -13,7 +13,14 @@ class UpdateWorkcenter extends API
         $id = $data["id"];
         unset($data["id"]);
         
-        $this->put($id, $data);
+        try {
+            $result = $this->controller->updateWorkcenter($id, $data);
+            $this->checkError($result);
+            $this->jsonResponse($result);
+        } catch (Exception $th) {
+            $this->errorResponse($th);
+        }
+            
     }
 }
 $rawInput = file_get_contents("php://input");

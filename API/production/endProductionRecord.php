@@ -32,7 +32,9 @@ class EndInsertRecord extends API
             "creator",
 
             "esp_id",
-            "hourly_plan"
+            "hourly_plan",
+
+            "islinestop"
         ];
         
         $this->validation->requiredFields($data, $requiredFields);
