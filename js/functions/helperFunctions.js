@@ -203,16 +203,29 @@ export function getTodayDateString() {
     return `${yyyy}-${mm}-${dd}`;
 }
 
-export function popoverInitialize(popoverTriggerClass, popoverId, defaultPlacement = 'bottom') {
+export function popoverInitialize(popoverTriggerClass, popoverId, defaultPlacement = 'bottom', customPopoverClass = '') {
     const popoverTrigger = document.querySelector(popoverTriggerClass);
-    const content = document.querySelector(`${popoverId}`).innerHTML;
+    if (!popoverTrigger) return;
+
+    // Remove existing popover instance (if any)
+    const existingPopover = bootstrap.Popover.getInstance(popoverTrigger);
+    if (existingPopover) {
+        existingPopover.dispose();
+    }
+
+    const contentElement = document.querySelector(`${popoverId}`);
+    if (!contentElement) return;
+
+    const content = contentElement.innerHTML;
     const placement = popoverTrigger.getAttribute('data-bs-placement') || defaultPlacement;
 
     new bootstrap.Popover(popoverTrigger, {
         html: true,
         sanitize: false,
         placement: placement,
+        customClass: customPopoverClass,
         content: () => content
     });
 }
+
 

@@ -76,23 +76,23 @@
 
 <title>HOMS - WC Selection</title>
 
-<body class="bg-custom text-light container-fluid">
+<body class="bg-custom container-fluid">
     <?php 
         require_once __DIR__ . "/../../components/header.php";
         require_once __DIR__ . '/../../components/navbar.php';
     ?>
     
-    <div class="d-flex flex-column bg-custom-secondary container-fluid rounded-3 pb-2"> 
+    <div class="d-flex flex-column border-1 container-fluid rounded-3 pb-2"> 
         <div class="d-flex align-items-center justify-content-between gap-3 pt-4">
 
             <div class="d-flex align-items-center gap-2 justify-content-between">
                 <div>
-                    <h1><?php echo "$wcName"?></h1>
+                    <h1 id="wcName"><?php echo "$wcName"?></h1>
                 </div>
             </div>
 
             <div id="" class="initial initial-setup">
-                <div class="d-flex flex-column gap-4"  style="color : #8DCEE3;">
+                <div class="d-flex flex-column gap-4 text-primary">
                     <div id="po_number" class="d-flex align-items-center justify-content-center gap-2 align-items-center">
                         <i class="fa-solid fa-paste" style="font-size: 32px; margin-right: 5px; "></i>
                         <p class="fw-bold m-0" style="font-size: 24px; text-decoration: underline" >po_number</p>
@@ -278,7 +278,7 @@
                                 ?>
                             </div>
 
-                            <div class="countInputs">
+                            <div id="actual-quantity-container" class="countInputs">
                                 <span class="plan-details section-details-label">Actual Quantity</span>
                                 <?php
                                     echo $actualQuantity;
@@ -300,6 +300,13 @@
                             </div>
                         </div>
                         
+                        <div id="esp-output-conainer" class="mt-2" style="display: none;">
+                            <h5>ESP Ouput</h5>
+                            <div id="esp-outputs" class="d-flex gap-2 ">
+                                <!-- ESP OUTPUTS HERE -->
+                            </div>
+                            
+                        </div>
                         
                     </div>
                 </div>
@@ -363,7 +370,7 @@
             <div class="modal-content">
                 <div class="modal-header border-0">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Select Production Order</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="border-0 bg-transparent ms-auto" data-bs-dismiss="modal" aria-label="Close""><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="p-3 d-flex">
                     <?php echo $search; ?>

@@ -16,6 +16,9 @@ abstract class Model implements IModel {
         'esp_management',
         'breaktime_management',
         'settings',
+        'linestops',
+
+        'pr_one_pol',
     ]; // ✅ Prevents SQL Injection
     private static string $host = '10.248.1.152';
     private static string $username = 'postgres';
@@ -60,19 +63,41 @@ abstract class Model implements IModel {
         if (empty($data['creator'])) {
             throw new InvalidArgumentException('Missing required field: creator');
         }
-        
+
         if (!isset($data['time_created'])) {
-            $data['time_created'] = date('Y-m-d H:i:s'); // Current timestamp
+            $data['time_created'] = date('Y-m-d H:i:s');
         }
 
-        $columns = implode(", ", array_keys($data));
-        $placeholders = ":" . implode(", :", array_keys($data));
+        // Build SQL with placeholders
+        $columns = [];
+        $placeholders = [];
+        foreach ($data as $key => $value) {
+            $columns[] = $key;
+            // 👇 If value looks like JSON, add ::jsonb cast
+            if (is_string($value) && $this->isJson($value)) {
+                $placeholders[] = ":$key::jsonb";
+            } else {
+                $placeholders[] = ":$key";
+            }
+        }
 
-        $sql = "INSERT INTO {$table} ({$columns}) VALUES ({$placeholders})";
+        $sql = "INSERT INTO {$table} (" . implode(", ", $columns) . ") 
+                VALUES (" . implode(", ", $placeholders) . ")";
+
         $stmt = $this->conn->prepare($sql);
-
         $stmt->execute($this->sanitizeData($data));
     }
+
+    
+    private function isJson($string) {
+        if (!is_string($string)) {
+            return false;
+        }
+        $decoded = json_decode($string, true);
+        // only treat as JSON if it decodes to an array or object
+        return json_last_error() === JSON_ERROR_NONE && is_array($decoded);
+    }
+
 
     public function getAll() {
         $table = $this->getTableName();
@@ -88,6 +113,7 @@ abstract class Model implements IModel {
         $this->validateTableName($table);
 
         $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE $where $additionalConditions");
+        /* var_dump($stmt); */
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -97,7 +123,7 @@ abstract class Model implements IModel {
         $table = $this->getTableName();
         $this->validateTableName($table);
         $stmt = $this->conn->prepare("SELECT * FROM {$table} WHERE $where $additionalConditions");
-        /* var_dump($stmt) */
+        /* var_dump($stmt); */
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
@@ -122,6 +148,7 @@ abstract class Model implements IModel {
         $fields = implode(", ", array_map(fn($key) => "$key = :$key", array_keys($data)));
     
         $sql = "UPDATE {$table} SET {$fields} WHERE id = :id";
+
         $stmt = $this->conn->prepare($sql);
     
         $data['id'] = (int)$id;
@@ -165,18 +192,33 @@ abstract class Model implements IModel {
     }
 
     public function sanitizeData(array $data): array {
-        foreach ($data as $key => $value) {
-            if (is_string($value)) {
-                $data[$key] = htmlspecialchars(strip_tags($value));
-            } elseif (is_array($value)) {
-                $data[$key] = json_encode($value); // or implode(',', $value) if needed
-            } elseif ($value instanceof DateTime) {
-                $data[$key] = $value->format('Y-m-d H:i:s'); // normalize datetime
-            }
+    foreach ($data as $key => $value) {
+        if ($this->isJson($value)) {
+            // Don’t touch JSON strings
+            continue;
         }
-        return $data;
+        elseif (is_bool($value) || $value === 'true' || $value === 'false') {
+            $data[$key] = ($value === true || $value === 'true') ? 'true' : 'false';
+        }
+        elseif ($value === '' || $value === null) {
+            $data[$key] = null;
+        }
+        elseif (is_string($value)) {
+            // Safe for regular strings only
+            $data[$key] = htmlspecialchars(strip_tags($value));
+        }
+        elseif (is_array($value)) {
+            // Arrays are intentionally converted to JSON
+            $data[$key] = json_encode($value);
+        }
+        elseif ($value instanceof DateTime) {
+            $data[$key] = $value->format('Y-m-d H:i:s');
+        }
     }
-    
+    return $data;
+    }
+
+
     public function runSqlServerViews(string $serverName, array $connectionOptions, string $viewName) {
         try {
 

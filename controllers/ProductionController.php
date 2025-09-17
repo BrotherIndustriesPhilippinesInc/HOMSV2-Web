@@ -31,7 +31,6 @@ class ProductionController extends Controller
 
     }
 
-
     public function lastRun($data){
         $section = $data["section"];
         $work_center = $data["work_center"];
@@ -101,10 +100,14 @@ class ProductionController extends Controller
 
     public function evaluatedUpdate($data) {
         // Get the current (latest) record
-        $latestData = $this->get("time_created::date = '{$data['end_time']}' AND section = '{$data['section']}' AND work_center = '{$data['work_center']}' AND po_id = '{$data['po_id']}'", "ORDER BY id DESC LIMIT 1");
+        //$latestData = $this->get("time_created::date = '{$data['end_time']}' AND section = '{$data['section']}' AND work_center = '{$data['work_center']}' AND po_id = '{$data['po_id']}'", "ORDER BY id DESC LIMIT 1");
         
+        $latestData = $this->get("section = '{$data['section']}' AND work_center = '{$data['work_center']}' AND po_id = '{$data['po_id']}'", "ORDER BY id DESC LIMIT 1");
+        
+
         // Get the record *before* the latest one
-        $previousData = $this->get("time_created::date = '{$data['end_time']}' AND section = '{$data['section']}' AND work_center = '{$data['work_center']}' AND po_id = '{$data['po_id']}' AND id < {$latestData['id']}", "ORDER BY id DESC LIMIT 1");
+        //$previousData = $this->get("time_created::date = '{$data['end_time']}' AND section = '{$data['section']}' AND work_center = '{$data['work_center']}' AND po_id = '{$data['po_id']}' AND id < {$latestData['id']}", "ORDER BY id DESC LIMIT 1");
+        $previousData = $this->get("section = '{$data['section']}' AND work_center = '{$data['work_center']}' AND po_id = '{$data['po_id']}' AND id < {$latestData['id']}", "ORDER BY id DESC LIMIT 1");
 
         // Initialize cumulative values
         $prevPlan = $previousData && isset($previousData['commulative_plan']) ? $previousData['commulative_plan'] : 0;
@@ -113,26 +116,52 @@ class ProductionController extends Controller
 
         // Calculate new cumulative values
         $newCummulativePlan = $prevPlan + $data['target'];
-        $newCummulativeActual = $prevActual + $data['actual_quantity'];
 
+        $newCummulativeActual = $prevActual + array_sum($data["actual_quantity"]);
+
+        $tempActual = $data["actual_quantity"];
+
+        if($data["esp_id"] === 0){
+            //MANUAL
+            return $this->model->update($latestData["id"], [
+                "compliance_rate"      => $data["compliance_rate"],
+                "actual_quantity"      => $data["actual_quantity"]["manual"] = $tempActual, 
+                "target"               => $data["target"],
+                "variance"             => $data["variance"],
+                "direct_operators"     => $data["direct_operators"],
+                "end_time"             => $data["end_time"], 
+                "advance_reasons"      => $data["advance_reasons"],
+                "linestop_reasons"     => $data["linestop_reasons"],
+                "ended_by"             => $data["creator"],
+                "production_action"    => "end",
+                "commulative_plan"     => $newCummulativePlan,
+                "commulative_actual"   => $newCummulativeActual,
+                "islinestop"           => $data["islinestop"]
+            ]);
+
+        }else{
+            //ESP
+
+            return $this->model->update($latestData["id"], [
+                "compliance_rate"      => $data["compliance_rate"],
+                //"actual_quantity"      => $data["actual_quantity"]["manual"] = $tempActual, 
+                "target"               => $data["target"],
+                "variance"             => $data["variance"],
+                "direct_operators"     => $data["direct_operators"],
+                "end_time"             => $data["end_time"], 
+                "advance_reasons"      => $data["advance_reasons"],
+                "linestop_reasons"     => $data["linestop_reasons"],
+                "ended_by"             => $data["creator"],
+                "production_action"    => "end",
+                "commulative_plan"     => $newCummulativePlan,
+                "commulative_actual"   => $newCummulativeActual,
+                "islinestop"           => $data["islinestop"]
+            ]);
+            
+        }
         // Update current row
-        return $this->model->update($latestData["id"], [
-            "compliance_rate"      => $data["compliance_rate"],
-            "actual_quantity"      => $data["actual_quantity"], 
-            "target"               => $data["target"],
-            "variance"             => $data["variance"],
-            "direct_operators"     => $data["direct_operators"],
-            "end_time"             => $data["end_time"], 
-            "advance_reasons"      => $data["advance_reasons"],
-            "linestop_reasons"     => $data["linestop_reasons"],
-            "ended_by"             => $data["creator"],
-            "production_action"    => "end",
-            "commulative_plan"     => $newCummulativePlan,
-            "commulative_actual"   => $newCummulativeActual,
-            "islinestop"           => $data["islinestop"]
-        ]);
+        
     }
-
 
     public function getHistory($data){
         return $this->model->getHistory($data);
@@ -142,20 +171,44 @@ class ProductionController extends Controller
         return $this->model->getSectionHistory($data);
     }
 
-    public function updateActualQuantityViaESP($data){
-        /* $id = $data["id"]; */
-        /* GET CURRENT DATA */
+    public function updateActualQuantityViaESP($data) {
+        // Get the latest run
         $latestRun = $this->get("po = '{$data['po']}'");
-        if($latestRun["production_action"] === "start"){
-            /* Update Quantity */
-            $data = [
-                "actual_quantity"=> $latestRun["actual_quantity"] + 1,
-                "variance"=> $latestRun["variance"] - 1,
-                "time_created"=> date("Y-m-d H:i:s"),
-                "creator"=> "ESP",
+
+        if ($latestRun["production_action"] === "start") {
+            // Decode actual_quantity from JSON to array
+            $actualQuantities = json_decode($latestRun["actual_quantity"], true);
+
+            if (!is_array($actualQuantities)) {
+                $actualQuantities = [];
+            }
+
+            // Which sensor to update?
+            $sensorKey = $data["esp_name"] . " - " . $data["sensor_name"]; 
+            // example: "Primodial - sendLine1"
+
+            // Increment count
+            if (!isset($actualQuantities[$sensorKey])) {
+                $actualQuantities[$sensorKey] = 0;
+            }
+            $actualQuantities[$sensorKey]++;
+
+            // Encode back to JSON
+            $newActualQuantity = json_encode($actualQuantities);
+
+            // Update variance as well
+            $newVariance = $latestRun["variance"] - 1;
+
+            // Prepare update data
+            $updateData = [
+                "actual_quantity" => $newActualQuantity,
+                "variance" => $newVariance,
+                "time_created" => date("Y-m-d H:i:s"),
+                "creator" => "ESP",
             ];
-            return $this->model->updateActualQuantityViaESPModel($latestRun["id"], $data);
-        }else{
+
+            return $this->model->updateActualQuantityViaESPModel($latestRun["id"], $updateData);
+        } else {
             throw new Exception("No production record found for this PO.");
         }
     }

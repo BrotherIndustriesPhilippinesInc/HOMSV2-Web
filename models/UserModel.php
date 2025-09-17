@@ -25,7 +25,7 @@ class UserModel
                 break;
             // Add more mappings here, baka gusto mo pang dagdagan
             case "BPS":
-                $record["Section"] = "Tape Cassette";
+                $record["Section"] = "Printer 1";
                 break;
             case "IH":
                 $record["Section"] = "Ink Head";

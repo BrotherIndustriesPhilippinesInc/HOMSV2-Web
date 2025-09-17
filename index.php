@@ -46,6 +46,9 @@
     <!-- SELECT2 -->
     <link href="/homs/non_module_libraries/select2/select2.min.css" rel="stylesheet" />
     <script defer src="/homs/non_module_libraries/select2/select2.min.js"></script>
+
+    <!-- NOTIFICATIONS -->
+     <script defer type="module" src="/homs/js/functions/notifications.js"></script>
 </head>
 
 <body>
@@ -57,6 +60,7 @@
     require_once __DIR__ . '/views/components/dropdowns.php';
     require_once __DIR__ . '/helpers/MSQLServer.php';
     require_once __DIR__ . '/views/components/checkbox.php';
+    require_once __DIR__ . '/views/components/linestop_alert.php';
     
     $button = new Buttons();
     $textbox = new Textboxes();
@@ -103,6 +107,10 @@
 
         '/homs/production/history' => function() {
             include __DIR__ . '/views/pages/production/edit_history.php';
+        },
+
+        '/homs/production/linestops' => function() {
+            include __DIR__ . '/views/pages/production/linestops.php';
         },
 
         '/homs/graphs' => function() {

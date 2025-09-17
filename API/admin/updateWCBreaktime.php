@@ -12,7 +12,7 @@ class UpdateWCBreaktime extends API
         $this->validation->requiredFields($data, ["section", "line", "workcenter", "creator"]);
         try {
             $debugData = $this->debugRequestData($data); // Capture request data
-            $response = $this->controller->updateWorkcenterBreaktime($data["section"], $data["line"], $data["workcenter"], $data["creator"]);
+            $response = $this->controller->updateWorkcenterBreaktime($data["section"], $data["line"], $data["workcenter"], $data["creator"], $data["dayNight"]);
             $this->checkError($response);
 
             return $this->jsonResponse($response, $debugData);
@@ -25,4 +25,4 @@ $rawInput = file_get_contents("php://input");
 $data = json_decode($rawInput, true);
 $api = new UpdateWCBreaktime();
 
-$api->index($data);
+$api->index($data); 

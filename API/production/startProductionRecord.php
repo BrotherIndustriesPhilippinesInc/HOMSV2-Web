@@ -46,23 +46,39 @@ class StartInsertRecord extends API
             $data["section"] = "TC";
         }
 
-        $esp_details = $this->espController->get("id = '{$data["esp_id"]}'");
+        //get esp id via sensor name
+        $esp_details = $this->espController->getAllWhere("esp_name = '{$data["esp_id"]}'");
 
-        $esp_id = $esp_details["id"] ?? 0;
-        $espUpdate = [
-            "line_name" => $data["line_name"],
-            "area" => $data["area"],
-            "po" => $data["po"],
-            "isrunning" => 1,
-            "creator" => $data["creator"],
-            "po_id" => $data["po_id"],
-        ];
+        $data["actual_quantity"] = [];
+        $data["esp_id"] = $esp_details[0]["id"] ?? 0;
+
+        if($data["esp_id"] === 0){
+            //MANUAL
+            $data["actual_quantity"]["manual"] = 0;
+
+        }else{
+            //ESP32 USED
+            foreach($esp_details as $detail){
+            $esp_id = $detail["id"] ?? 0;
+            $espUpdate = [
+                "line_name" => $data["line_name"],
+                "area" => $data["area"],
+                "po" => $data["po"],
+                "isrunning" => 1,
+                "creator" => $data["creator"],
+                "po_id" => $data["po_id"],
+            ];
         
-        $this->espController->update($esp_id, $espUpdate);
+            $this->espController->update($esp_id, $espUpdate);
+
+            $data["actual_quantity"][$detail["esp_name"]." - ".$detail["sensor_name"]] = 0;
+            }
+        }
 
 
         /* GENERATE UNIQUE SESSION ID */
         $data["unique_session"] = uniqid("session_", true);
+
         $this->post($data);
     }
 }

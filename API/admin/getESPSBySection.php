@@ -10,14 +10,17 @@ class GetESPSBySection extends API
 
     public function index($data){
 
+        
         try {
            if($data["isAlreadyRunning"] === "true"){
                 $this->validation->requiredFields($data, ["section", "isAlreadyRunning", "po_id"]);
+                $response = $this->controller->getESPDetails($data['section'], $data['isAlreadyRunning'], $data['po_id']);
            }else{
                 $this->validation->requiredFields($data, ["section", "isAlreadyRunning"]);
+                $response = $this->controller->getESPSBySection($data['section'], $data['isAlreadyRunning'], $data['po_id'] ?? null);
            }
             
-            $response = $this->controller->getESPSBySection($data['section'], $data['isAlreadyRunning'], $data['po_id'] ?? null);
+            
 
             $this->checkError($response);
 

@@ -10,7 +10,7 @@ $(async function () {
     /* INITIALIZATION */
     const section = JSON.parse(localStorage.getItem('user'))['Section'];
     const userId = JSON.parse(localStorage.getItem('user'))["EmpNo"];
-    const work_center = localStorage.getItem('wc');
+    let work_center = localStorage.getItem('wc');
 
     let timeSyncInterval = null;
     let oldRowData = null;
@@ -186,10 +186,13 @@ $(async function () {
             if (result.isConfirmed) {
                 
                 /* CHECK INPUTS IF COMPLETE */
+                let espSelected = $(".espSelect").val();
+                let lineSelected = $(".lineSelect").val();
+                let shiftSelected = $(".shiftSelect").val();
                 if(
-                    $(".espSelect").val() !== "0" ||
-                    $(".lineSelect").val() === "0" ||
-                    $(".shiftSelect").val() === "Shift"
+                    espSelected == "" ||
+                    lineSelected == "0" ||
+                    shiftSelected == "Shift"
                 ){
                     Swal.fire({
                         icon: 'error',
@@ -205,6 +208,7 @@ $(async function () {
                 $("#startTime").val(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
                 $(".shiftSelect").val(selectedShift);
 
+                let date = formatTimeOnlyToPostgres(startTime.input.value);
                 let data = {
                     "production_action": "start",
                     "po_id": selectedPOData.po_id, 
@@ -268,7 +272,7 @@ $(async function () {
                         /* START REALTIME UPDATE IF ESP IS SELECTED */
                         let espSelectID = $(".espSelect").val();
                         if (espSelectID !== "0") {
-                            realTimeUpdateOfPODetails(selectedPOData.po_id);
+                            realTimeUpdateOfPODetails(selectedPOData.po_id, date);
                         }
 
                         startProductionTime = $("#dateSelect").val() + " " + convertTo24Hour(startTime.input.value);
@@ -439,6 +443,12 @@ $(async function () {
         let advanceReason = collectAdvanceReasonData();
         let linestopReason = collectLinestopReasonData();
 
+        if($("#espSelect").val() == 0){
+            console.log("Please select ESP Sensor");
+        }else{
+            console.log("esp selected");
+        }
+
         let data = {
             "production_action": "end",
             "po_id": selectedPOData.po_id, 
@@ -514,6 +524,8 @@ $(async function () {
                 calculateComplianceRate();
 
                 /* $(".countInputs").hide(); */
+
+                $("#esp-output-conainer").hide();
 
                 table.ajax.reload(null, false);
             });
@@ -591,7 +603,29 @@ $(async function () {
                 { data: "target", visible: true},
                 { data: "commulative_plan", visible: true},
 
-                { data: "actual_quantity"},
+                { 
+                    data: "actual_quantity", 
+                    render: function(data, type, row, meta) {
+                        if (!data) return "-";
+
+                        let parsed;
+                        try {
+                            parsed = (typeof data === "string") ? JSON.parse(data) : data;
+                        } catch (e) {
+                            console.error("Invalid JSON in actual_quantity:", data);
+                            return data;
+                        }
+
+                        // parsed is an object → convert to array of [key, value]
+                        let html = Object.entries(parsed).map(([sensor, qty]) => `
+                            <div class="mb-1">
+                                <strong>${sensor}</strong>: <span class="text-primary">${qty}</span>
+                            </div>
+                        `).join("");
+
+                        return `<div style="max-height:100px;overflow-y:auto;">${html}</div>`;
+                    }
+                },
                 { data: "commulative_actual", visible: true},
 
                 { data: "compliance_rate", visible: true},
@@ -739,6 +773,9 @@ $(async function () {
         let lineList = await apiCall(`/homs/API/admin/getWorkcenterDetails.php?section=${section}&work_center=${work_center}`, 'GET');
         assignLineListValues(lineList.data);
 
+        await pr1Check(section, poId);
+
+
         await getTaktTime();
         computeHourlyPlan();
 
@@ -774,7 +811,7 @@ $(async function () {
         espSelect.append(new Option(`${"Manual Input"}`, "0"));
 
         espList.forEach(({ esp_name, sensor_name, id }) => {
-            espSelect.append(new Option(`${esp_name} - ${sensor_name}`, id));
+            espSelect.append(new Option(`${esp_name}`, id));
         });
     }
 
@@ -1327,7 +1364,7 @@ $(async function () {
             $(".po-button-modal").hide();
 
             const espSelect = $(".espSelect").empty();
-            espSelect.append(new Option(`${lastRunData.esp_name} - ${lastRunData.esp_sensor_name}`, lastRunData.esp_id));
+            espSelect.append(new Option(`${lastRunData.esp_name}`, lastRunData.esp_id));
 
             var option = $(".lineSelect option").filter(function() {
                 return $(this).text().trim() === lastRunData.line_name;
@@ -1351,7 +1388,7 @@ $(async function () {
 
             /* REALTIME UPDATES IF ESP IS SELECTED */
             if(lastRunData.esp_id != 0){
-                realTimeUpdateOfPODetails(lastRunData.po_id);
+                realTimeUpdateOfPODetails(lastRunData.po_id, lastRunData.production_record_time_created);
             }
 
         }else{
@@ -1514,7 +1551,7 @@ $(async function () {
         }
     }
 
-    async function realTimeUpdateOfPODetails(poId) {
+    async function realTimeUpdateOfPODetails(poId, date) {
         console.log("Realtime update of PO details");
 
         // Clear any existing interval first (important!)
@@ -1523,22 +1560,64 @@ $(async function () {
             poDetailsInterval = null;
         }
 
-        const response = await apiCall(`/homs/API/production/getLastRunning.php?section=${section}&work_center=${work_center}&po=${poId}`, 'GET');
+        const response = await apiCall(`/homs/API/production/getLastRunning.php?section=${section}&work_center=${work_center}&po=${poId}&date=${date}`, 'GET');
         const data = response.data;
 
         if (data) {
             computeHourlyPlan();
-            updateActualQuantity(data.actual_quantity);
+            //updateActualQuantity(data.actual_quantity);
         }
+
+        //HIDE MANUAL ACTUAL
+        $("#esp-output-conainer").show();
+        $("#actual-quantity-container").hide();
+
+        //ADD DYNAMIC INPUTS BASED ON THE NUMBER OF ESP SENSORS
+        let espDetails = await apiCall(`/homs/API/admin/getESPSBySection.php?section=${section}&isAlreadyRunning=true&po_id=${poId}`, 'GET');
+        //console.table(espDetails.data);
+
+        $("#esp-outputs").empty();
+        espDetails.data.forEach(element => {
+            let jsonQuantity = JSON.parse(data.actual_quantity);
+            //console.log(jsonQuantity[element.esp_name + " - " + element.sensor_name]);
+            let actualQty = jsonQuantity[element.esp_name + " - " + element.sensor_name] || 0;
+
+            //add to esp-outputs div
+            let espOutput = `
+            <div>
+                <label class="section-details-label">${element.sensor_name}</label>
+                <input 
+                    type="number" 
+                    id="${element.esp_name}_${element.sensor_name}" 
+                    class="esp-inputs plan-detail-textbox secondary-background p-1 form-control border-0 rounded-3 fw-medium text-primary glow" 
+                    placeholder="" 
+                    value="${actualQty}">
+            </div>
+            `;
+            $("#esp-outputs").append(espOutput);
+            
+        });
 
         if ($(".espSelect").val() != 0) {
             poDetailsInterval = setInterval(async () => {
-                const response = await apiCall(`/homs/API/production/getLastRunning.php?section=${section}&work_center=${work_center}&po=${poId}`, 'GET');
+                const response = await apiCall(`/homs/API/production/getLastRunning.php?section=${section}&work_center=${work_center}&po=${poId}&date=${date}`, 'GET');
                 const data = response.data;
+
+                let jsonQuantity = JSON.parse(data.actual_quantity);
+                
+                let espDetails = await apiCall(`/homs/API/admin/getESPSBySection.php?section=${section}&isAlreadyRunning=true&po_id=${poId}`, 'GET');
 
                 if (data) {
                     computeHourlyPlan();
-                    updateActualQuantity(data.actual_quantity);
+                    let sum = 0;
+                    espDetails.data.forEach(element => {
+                        let actualQty = jsonQuantity[element.esp_name + " - " + element.sensor_name] || 0;
+                        updateActualQuantity(element.esp_name + "_" + element.sensor_name, actualQty);
+
+                        sum += actualQty;
+                    });
+
+                    $(`#actualQuantity`).val(sum).trigger("input");
                 }
             }, 3000);
         }
@@ -1552,8 +1631,10 @@ $(async function () {
     }
     }
 
-    function updateActualQuantity(quantity) {
-        $("#actualQuantity").val(quantity).trigger("input");
+    function updateActualQuantity(id, quantity) {
+
+        
+        $(`#${id}`).val(quantity).trigger("input");
     }
 
     async function getGlobalSettings() {
@@ -1723,6 +1804,14 @@ $(async function () {
             }
         ];
 
+        // if($("#espSelect").val() == 0){
+        //     alert("Please select ESP Sensor");
+        // }else{
+        //     alert("esp selected");
+        // }
+        
+        // return;
+
         let data = {
             "production_action": "end",
             "po_id": selectedPOData.po_id, 
@@ -1797,6 +1886,8 @@ $(async function () {
                 calculateComplianceRate();
 
                 /* $(".countInputs").hide(); */
+
+                $("#esp-output-conainer").hide();
 
                 table.ajax.reload(null, false);
             });
@@ -1943,6 +2034,17 @@ $(async function () {
 
     async function lineStopCheck() {
         
+    }
+
+    async function pr1Check(section, poID) {
+        let new_work_center = await apiCall(`/homs/API/uploading/getPODetails.php?section=${section}&poID=${poID}`, 'GET').then(response => {
+            return response.data.work_center;
+        });
+        if(section === "Printer 1") {
+            localStorage.setItem('wc', new_work_center);
+            work_center = new_work_center;
+            $("#wcName").text(new_work_center);
+        }
     }
 
 });

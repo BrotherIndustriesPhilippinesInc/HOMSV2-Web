@@ -17,6 +17,8 @@
         "Ink Cartridge" => "Ink Cartridge",
         "BPS" => "BPS",
         "Toner" => "Toner",
+        "PCBA" => "PCBA",
+        "Molding" => "Molding",
     ]);
     $costcenter = $select->primarySelect("register-costcenter", "", [
         "4110" => "4110",
@@ -89,6 +91,8 @@
         "Ink Cartridge" => "Ink Cartridge",
         "BPS" => "BPS",
         "Toner" => "Toner",
+        "PCBA" => "PCBA",
+        "Molding" => "Molding",
     ]);
     $editCostcenter = $select->primarySelect("edit-costcenter", "", [
         "4110" => "4110",

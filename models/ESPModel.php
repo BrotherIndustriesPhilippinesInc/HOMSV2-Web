@@ -10,4 +10,12 @@ class ESPModel extends Model
     protected function getTableName(): string {
         return "esp_management";
     }
+
+    public function getESPDistictMacAddress($section){
+        return $this->executePrepared(
+            "SELECT DISTINCT esp_name, mac_address FROM public.esp_management WHERE assigned_section = :section AND isrunning = false",
+            ['section' => $section],
+            "all"
+        );
+    }
 }

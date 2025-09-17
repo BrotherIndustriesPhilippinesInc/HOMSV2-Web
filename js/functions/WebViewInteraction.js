@@ -1,4 +1,4 @@
-export function receiveFromWebView(callback) {
+export function receiveFromWebView(actionName, callback) {
     return new Promise((resolve, reject) => {
         window.chrome.webview.addEventListener('message', function (event) {
             console.log("Received message from C#: ", event.data);
@@ -13,7 +13,9 @@ export function receiveFromWebView(callback) {
                 }
             }
 
-            resolve(data);
+            if (data["actionName"] === actionName) {
+                resolve(data);
+            }
         });
     });
 }

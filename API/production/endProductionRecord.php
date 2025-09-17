@@ -47,19 +47,35 @@ class EndInsertRecord extends API
         try {
             $debugData = $this->debugRequestData($data); // Capture request data
 
-            $esp_details = $this->espController->get("id = '{$data["esp_id"]}'");
+            //get esp id via sensor name
+            $esp_details = $this->espController->getAllWhere("esp_name = '{$data["esp_id"]}'");
 
-            $esp_id = $esp_details["id"] ?? 0;
-            $espUpdate = [
-                "line_name" => "N/A",
-                "area" => "N/A",
-                "po" => "N/A",
-                "isrunning" => 0,
-                "creator" => $data["creator"],
-                "po_id" => $data["po_id"],
-            ];
-            $this->espController->update($esp_id, $espUpdate);
-        
+            $tempActual = $data["actual_quantity"];
+
+            $data["actual_quantity"] = [];
+            $data["esp_id"] = $esp_details[0]["id"] ?? 0;
+
+            if($data["esp_id"] === 0){
+                //MANUAL
+                $data["actual_quantity"]["manual"] = $tempActual;
+
+            }else{
+                //ESP
+                $esp_details = $this->espController->getAllWhere("po_id = '{$data["po_id"]}' AND isrunning = true");
+                    foreach ($esp_details as $key => $value) {
+                        $espUpdate = [
+                        "line_name" => "N/A",
+                        "area" => "N/A",
+                        "po" => "N/A",
+                        "isrunning" => 0,
+                        "creator" => $data["creator"],
+                        "po_id" => $data["po_id"],
+                    ];
+                    $this->espController->update($value["id"], $espUpdate);
+                }
+
+            }
+
             $response = $this->controller->evaluatedUpdate($data);
             $this->checkError($response);
 

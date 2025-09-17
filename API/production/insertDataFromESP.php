@@ -10,7 +10,7 @@ class InsertDataFromESP extends API
 
     public function index($data){
 
-        $this->validation->requiredFields($data, ["line", "area"]);
+        $this->validation->requiredFields($data, ["esp_name","sensor_name", "po_id", "po"]);
 
         try {
             $debugData = $this->debugRequestData($data);

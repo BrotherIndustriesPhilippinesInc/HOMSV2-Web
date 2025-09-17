@@ -30,7 +30,7 @@ $(function () {
                 target: '#uppy-dashboard',
                 width: '300px',
                 height: '300px',
-                theme: 'dark',
+                theme: 'light',
                 showProgressDetails: false
             })
 

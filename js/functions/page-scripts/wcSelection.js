@@ -4,7 +4,8 @@ import { search } from "../helperFunctions.js";
 $(function () {
     const section = JSON.parse(localStorage.getItem('user'))['Section'];
     generateWorkcenters(section);
-
+    
+    skipWCSelection(section);
     $(document).on("click", ".wc-button", function (e) {
         let wcValue = $(this).data("wc-value"); // Get the wc value from the button's data attribute
 
@@ -80,4 +81,10 @@ async function getLastUpdate(section){
         $("#last_update_time").text(`${formattedTime}`);
         $("#last_update_by").text(`${creator}`);
     });
+}
+
+function skipWCSelection(section){
+    if(section === "Printer 1"){
+        window.location.href = "/homs/production/details?wc=PR1&section=Printer 1";
+    }
 }

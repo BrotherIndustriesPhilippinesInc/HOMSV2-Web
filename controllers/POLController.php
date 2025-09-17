@@ -18,13 +18,16 @@ class POLController extends Controller
     private function setTableName($section) {
         switch ($section) {
             case "BPS":
-                $this->model->setTableName("tc");
+                $this->model->setTableName("pr_one");
                 break;
             case 'Tape Cassette':
                 $this->model->setTableName("tc");
                 break;
-            case 'PT':
+            case 'P-Touch':
                 $this->model->setTableName("pt");
+                break;
+            case 'Printer 1':
+                $this->model->setTableName("pr_one");
                 break;
             default:
                 throw new Exception("Invalid section name.");

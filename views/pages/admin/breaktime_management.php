@@ -6,7 +6,7 @@
     /* REGISTRATION */
     $create = $button->primaryButton("create","Register Breaktime", "", "", "data-bs-toggle='modal' data-bs-target='#breaktimeCreateModal'");
     $submit = $button->primaryButton("submit","Submit", "btn btn-primary bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "", "data-bs-dismiss='modal'");
-    $createName = $textbox->primaryTextbox("create-name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+    $createName = $textbox->primaryTextbox("create-name", "form-control bg-custom-tertiary rounded-3 fw-medium text-primary glow", "");
     
     $createStartTime = $textbox->timeSelect("create-start_time", "bg-custom-tertiary");
     $createEndTime = $textbox->timeSelect("create-end_time", "bg-custom-tertiary");
@@ -21,10 +21,12 @@
         "BPS" => "BPS",
         "Toner" => "Toner",
         "PCBA" => "PCBA",
+        "MOLDING" => "Molding",
+
     ]);
-    $createLineName = $textbox->primaryTextbox("create-line_name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
-    $createArea = $textbox->primaryTextbox("create-area", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
-    $createShift = $textbox->primaryTextbox("create-shift", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+    $createLineName = $textbox->primaryTextbox("create-line_name", "form-control bg-custom-tertiary rounded-3 fw-medium text-primary glow", "");
+    $createArea = $textbox->primaryTextbox("create-area", "form-control bg-custom-tertiary rounded-3 fw-medium text-primary glow", "");
+    $createShift = $textbox->primaryTextbox("create-shift", "form-control bg-custom-tertiary rounded-3 fw-medium text-primary glow", "");
 
     $createBreakType = $select->primarySelect("create-break_type", "", [
         "AM" => "AM Break",
@@ -40,8 +42,8 @@
 
     /* EDIT */
     $edit = $button->primaryButton("edit","Register Breaktime", "", "", "data-bs-toggle='modal' data-bs-target='#breaktimeEditModal'");
-    $save = $button->primaryButton("save","Save", "btn btn-primary bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "", "data-bs-dismiss='modal'");
-    $editName = $textbox->primaryTextbox("edit-name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+    $save = $button->primaryButton("save","Save", "btn btn-primary bg-custom-tertiary brounded-3 fw-medium text-primary glow", "", "data-bs-dismiss='modal'");
+    $editName = $textbox->primaryTextbox("edit-name", "form-control bg-custom-tertiary rounded-3 fw-medium text-primary glow", "");
     
     $editStartTime = $textbox->timeSelect("edit-start_time", "bg-custom-tertiary");
     $editEndTime = $textbox->timeSelect("edit-end_time", "bg-custom-tertiary");
@@ -56,10 +58,11 @@
         "BPS" => "BPS",
         "Toner" => "Toner",
         "PCBA" => "PCBA",
+        "MOLDING" => "Molding",
     ]);
-    $editLineName = $textbox->primaryTextbox("edit-line_name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
-    $editArea = $textbox->primaryTextbox("edit-area", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
-    $editShift = $textbox->primaryTextbox("edit-shift", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
+    $editLineName = $textbox->primaryTextbox("edit-line_name", "form-control bg-custom-tertiary rounded-3 fw-medium text-primary glow", "");
+    $editArea = $textbox->primaryTextbox("edit-area", "form-control bg-custom-tertiary rounded-3 fw-medium text-primary glow", "");
+    $editShift = $textbox->primaryTextbox("edit-shift", "form-control bg-custom-tertiary rounded-3 fw-medium text-primary glow", "");
 
     $editBreakType = $select->primarySelect("edit-break_type", "", [
         "AM" => "AM Break",

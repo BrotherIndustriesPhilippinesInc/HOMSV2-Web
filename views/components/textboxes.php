@@ -6,7 +6,7 @@ class Textboxes{
 
     public function primaryTextbox($name, $class = "", $placeholder = "", $value = "", $type= "text"){
         $html = <<<HTML
-            <input type={$type} id="{$name}" class="{$class} form-control border-0 rounded-3 fw-medium text-primary glow" placeholder="{$placeholder}" value="{$value}">
+            <input type={$type} id="{$name}" class="{$class} border-1 form-control rounded-3 fw-medium text-primary glow" placeholder="{$placeholder}" value="{$value}">
         HTML;
         return $html;
     }
@@ -18,7 +18,7 @@ class Textboxes{
     }
     public function searchTextbox($name){
         $html = <<<HTML
-        <div class="d-flex bg-custom-tertiary border-0 rounded-4 p-1 ps-2 glow">
+        <div class="d-flex bg-custom-tertiary primary-border rounded-4 p-1 ps-2 glow">
             <img src="/homs/resources/icons/search.svg" />
             <input type="text" id="{$name}" class="bg-custom-tertiary border-0 rounded-4 fw-medium text-primary text-center " placeholder="Search">
         </div>
@@ -41,7 +41,7 @@ class Textboxes{
     }
     public function textArea($name, $class=" ", $placeholder = ""){
         $html = <<<HTML
-            <textarea id="{$name}" class="{$class} form-control border-0 rounded-3 fw-medium tertiary-text glow" placeholder="{$placeholder}"></textarea>
+            <textarea id="{$name}" class="{$class} form-control primary-border rounded-3 fw-medium tertiary-text glow" placeholder="{$placeholder}"></textarea>
         HTML;
         return $html;
     }

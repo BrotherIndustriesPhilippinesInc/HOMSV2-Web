@@ -106,20 +106,25 @@ class WorkcenterController extends Controller
         }
     }
 
-    public function updateWorkcenterBreaktime($section, $line_name, $workcenter) {
+    public function updateWorkcenterBreaktime($section, $line_name, $workcenter, $creator, $dayNight) {
         $matchedBreaktime = $this->breaktimeModel->getAllWhere("section = '$section' AND line = '$line_name'");
-        $wc = $this->model->getAllWhere("workcenter = '$workcenter'");
 
-        /* var_dump($wc); */
+        if($dayNight === "day") {
+            $wc = $this->getAllWhere("workcenter = '$workcenter' AND (line_name LIKE '%(B)' OR line_name LIKE '% (B)')");
+        } else {
+            $wc = $this->getAllWhere("workcenter = '$workcenter' AND (line_name LIKE '%(Y)' OR line_name LIKE '% (Y)')");
+        }
+        var_dump($wc[0]["line_name"]);
+        var_dump($matchedBreaktime[0]["id"]);
+
         if (empty($matchedBreaktime)) {
             throw new Exception("No matching breaktime found for section '$section' and line '$line_name'.");
         }
         if (empty($wc)) {
             throw new Exception("No workcenter found for workcenter '$workcenter'.");
         }
-        foreach ($wc as $key => $value) {
-            $this->update($value["id"], ["breaktime_id" => $matchedBreaktime[0]["id"]]);
-        }
+
+        $this->update($wc[0]["id"], ["breaktime_id" => $matchedBreaktime[0]["id"]]);
     }
 
     public function getWorkcentersFromViews(){
@@ -130,7 +135,7 @@ class WorkcenterController extends Controller
     public function updateWorkcenter($id, array $data) {
         try {
             $this->update($id, $data);
-            $this->updateWorkcenterBreaktime($data["section"], $data["breaktime_line_name"], $data["workcenter"]);
+            $this->updateWorkcenterBreaktime($data["section"], $data["breaktime_line_name"], $data["workcenter"], $data["day_night"]);
         } catch (Exception $th) {
             return $this->errorResponse($th);
         }

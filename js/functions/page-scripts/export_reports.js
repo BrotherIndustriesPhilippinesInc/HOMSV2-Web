@@ -57,7 +57,7 @@ $(async function () {
         generateDPR(wc, date);
     });
 
-    receiveFromWebView((data) => {
+    receiveFromWebView("generatedFilePath",(data) => {
 
         if (data.generatedFilePath) {
             window.location.href = `http://apbiphbpsts01:8080/homs/resources/DPR/Generated/${data.generatedFilePath}`;

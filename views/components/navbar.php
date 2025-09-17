@@ -3,9 +3,10 @@
   $dashboard = $button->navButton("Dashboard", "/homs/");
 
   $uploadPOL = $button->navButton("Upload POL", "/homs/production/upload_pol", "text-center pt-2");
-  $wcSelection = $button->navButton("Work Center Selection", "/homs/production/wc_selection", "text-center pt-2");
-  $exportReports = $button->navButton("Export Reports", "/homs/production/export_reports", "text-center pt-2");
-  $history = $button->navButton("Edit History", "/homs/production/history", "text-center pt-2");
+  $wcSelection = $button->navButton("Production Control", "/homs/production/wc_selection", "text-center pt-2");
+  $exportReports = $button->navButton("Reports", "/homs/production/export_reports", "text-center pt-2");
+  $history = $button->navButton("History", "/homs/production/history", "text-center pt-2");
+  $linestops = $button->navButton("Linestops", "/homs/production/linestops", "text-center pt-2");
 
   $reasons = $button->navButton("Reasons & Actions", "/homs/admin/reasons", "text-center pt-2");
   $workcenters = $button->navButton("Workcenters", "/homs/admin/workcenters", "text-center pt-2");
@@ -74,6 +75,7 @@
                 echo $wcSelection;
                 echo $history;
                 echo $exportReports;
+                echo $linestops;
               ?>
             </div>
           </div>
