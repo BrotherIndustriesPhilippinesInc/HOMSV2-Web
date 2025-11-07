@@ -61,21 +61,14 @@
         <table id="data-table" class="table">
             <thead>
                 <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Mac Address</th>
-                    <th scope="col">Sensor Name</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Email Address</th>
                     <th scope="col">Section</th>
-                    <th scope="col">Line</th>
-                    <th scope="col">Area</th>
-                    <th scope="col">PO</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Creator</th>
-                    <th scope="col">Time Create</th>
-                    <th scope="col">Updated By</th>
-                    <th scope="col">Time Updated</th>
-                    
+                    <th scope="col">Position</th>
+                    <th scope="col">Employee Number</th>
+                    <th scope="col">ADID</th>
+                    <th scope="col">Is Admin</th>
                     <th scope="col">Actions</th>
-
                 </tr>
             </thead>
         </table>
@@ -218,4 +211,4 @@
     
 </body>
 
-<script defer type="module" src="/homs/js/functions/page-scripts/espManagement.js"></script>
+<script defer type="module" src="/homs/js/functions/page-scripts/users.js"></script>

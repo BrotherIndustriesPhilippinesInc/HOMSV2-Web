@@ -126,10 +126,13 @@ $(async function () {
             await setup(poId, $("#dateSelect").val()),
         ).done(function () {
             loading("hide");
+            taktTimeToSeconds($("#taktTime").val());
             createTable();
         }).fail(function () {
             alert('Error loading data.');
         });
+
+        
     });
 
     $("#dateSelect").on("change", async function () {
@@ -189,6 +192,7 @@ $(async function () {
                 let espSelected = $(".espSelect").val();
                 let lineSelected = $(".lineSelect").val();
                 let shiftSelected = $(".shiftSelect").val();
+
                 if(
                     espSelected == "" ||
                     lineSelected == "0" ||
@@ -295,6 +299,32 @@ $(async function () {
 
     $("#taktTime").on("input", function () {
         startTaktTimer();
+    });
+
+    $(".shiftSelect").on("change", function () {
+        if ($(this).val() === "ds") {
+            // Find the corresponding lineSelect in the same .d-flex container
+            const $lineSelect = $(this)
+                .closest(".d-flex")
+                .find(".lineSelect");
+
+            // Select option by index — e.g., 1 = first selectable (not "Select Line...")
+            $lineSelect.find("option").eq(1).prop("selected", true);
+
+            // Trigger change to update Select2 or dependent UI
+            $lineSelect.trigger("change");
+        }else{
+            // Find the corresponding lineSelect in the same .d-flex container
+            const $lineSelect = $(this)
+                .closest(".d-flex")
+                .find(".lineSelect");
+
+            // Select option by index — e.g., 1 = first selectable (not "Select Line...")
+            $lineSelect.find("option").eq(2).prop("selected", true);
+
+            // Trigger change to update Select2 or dependent UI
+            $lineSelect.trigger("change");
+        }
     });
 
     $(document).on("click", ".advanceAddLayer", function(){
@@ -556,6 +586,8 @@ $(async function () {
     $(".editSave").on("click", async function () {
         editSave();
     });
+
+    
     
     /* FUNCTIONS */
     async function getPOList() {
@@ -833,14 +865,38 @@ $(async function () {
             $(this).find("option:first").prop("disabled", true);
         });
 
-        lineList.forEach(({ line_name, id }) => {
+        lineList.reverse().forEach(({ line_name, id }) => {
             lineSelect.append(new Option(`${line_name}`, id));
         });
     }
 
     function assignAreaListValues(areaList) {
-        const areaSelect = $(".areaSelect").empty();
-        areaSelect.append(new Option(areaList, areaList, true, true));
+        if(section !== "Printer 1"){
+            const areaSelect = $(".areaSelect").empty();
+            areaSelect.append(new Option(areaList, areaList, true, true));
+        }else{
+            const areaSelect = $(".areaSelect").empty();
+            let lines = [
+                "Line A",
+                "Line B",
+                "Line C",
+                "Line D",
+                "Line E",
+                "Line F",
+                "Line G",
+                "Line H",
+                "Line I",
+                "Line J",
+                "Line K",
+                "Line L",
+                "Line M",
+            ];
+            
+            lines.forEach(element => {
+                areaSelect.append(new Option(element, element));
+            });
+        }
+        
     }
 
     function toTimeObj(timeStr) {
@@ -1369,6 +1425,7 @@ $(async function () {
             var option = $(".lineSelect option").filter(function() {
                 return $(this).text().trim() === lastRunData.line_name;
             });
+            
             $(".lineSelect").val(option.val()).trigger("change");
             $(".areaSelect").val(lastRunData.area).trigger("change");
             $(".shiftSelect").val(lastRunData.shift).trigger("change");
@@ -2046,5 +2103,23 @@ $(async function () {
             $("#wcName").text(new_work_center);
         }
     }
+
+    function taktTimeToSeconds(taktTime) {
+        // Convert string to number
+        let hours = parseFloat(taktTime);
+        if (isNaN(hours)) {
+            alert("Invalid takt time value!");
+            return;
+        }
+
+        // 1 hour = 3600 seconds
+        let taktTimeSeconds = hours * 3600;
+
+        // Show result
+        $("#taktTimeSeconds").val(taktTimeSeconds.toFixed(2));
+        $("#taktTimeDisplay").text(taktTimeSeconds.toFixed(2) + " seconds");
+    }
+
+
 
 });

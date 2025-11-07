@@ -48,7 +48,15 @@
     <script defer src="/homs/non_module_libraries/select2/select2.min.js"></script>
 
     <!-- NOTIFICATIONS -->
-     <script defer type="module" src="/homs/js/functions/notifications.js"></script>
+    <script defer type="module" src="/homs/js/functions/notifications.js"></script>
+
+    <!-- DATERANGEPICKER -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <!-- ICONIFY -->
+     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@3.0.0/dist/iconify-icon.min.js"></script>
 </head>
 
 <body>
@@ -147,6 +155,18 @@
 
         '/homs/admin/settings' => function() {
             include __DIR__ . '/views/pages/admin/settings.php';
+        },
+
+        '/homs/admin/users' => function() {
+            include __DIR__ . '/views/pages/admin/users.php';
+        },
+
+        '/homs/production/pr1' => function() {
+            include __DIR__ . '/views/pages/production/pr1.php';
+        },
+
+        '/homs/admin/takttime' => function() {
+            include __DIR__ . '/views/pages/admin/takttime.php';
         },
     ];
 

@@ -5,7 +5,7 @@
 
 <title>HOMS</title>
 
-<body class="bg-custom text-light container-fluid">
+<body class="bg-custom container-fluid">
     <?php 
         require_once __DIR__ . "/../components/header.php";
         require_once __DIR__ . '/../components/navbar.php';
@@ -17,8 +17,9 @@
 
     <script type='module' src='https://bi.datalake.brother.co.jp/javascripts/api/tableau.embedding.3.latest.min.js'></script>
     <div class="h-100 w-100">
-        <tableau-viz id='tableau-viz' src='https://bi.datalake.brother.co.jp/t/biph/views/TrialDashboard/Dashboard1' width='1300' height='840' hide-tabs toolbar='bottom' ></tableau-viz>
+        <tableau-viz id='tableau-viz' src='https://bi.datalake.brother.co.jp/t/biph/views/DPP16-2/Dashboard1' width='1300' height='840' hide-tabs toolbar='bottom' ></tableau-viz>
     </div>
+
 
     
 </body>

@@ -59,8 +59,6 @@ class WorkcenterController extends Controller
             return $this->errorResponse($e);
         }
     }
-    
-
 
     private function readFile($file, $user) {
         date_default_timezone_set('Asia/Manila');
@@ -140,5 +138,4 @@ class WorkcenterController extends Controller
             return $this->errorResponse($th);
         }
     }
-
 }

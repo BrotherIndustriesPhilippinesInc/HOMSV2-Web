@@ -7,7 +7,7 @@
 
 <title>HOMS - Edit History</title>
 
-<body class="bg-custom text-light container-fluid">
+<body class="bg-custom container-fluid">
     <?php 
         require_once __DIR__ . "/../../components/header.php";
         require_once __DIR__ . '/../../components/navbar.php';

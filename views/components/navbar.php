@@ -3,7 +3,7 @@
   $dashboard = $button->navButton("Dashboard", "/homs/");
 
   $uploadPOL = $button->navButton("Upload POL", "/homs/production/upload_pol", "text-center pt-2");
-  $wcSelection = $button->navButton("Production Control", "/homs/production/wc_selection", "text-center pt-2");
+  $wcSelection = $button->navButton("Production Control", "/homs/production/wc_selection", "wc-selection-nav text-center pt-2");
   $exportReports = $button->navButton("Reports", "/homs/production/export_reports", "text-center pt-2");
   $history = $button->navButton("History", "/homs/production/history", "text-center pt-2");
   $linestops = $button->navButton("Linestops", "/homs/production/linestops", "text-center pt-2");
@@ -14,11 +14,16 @@
   $esp_management = $button->navButton("ESP Management", "/homs/admin/esp_management", "text-center pt-2");
   $breaktime_management = $button->navButton("Breaktime Management", "/homs/admin/breaktime_management", "text-center pt-2");
   $settings = $button->navButton("Settings", "/homs/admin/settings", "text-center pt-2");
+  $users = $button->navButton("Users", "/homs/admin/users", "text-center pt-2");
+
+  $takttime = $button->navButton("Takt Time", "/homs/admin/takttime", "text-center pt-2");
 
   $confirmation = $button->navButton("Confirmation", "/homs/confirmation");
   $graphs = $button->navButton("Graphs", "/homs/graphs");
 
   $om = $button->navButton("Manual", "/homs/manual");
+
+  $pr1 = $button->navButton("Printer 1 Production", "/homs/production/pr1", "pr1-nav text-center pt-2");
 
     // Get the current path
   $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -30,8 +35,8 @@
 ?>
 
 <div class="offcanvas offcanvas-start bg-custom" tabindex="-1" id="offcanvasDark" aria-labelledby="offcanvasDarkLabel">
-  <div class="offcanvas-header">
-    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  <div class="offcanvas-header justify-content-end">
+    <i class="fa-solid fa-xmark" data-bs-dismiss="offcanvas" style="color: #1D8B8B !important;"></i>
   </div>
   <div class="d-flex justify-content-center mb-4">
     <span data-bs-toggle="offcanvas" data-bs-target="#offcanvasDark" aria-controls="offcanvasDark">
@@ -41,15 +46,15 @@
   <div class="offcanvas-body p-0">
     <ul class="nav flex-column">
       <!-- COMPONENT TEST -->
-      <li class="nav-item d-flex">
+      <!-- <li class="nav-item d-flex">
           <div class="nav-status <?php echo isActive('/comptest', $currentPath); ?>" style="width: 8px; height: auto;"></div>
           <div class="w-100">
             <div class="nav-link w-100 text-primary fs-5 fw-medium">
-              <?php echo $compTest; ?>
+              <?php /* echo $compTest; */ ?>
             </div>
           </div>
           
-      </li>
+      </li> -->
       <!-- DASHBOARD -->
       <li class="nav-item d-flex">
           <div class="nav-status <?php echo isActive('/', $currentPath); ?>" style="width: 8px; height: auto;"></div>
@@ -66,13 +71,16 @@
           <div class="nav-link w-100 text-primary fs-5 fw-medium">
             <div class="nav-title d-flex justify-content-center align-items-center">
               <span class="w-100 fs-5">Production</span>
-              <img class="arrow" src="/homs/resources/icons/arrow_down.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
-              <img class="arrow d-none" src="/homs/resources/icons/arrow_up.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
+
+              <i class="arrow fa-solid fa-caret-down"></i>
+              <i class="arrow d-none fa-solid fa-caret-up"></i>
+              
             </div>
             <div class="nav-submenu">
               <?php 
                 echo $uploadPOL; 
                 echo $wcSelection;
+                echo $pr1;
                 echo $history;
                 echo $exportReports;
                 echo $linestops;
@@ -87,31 +95,33 @@
           <div class="nav-link w-100 text-primary fs-5 fw-medium">
             <div class="nav-title d-flex justify-content-center align-items-center">
               <span class="w-100 fs-5">Admin</span>
-              <img class="arrow" src="/homs/resources/icons/arrow_down.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
-              <img class="arrow d-none" src="/homs/resources/icons/arrow_up.svg" style="width: 24px; height: 24px;" alt="arrow-icon">
+              <i class="arrow fa-solid fa-caret-down"></i>
+              <i class="arrow d-none fa-solid fa-caret-up"></i>
             </div>
             <div class="nav-submenu">
               <?php
                 echo $reasons;
                 echo $workcenters;
+                echo $takttime;
                 echo $st_management;
                 echo $esp_management;
                 echo $breaktime_management;
                 echo $settings;
+                echo $users;
               ?>
             </div>
           </div>
       </li>
       <!-- GRAPHS -->
-      <li class="nav-item d-flex">
+      <!-- <li class="nav-item d-flex">
           <div class="nav-status <?php echo isActive('/graphs', $currentPath); ?>" style="width: 8px; height: auto;"></div>
           <div class="w-100">
             <div class="nav-link w-100 text-primary fs-5 fw-medium">
-              <?php echo $graphs; ?>
+              <?php /* echo $graphs; */ ?>
             </div>
             
           </div>
-      </li>
+      </li> -->
 
       <!-- OM -->
       <li class="nav-item d-flex">

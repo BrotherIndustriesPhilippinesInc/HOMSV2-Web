@@ -2,6 +2,7 @@ export function navigation() {
     expand();
     linkHover();
     removeBackdrop();
+    navRestrictions();
 }
 
 function expand(){
@@ -34,4 +35,14 @@ function removeBackdrop(){
     document.addEventListener('show.bs.offcanvas', function () {
         document.querySelectorAll('.offcanvas-backdrop').forEach(backdrop => backdrop.remove());
     });
+}
+
+function navRestrictions() {
+    const section = JSON.parse(localStorage.getItem('user'))['Section'];
+    if(section !== "Printer 1"){
+        $(".pr1-nav").addClass("d-none");
+    }else{
+        //$(".wc-selection-nav").addClass("d-none");
+    }
+    
 }

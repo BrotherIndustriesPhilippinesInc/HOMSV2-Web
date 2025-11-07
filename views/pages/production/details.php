@@ -11,7 +11,7 @@
 
     $dateSelect = $textbox->timeSelect("dateSelect", "h-100 bg-custom-tertiary text-primary fw-medium ", "");
 
-    $selectPO = $button->primaryButton("po-button-modal", "Select PO", "/homs/resources/icons/shopping_cart.svg", "po_cart", "data-bs-toggle='modal' data-bs-target='#poModal' style='z-index: 99'");
+    $selectPO = $button->primaryButton("po-button-modal", "Select PO", "/homs/resources/icons/cart-shopping-solid-full.svg", "po_cart", "data-bs-toggle='modal' data-bs-target='#poModal' style='z-index: 99'", "", "height: 24px;");
     $selectESP = $select->primarySelect("espSelect", "ESP32", ["Line 1", "Line 2", "Line 3"], "");
 
     $startProduction = $button->primaryButton("startProduction", "Start Production", "/homs/resources/icons/pallet.svg", "", );
@@ -24,7 +24,8 @@
     $planQuantity = $textbox->primaryTextbox("planQuantity", "plan-detail-textbox secondary-background p-1", "", "0", "number");
     
     $hourlyPlanQuantity = $textbox->primaryTextbox("hourlyPlanQuantity", "plan-detail-textbox secondary-background p-1", "", "0", "number");
-    $taktTime = $textbox->primaryTextbox("taktTime", "plan-detail-textbox secondary-background p-1", "0", "0", "number");
+    $taktTime = $textbox->primaryTextbox("taktTime", "d-none plan-detail-textbox secondary-background p-1 ", "0", "0", "number");
+    $taktTimeSeconds = $textbox->primaryTextbox("taktTimeSeconds", "plan-detail-textbox secondary-background p-1 ", "0", "0", "number");
     $actualQuantity = $textbox->primaryTextbox("actualQuantity", "plan-detail-textbox secondary-background p-1", "", "0", "number");
     $variance = $textbox->primaryTextbox("variance", "plan-detail-textbox secondary-background p-1", "0", "0", "number");
 
@@ -265,9 +266,10 @@
                             </div>
 
                             <div>
-                                <span class="plan-details section-details-label">Takt Time</span>
+                                <span class="plan-details section-details-label">Takt Time (Seconds)</span>
                                 <?php
                                     echo $taktTime;
+                                    echo $taktTimeSeconds;
                                 ?>
                             </div>
 
@@ -370,7 +372,7 @@
             <div class="modal-content">
                 <div class="modal-header border-0">
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Select Production Order</h1>
-                    <button type="button" class="border-0 bg-transparent ms-auto" data-bs-dismiss="modal" aria-label="Close""><i class="fa-solid fa-xmark"></i></button>
+                    <button type="button" class="border-0 bg-transparent ms-auto" data-bs-dismiss="modal" aria-label="Close"><i class="fa-solid fa-xmark" style="color: #1D8B8B !important;"></i></button>
                 </div>
                 <div class="p-3 d-flex">
                     <?php echo $search; ?>

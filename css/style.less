@@ -26,11 +26,20 @@
 
 @primary-border: #1D8B8B;
 
+@border-color: #e7eaf0;
+
+
+
 .primary-border{
     border-width: 1px !important;
     border-style: solid !important;
     border-color: @primary-border !important;
 }
+
+.btn-primary{
+    color: @primary-misc !important;
+}
+
 .secondary-background{
     background-color: @secondary-background !important;
 }
@@ -193,7 +202,7 @@ input[type="text"]::-webkit-input-placeholder {
 }
 .flatpickr-no-calendar{
     background-color: @secondary-background;
-    border: 0;
+    border: 1px solid @border-color;
     width: 100%;
     padding: 4px;
     border-radius: 8px;
@@ -327,6 +336,10 @@ input[type="checkbox"]{
     z-index: 1;
 }
 
+.dt-info{
+    color: @primary-misc !important;
+}
+
 .buttons-colvis{
     background-color: @tertiary-background !important;
     color: @primary-misc !important;
@@ -338,9 +351,11 @@ label{
     font-size: 12px;
     font-weight: 500;
 }
+
 .text-light{
     color: @primary-misc !important;
 }
+
 .primary-border{
     border-color: @primary-misc !important;
 }
@@ -352,6 +367,7 @@ label{
 select{
     cursor: pointer;
 }
+
 div:where(.swal2-container) div:where(.swal2-popup){
     background-color: @primary-background !important;
     border: 1px solid @primary-misc !important;
@@ -484,7 +500,7 @@ div:where(.swal2-container) div:where(.swal2-popup){
     height: 40px;
 }
 
-#dateSelect{
+#dateSelect, #finishedDateSelect{
     border: 1px solid @primary-misc !important;
 }
 

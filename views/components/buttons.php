@@ -4,14 +4,14 @@ class Buttons
     public function __construct(){
 
     }
-    public function primaryButton($name, $text, $imgSource ='', $alt='', $buttonAttributes = '',$class='',)
+    public function primaryButton($name, $text, $imgSource ='', $alt='', $buttonAttributes = '',$class='', $style='')
     {
         $spanClass = '';
         $imageExists = '';
         $textExists = '';
         if($imgSource != '' || $text != ''){
             $spanClass = "ps-2";
-            $imageExists = "<img src='{$imgSource}' alt='{$alt}'>";
+            $imageExists = "<img src='{$imgSource}' alt='{$alt}' style='{$style}'>";
         }
         if($text != ''){
             $textExists = "<span class='{$name}-span btn-span {$spanClass}'>$text</span>";
