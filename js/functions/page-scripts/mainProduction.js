@@ -587,8 +587,6 @@ $(async function () {
         editSave();
     });
 
-    
-    
     /* FUNCTIONS */
     async function getPOList() {
         $("#po_list").empty();
@@ -1738,7 +1736,6 @@ $(async function () {
             }
         }
     }
-
 
     function hasMinutesPassed(startTime, minutesThreshold) {
         let now = new Date();

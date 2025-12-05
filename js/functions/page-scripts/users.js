@@ -9,14 +9,10 @@ $(async function () {
 
     const params = {
         ajax: {
-            url: "http://apbiphbpswb01:80/PortalAPI/api/SystemApproverLists/datatable?systemID=64", // your endpoint
-            method: "POST",
-            contentType: 'application/json',
-            data: function (d) {
-                return JSON.stringify(d); // DataTables request model
-            }
+            url: "http://apbiphbpswb01:9876/api/Users", // your endpoint
+            method: "GET",
+            dataSrc: "",
         },
-        serverSide: true,
         processing: true,
         layout: {
             topStart: {
@@ -47,7 +43,8 @@ $(async function () {
                 orderable: false,
                 render: function (data) {
                     return `
-                            <a href="/Users/Delete?portalId=${data}" asp-user-id="${data}" class="btn btn-danger">Delete</a>
+                            <a href="/Users/Update?portalId=${data}" asp-user-id="${data}" class="btn">Update</a>
+                            <a href="/Users/Delete?portalId=${data}" asp-user-id="${data}" class="btn">Delete</a>
                     `;
                 },
                 className: "text-center" // optional: center the buttons

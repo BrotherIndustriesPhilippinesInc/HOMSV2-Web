@@ -9,7 +9,7 @@ $(async function () {
 
     const params = {
         ajax: {
-            url: "http://apbiphbpsts01:8080/homs/api/admin/getTaktTimeV2.php", // your endpoint
+            url: "http://apbiphbpswb02/homs/api/admin/getTaktTimeV2.php", // your endpoint
             method: "GET",
             contentType: 'application/json',
             dataSrc: function (json) {
@@ -103,7 +103,7 @@ $(async function () {
             "section": section
         };
 
-        await apiCall("http://apbiphbpsts01:8080/homs/api/admin/submitTaktTimeV2.php", "POST", data).then((result) => {
+        await apiCall("http://apbiphbpswb02/homs/api/admin/submitTaktTimeV2.php", "POST", data).then((result) => {
             Swal.fire({
                 icon: 'success',
                 title: 'Success',
@@ -120,13 +120,13 @@ $(async function () {
     }
 
     async function getModel(id){
-        return await apiCall("http://apbiphbpsts01:8080/homs/api/admin/getSpecificTaktTimeV2.php?id=" + id, "GET").then((result) => {
+        return await apiCall("http://apbiphbpswb02/homs/api/admin/getSpecificTaktTimeV2.php?id=" + id, "GET").then((result) => {
             return result;
         });
     }
 
     async function updateModel(data){
-        await apiCall("http://apbiphbpsts01:8080/homs/api/admin/updateTaktTimeV2.php", "PUT", data).then((result) => {
+        await apiCall("http://apbiphbpswb02/homs/api/admin/updateTaktTimeV2.php", "PUT", data).then((result) => {
             Swal.fire({
                 icon: 'success',
                 title: 'Success',
@@ -151,7 +151,7 @@ $(async function () {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                await apiCall("http://apbiphbpsts01:8080/homs/api/admin/deleteTaktTimeV2.php", "DELETE", data).then((result) => {
+                await apiCall("http://apbiphbpswb02/homs/api/admin/deleteTaktTimeV2.php", "DELETE", data).then((result) => {
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',

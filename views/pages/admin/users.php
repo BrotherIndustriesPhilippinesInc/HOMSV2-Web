@@ -6,20 +6,13 @@
     $date = $textbox->dateSelect("date");
 
     /* REGISTRATION */
-    $create = $button->primaryButton("create","Register ESP", "", "", "data-bs-toggle='modal' data-bs-target='#espCreateModal'");
+    $create = $button->primaryButton("create","Register user", "", "", "data-bs-toggle='modal' data-bs-target='#userCreateModal'");
     $submit = $button->primaryButton("submit","Submit", "btn btn-primary bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "", "data-bs-dismiss='modal'");
     $createName = $textbox->primaryTextbox("create-name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
     $createMacAddress = $textbox->primaryTextbox("create-mac_address", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
     $createAssignedSection = $select->primarySelect("create-assigned_section", "", [
-        "Printer 1" => "Printer 1",
-        "Printer 2" => "Printer 2",
-        "Ink Head" => "Ink Head",
-        "P-Touch" => "P-Touch",
-        "Tape Cassette" => "Tape Cassette",
-        "Ink Cartridge" => "Ink Cartridge",
-        "BPS" => "BPS",
-        "Toner" => "Toner",
-        "PCBA" => "PCBA",
+        "true" => "True",
+        "false" => "False"
     ]);
     $createLineName = $textbox->primaryTextbox("create-line_name", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
     $createArea = $textbox->primaryTextbox("create-area", "form-control bg-custom-tertiary border-0 rounded-3 fw-medium text-primary glow", "");
@@ -46,7 +39,7 @@
     
 ?>
 
-<title>HOMS - ESP Management</title>
+<title>HOMS - User Management</title>
 
 <body class="bg-custom container-fluid">
     <?php 
@@ -54,7 +47,7 @@
         require_once __DIR__ . '/../../components/navbar.php';
     ?>
     <div class="bg-custom-secondary container-fluid rounded-3">
-        <h1>ESP Management</h1>
+        <h1>User Management</h1>
         <div>
             <?php echo $create; ?>
         </div>
@@ -75,63 +68,30 @@
     </div>
     
     <!-- Modal -->
-    <div id="espCreateModal" class="modal fade" data-bs-keyboard="false" tabindex="-1">
+    <div id="userCreateModal" class="modal fade" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Register ESP32</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Register User</h1>
+                    <button type="button" class="btn-close my-custom-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
                     <div class="d-flex flex-column gap-3">
                         <div>
                             <div>
-                                <label for="create-name" class="form-label">ESP Name</label>
+                                <label for="create-name" class="form-label">Employee Number</label>
                             </div>
                             <?php echo $createName; ?>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div>
-                                    <label for="create-mac_address" class="form-label">Mac Address</label>
-                                </div>
-                                <?php echo $createMacAddress; ?>
-                            </div>
-                            <div>
-                                <div>
-                                    <label for="create-sensor_name" class="form-label">Sensor Name</label>
-                                </div>
-                                <?php echo $createSensorName; ?>
-                            </div>
                         </div>
                         
                         <div>
                             <div>
-                                <label for="create-assigned_section" class="form-label">Section</label>
+                                <label for="create-assigned_section" class="form-label">Is Admin</label>
                             </div>
                             <?php echo $createAssignedSection; ?>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <div>
-                                    <label for="create-line_name" class="form-label">Line</label>
-                                </div>
-                                <?php echo $createLineName; ?>
-                            </div>
-                            <div>
-                                <div>
-                                    <label for="create-area" class="form-label">Area</label>
-                                </div>
-                                <?php echo $createArea; ?>
-                            </div>
-                        </div>
-                        <div id="create-legend-container" class="d-none">
-                            <div>
-                                <label for="create-legend" class="form-label">Loss Factor Legend</label>
-                            </div>
-                            <?php echo $createLegend; ?>
-                        </div>
+                        
                     </div>
                     
                 </div>
@@ -142,11 +102,11 @@
         </div>
     </div>
 
-    <div id="espEditModal" class="modal fade" data-bs-keyboard="false" tabindex="-1">
+    <div id="userEditModal" class="modal fade" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header border-0">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Register ESP32</h1>
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Register user32</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -154,7 +114,7 @@
                     <div class="d-flex flex-column gap-3">
                         <div>
                             <div>
-                                <label for="edit-name" class="form-label">ESP Name</label>
+                                <label for="edit-name" class="form-label">user Name</label>
                             </div>
                             <?php echo $editName; ?>
                         </div>

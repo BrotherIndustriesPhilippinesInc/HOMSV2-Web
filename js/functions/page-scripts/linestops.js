@@ -50,7 +50,7 @@ $(function () {
         }
     }
 
-    if (window.location.href === "http://apbiphbpsts01:8080/homs/production/linestops") {
+    if (window.location.href === "http://apbiphbpswb02/homs/production/linestops") {
         table = dataTablesInitialization("#data-table", params);
         setInterval(function () {
             table.ajax.reload(null, false); // user paging is not reset on reload
@@ -81,7 +81,7 @@ $(function () {
 
             creator: user.EmpNo,
         };
-        if (window.location.href === "http://apbiphbpsts01:8080/homs/production/linestops") {
+        if (window.location.href === "http://apbiphbpswb02/homs/production/linestops") {
             apiCall("/homs/api/production/updateLinestop.php", "POST", data).then((response) => {
                 Swal.fire({
                     icon: 'success',

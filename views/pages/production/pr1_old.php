@@ -87,22 +87,84 @@ $checkDelayButton = $button->primaryButton("checkDelayButton", "Check Delay", ""
                 <span class="checkDelayButton-span btn-span ps-2">Check Delay</span>
             </button>
         </div>
-        <table id="delay-table" class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Production Order</th>
-                    <th scope="col">Model Code</th>
-                    <th scope="col">Target / Hour</th>
-                    <th scope="col">Input / Hour</th>
-                    <th scope="col">Cumm. Target / Hour</th>
-                    <th scope="col">Cumm. Input / Hour</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">Production Line</th>
-                    <th scope="col">Status</th>
-                    <th scope="col"></th>
-                </tr>
-            </thead>
-        </table>
+        <div class="d-flex gap-3">
+            <!-- Input Chart -->
+            <div class="w-50 border p-3 rounded d-flex flex-column gap-3">
+                <h3>Input</h3>
+                <div>
+                    <canvas id="input-chart"></canvas>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <?php
+                        echo $inputDateSelect;
+                        ?>
+                    </div>
+
+                    <div class="d-flex gap-2 w-50">
+                        <?php
+                        echo $inputLineSelect;
+                        echo $inputPO;
+                        ?>
+                    </div>
+
+                </div>
+
+                <div>
+                    <table id="input-table" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Production Line</th>
+                                <th scope="col">Production Order</th>
+                                <th scope="col">Target</th>
+                                <th scope="col">Input</th>
+                                <th scope="col">Time</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- Finished Chart -->
+            <div class="w-50 border p-3 rounded d-flex flex-column gap-3">
+                <h3>Finished</h3>
+                <div>
+                    <canvas id="finished-chart"></canvas>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <?php
+                        echo $finishedDateSelect;
+                        ?>
+                    </div>
+
+                    <div class="d-flex gap-2 w-50">
+                        <?php
+                        echo $finishedLineSelect;
+                        echo $finishedPO;
+                        ?>
+                    </div>
+
+                </div>
+
+                <div>
+                    <table id="finished-table" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Production Line</th>
+                                <th scope="col">Production Order</th>
+                                <th scope="col">Target</th>
+                                <th scope="col">Finished</th>
+                                <th scope="col">Time</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
 
     </div>
 
@@ -123,7 +185,22 @@ $checkDelayButton = $button->primaryButton("checkDelayButton", "Check Delay", ""
                         <iconify-icon icon="material-symbols:refresh" width="24" height="24"></iconify-icon>
                         <span class="refreshButton-span btn-span ps-2">Refresh</span>
                     </button>
-                    
+                    <table id="delay-table" class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Production Order</th>
+                                <th scope="col">Model Code</th>
+                                <th scope="col">Target / Hour</th>
+                                <th scope="col">Input / Hour</th>
+                                <th scope="col">Cumm. Target / Hour</th>
+                                <th scope="col">Cumm. Input / Hour</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Production Line</th>
+                                <th scope="col">Status</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
                 
             </div>

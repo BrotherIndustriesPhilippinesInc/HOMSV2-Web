@@ -60,7 +60,7 @@ $(async function () {
     receiveFromWebView("generatedFilePath",(data) => {
 
         if (data.generatedFilePath) {
-            window.location.href = `http://apbiphbpsts01:8080/homs/resources/DPR/Generated/${data.generatedFilePath}`;
+            window.location.href = `http://apbiphbpswb02/homs/resources/DPR/Generated/${data.generatedFilePath}`;
             Swal.fire({
                 title: 'Success!',
                 text: 'DPR has been generated.',

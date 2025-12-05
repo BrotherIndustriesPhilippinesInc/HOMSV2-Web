@@ -12,7 +12,7 @@ class MSQLServer
     {
         try {
             $this->conn = new PDO(
-                "sqlsrv:Server=$this->serverName;Database=$this->database",
+                "sqlsrv:Server=$this->serverName;Database=$this->database;TrustServerCertificate=true",
                 $this->username,
                 $this->password
             );

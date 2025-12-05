@@ -168,6 +168,9 @@
         '/homs/admin/takttime' => function() {
             include __DIR__ . '/views/pages/admin/takttime.php';
         },
+        '/homs/production/mes_po_reason' => function() {
+            include __DIR__ . '/views/pages/production/mes_po_reason.php';
+        },
     ];
 
     // Get the current path

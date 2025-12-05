@@ -449,6 +449,7 @@
                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Causes & Actions</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div id="stopProductionModalBody" class="container modal-body">
                     <div>
                         <div class="d-flex flex-column content-group p-2 rounded-3 h-100">
@@ -490,6 +491,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -571,6 +573,7 @@
             </div>
         </div>
     </div>
+    
 </body>
 
 <!-- <script defer type="module" src="/homs/js/functions/page-scripts/detailsPOSelection.js"></script> -->
