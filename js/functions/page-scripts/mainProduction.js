@@ -94,7 +94,7 @@ $(async function () {
     let selectedPOID;
 
     getPOList();
-    popoverInitialize();
+    //popoverInitialize();
 
     addReasonRow("#advance-container");
     addLinestopReasonRow("#linestop-container");

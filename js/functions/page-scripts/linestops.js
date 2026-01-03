@@ -3,9 +3,10 @@ import { sendToWebView } from "./../WebViewInteraction.js";
 import dataTablesInitialization from "./../dataTablesInitialization.js";
 
 /* Initialization */
-    const user = JSON.parse(localStorage.getItem("user"));
-    const section = user.Section;
-    let table;
+const user = JSON.parse(localStorage.getItem("user"));
+const section = user.Section;
+let table;
+
 $(function () {
     /* Initialize database */
     const params = {
@@ -165,7 +166,6 @@ export async function renderNotifications(containerID, badgeID) {
             console.error("Error fetching linestops:", error);
         });
 }
-
 
 function isRecent(timestampString, thresholdInSeconds = 10) {
     const now = new Date();

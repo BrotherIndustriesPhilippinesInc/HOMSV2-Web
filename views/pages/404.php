@@ -12,6 +12,6 @@
         justify-content: center;
         align-items: center;
     ">
-        <h1>404<span style="font-size: 8px !important; font-weight: 100;">feelings</span>Not Found</h1>
+        <h1>404<span style="font-size: 8px !important; font-weight: 100;">_</span>Not Found</h1>
     </div>
 </body>

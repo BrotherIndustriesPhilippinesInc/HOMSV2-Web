@@ -92,7 +92,7 @@
                 </div>
             </div>
 
-            <div id="" class="initial initial-setup">
+            <!-- <div id="" class="initial initial-setup">
                 <div class="d-flex flex-column gap-4 text-primary">
                     <div id="po_number" class="d-flex align-items-center justify-content-center gap-2 align-items-center">
                         <i class="fa-solid fa-paste" style="font-size: 32px; margin-right: 5px; "></i>
@@ -118,7 +118,7 @@
                     data-bs-placement="left"
                     data-bs-html="true"
                 />
-            </div>
+            </div> -->
         </div>
 
         <div class="h-100 d-flex justify-content-between gap-3">

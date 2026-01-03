@@ -39,12 +39,25 @@ $(async function () {
                 className: "text-center" // optional: center the icon
             },
             {
-                data: "id",
+                data: "employeeNumber",
                 orderable: false,
-                render: function (data) {
+                render: function (data, type, row) {
                     return `
-                            <a href="/Users/Update?portalId=${data}" asp-user-id="${data}" class="btn">Update</a>
-                            <a href="/Users/Delete?portalId=${data}" asp-user-id="${data}" class="btn">Delete</a>
+                        <div class="d-flex justify-content-center gap-2">
+                            <button 
+                                data-user-id="${row.employeeNumber}"
+                                data-user-id2="${row.portalID}"
+                                class="edit-user btn btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#userEditModal">
+                                Update
+                            </button>
+                            <button 
+                                data-user-id="${row.employeeNumber}"
+                                class="delete-account btn danger">
+                                Delete
+                            </button>
+                        </div>
                     `;
                 },
                 className: "text-center" // optional: center the buttons
@@ -81,27 +94,24 @@ $(async function () {
         submit();
     });
 
-    $(document).on("click", ".edit-esp", function (e) {
-        let espId = $(this).data("esp");
-        let esp = table.rows().data().toArray().find(r => r.id == espId);
-        $("#edit-name").val(esp.esp_name);
-        $("#edit-mac_address").val(esp.mac_address);
-        $(".edit-assigned_section").val(esp.assigned_section);
-        $("#edit-line_name").val(esp.line_name);
-        $("#edit-area").val(esp.area);
-        $("#edit-sensor_name").val(esp.sensor_name);
+    $(document).on("click", ".edit-user", function (e) {
+        let userId = $(this).data("user-id");
+        let userId2 = $(this).data("user-id2");
+        let user = table.rows().data().toArray().find(r => r.employeeNumber == userId);
+        $("#edit-name").val(user.employeeNumber);
+        $(".edit-is_admin").val(String(user.isAdmin)); // convert boolean to string (user.isAdmin);
 
-        $(".save").attr("data-esp_id", espId);
-        editingID = espId;
+        $(".save").attr("data-user-id", userId);
+        editingID = userId2;
     });
 
     $(".save").on("click", function (e) {
         save(editingID);
     });
 
-    $(document).on("click", ".delete-esp", function (e) {
-        let espId = $(this).data("esp_id");
-        deleteESP(espId);
+    $(document).on("click", ".delete-account", function (e) {
+        let accountID = $(this).data("user-id");
+        deleteAccount(accountID);
     });
 
     $(".create-category").on("change", function (e) {
@@ -116,35 +126,26 @@ $(async function () {
     });
 
     function submit(){
-        let esp = {
-            esp_name: $("#create-name").val(),
-            mac_address: $("#create-mac_address").val(),
-            assigned_section: $(".create-assigned_section").val(),
-            line_name: $("#create-line_name").val(),
-            area: $("#create-area").val(),
-            sensor_name: $("#create-sensor_name").val(),
+        let postData = {
+            "biphid": $("#create-name").val(),
+            "isAdmin": Boolean($(".create-is_admin").val()),
+        }
 
-            creator: user["EmpNo"],
-        };
-
-        let espFields = [
-            { name: "Name", value: $("#create-name").val() }, 
-            { name: "MAC Address", value: $("#create-mac_address").val() }, 
-            { name: "Assigned Section", value: $(".create-assigned_section").val() }, 
-            { name: "Line Name", value: $("#create-line_name").val() },
-            { name: "Area", value: $("#create-area").val() }, 
-            { name: "Sensor Name", value: $("#create-sensor_name").val() }
+        let createFields = [
+            { name: "biphid", value: $("#create-name").val(), }, 
+            { name: "isAdmin", value: $(".create-is_admin").val() }, 
+            
         ];
-        if (!validateFields(espFields)) return;
+        if (!validateFields(createFields)) return;
 
-        apiCall("/homs/api/admin/submitESP.php", "POST", esp)
+        apiCall("http://apbiphbpswb01:9876/api/Users", "POST", postData)
         .then((response) => {
             Swal.fire({
                 icon: 'success',
                 title: 'Success',
                 timer: 1000,
                 timerProgressBar: true,
-                text: 'ESP Registered successfully!',
+                text: 'User Registered successfully!',
             });
             table.ajax.reload(null, false); // Reload the table without resetting the pagination
         })
@@ -155,46 +156,34 @@ $(async function () {
     }
 
     function save(id){
-        let esp = {
-            id: id,
-            esp_name: $("#edit-name").val(),
-            mac_address: $("#edit-mac_address").val(),
-            assigned_section: $(".edit-assigned_section").val(),
-            line_name: $("#edit-line_name").val(),
-            area: $("#edit-area").val(),
-            sensor_name: $("#edit-sensor_name").val(),
-
-            creator: user["EmpNo"],
+        let data = {
+            isAdmin: $(".edit-is_admin").val() === "true"
         };
 
-        let espFields = [
-            { name: "Name", value: $("#edit-name").val() }, 
-            { name: "MAC Address", value: $("#edit-mac_address").val() }, 
-            { name: "Assigned Section", value: $(".edit-assigned_section").val() }, 
-            { name: "Line Name", value: $("#edit-line_name").val() },
-            { name: "Area", value: $("#edit-area").val() }, 
-            { name: "Sensor Name", value: $("#edit-sensor_name").val() }
+        let createFields = [
+            { name: "isAdmin", value: $(".edit-is_admin").val() }, 
+            
         ];
-        if (!validateFields(espFields)) return;
+        if (!validateFields(createFields)) return;
 
-        apiCall("/homs/api/admin/updateESP.php", "PUT", esp)
+        apiCall(`http://apbiphbpswb01:9876/api/Users/UpdateUser/${id}`, "POST", data)
         .then((response) => {
             Swal.fire({
                 icon: 'success',
                 title: 'Success',
                 timer: 1000,
                 timerProgressBar: true,
-                text: 'ESP Updated Successfully!!',
+                text: 'User Updated Successfully!!',
             });
             table.ajax.reload(null, false); // Reload the table without resetting the pagination
         })
         .catch((error) => {
             console.error("Submit Failed:", error.message);
-            alert("Failed to submit esp: " + error.message);
+            alert("Failed to submit user: " + error.message);
         });
     }
 
-    function deleteESP(espId) {
+    function deleteAccount(accountID) {
         Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -205,11 +194,15 @@ $(async function () {
             confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                apiCall("/homs/api/admin/deleteESP.php", "DELETE", { id: espId })
+                apiCall(
+                    "http://apbiphbpswb01:9876/api/Users/DeleteUsers",
+                    "POST",
+                    { emp_id: String(accountID) }
+                )
                 .then((response) => {
                     Swal.fire({
                         title: 'Deleted!',
-                        text: 'Your ESP has been deleted.',
+                        text: 'Account has been deleted.',
                         icon: 'success',
                         timer: 1000,
                         timerProgressBar: true
@@ -218,10 +211,10 @@ $(async function () {
                 })
                 .catch((error) => {
                     console.error("Delete Failed:", error.message);
-                    alert("Failed to delete ESP: " + error.message);
+                    alert("Failed to delete account: " + error.message);
                 });
             }
         });
-
     }
+
 });
