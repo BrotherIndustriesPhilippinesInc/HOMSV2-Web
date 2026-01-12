@@ -227,5 +227,3 @@ export function popoverInitialize(popoverTriggerClass, popoverId, defaultPlaceme
         content: () => content
     });
 }
-
-

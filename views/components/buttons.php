@@ -4,7 +4,7 @@ class Buttons
     public function __construct(){
 
     }
-    public function primaryButton($name, $text, $imgSource ='', $alt='', $buttonAttributes = '',$class='', $style='')
+    public function primaryButton($name, $text, $imgSource ='', $alt='', $buttonAttributes = '', $class='', $style='', $isIconify='', $iconifyComponent='')
     {
         $spanClass = '';
         $imageExists = '';
@@ -16,12 +16,24 @@ class Buttons
         if($text != ''){
             $textExists = "<span class='{$name}-span btn-span {$spanClass}'>$text</span>";
         }
-        $html = <<<HTML
-        <button type="button" class='{$name} btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary {$class} glow' $buttonAttributes>
-            $imageExists
-            $textExists
-        </button>
-        HTML;
+
+        $html = '';
+        if(!$isIconify){
+            $html = <<<HTML
+            <button type="button" class='{$name} btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary {$class} glow' $buttonAttributes>
+                $imageExists
+                $textExists
+            </button>
+            HTML;
+        }else{
+            $html = <<<HTML
+            <button type="button" class='{$name} btn btn-primary bg-custom-tertiary border-1 rounded-3 fw-medium text-primary {$class} glow' $buttonAttributes>
+                $iconifyComponent
+                $textExists
+            </button>
+            HTML;
+        }
+        
         return $html;
     }
     public function primaryButtonAlt($name, $text, $imgLink ='', $buttonAttributes = '',$class='',)

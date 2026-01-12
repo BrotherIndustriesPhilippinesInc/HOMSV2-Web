@@ -433,10 +433,11 @@ $(async function () {
 
 
         /* Check if variance is 10% of plan */
+        let target = parseInt($("#target").val());
         let planQuantity = parseInt($("#hourlyPlanQuantity").val());
         let actualQuantity = parseInt($("#actualQuantity").val());
 
-        let variancePercent = calculateVariancePercent(planQuantity, actualQuantity);
+        let variancePercent = calculateVariancePercent(target, actualQuantity);
 
         // Get reasons
         let advanceReasonCheck = collectAdvanceReasonData();
@@ -585,6 +586,10 @@ $(async function () {
 
     $(".editSave").on("click", async function () {
         editSave();
+    });
+
+    $(".lineSelect").on("change", function () {
+        lineShiftMatch(".lineSelect", ".shiftSelect");
     });
 
     /* FUNCTIONS */
@@ -1556,6 +1561,17 @@ $(async function () {
                 }
             };
 
+            const buildActualQuantity = (val) => {
+                if (typeof val === "string") {
+                    try {
+                        return JSON.parse(val);
+                    } catch {
+                        return null; // invalid JSON
+                    }
+                }
+                return val;
+            };
+
             const updatedData = {
                 "id": newRowData["id"],
                 "po": newRowData["po"],
@@ -1567,7 +1583,7 @@ $(async function () {
                 "description": newRowData["description"],
                 "plan_quantity": newRowData["plan_quantity"],
                 "takt_time": newRowData["takt_time"],
-                "actual_quantity": newRowData["actual_quantity"],
+                "actual_quantity": buildActualQuantity(newRowData["actual_quantity"]),
                 "variance": newRowData["variance"],
                 "shift": newRowData["shift"],
                 "hourly_time": newRowData["hourly_time"],
@@ -2117,6 +2133,13 @@ $(async function () {
         $("#taktTimeDisplay").text(taktTimeSeconds.toFixed(2) + " seconds");
     }
 
+    function lineShiftMatch(lineSelectId, shiftSelectId) {
 
+        const lineSelect = $(lineSelectId)
+        const shiftSelect = $(shiftSelectId)
+
+        //match by index placement
+        shiftSelect[0].selectedIndex = lineSelect[0].selectedIndex;
+    }
 
 });

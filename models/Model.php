@@ -19,6 +19,7 @@ abstract class Model implements IModel {
         'linestops',
 
         'pr_one_pol',
+        'ic_pol',
         'takt_time'
     ]; // ✅ Prevents SQL Injection
     private static string $host = '10.248.1.152';

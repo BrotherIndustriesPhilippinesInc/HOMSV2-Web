@@ -14,7 +14,7 @@
     $selectPO = $button->primaryButton("po-button-modal", "Select PO", "/homs/resources/icons/cart-shopping-solid-full.svg", "po_cart", "data-bs-toggle='modal' data-bs-target='#poModal' style='z-index: 99'", "", "height: 24px;");
     $selectESP = $select->primarySelect("espSelect", "ESP32", ["Line 1", "Line 2", "Line 3"], "");
 
-    $startProduction = $button->primaryButton("startProduction", "Start Production", "/homs/resources/icons/pallet.svg", "", );
+    $startProduction = $button->primaryButton("startProduction", "Start Production", "/homs/resources/icons/pallet.svg", "", "", "", "", true, '<iconify-icon icon="fluent:production-20-filled" width="24" height="24" style="vertical-align: bottom;"></iconify-icon>');
 
     $stopProduction = $button->primaryButtonAlt("stopProduction", "Stop Production", "fa-regular fa-circle-stop", "data-bs-toggle='modal' data-bs-target='#stopProductionModal'", "danger" );
     //$causeCategories = $button->primaryButton("causeCategories", "Cause Categories", "/homs/resources/icons/list_alt.svg", "cause_categories", "data-bs-toggle='modal' data-bs-target='#causeModal'", "d-flex align-items-center p-1");

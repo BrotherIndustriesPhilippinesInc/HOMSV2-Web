@@ -13,6 +13,7 @@ class POLController extends Controller
     public function __construct() {
         parent::__construct(new POLModel());
         $this->renamer = new DataRenamer();
+        ini_set('memory_limit', '1024M');
     }
 
     private function setTableName($section) {
@@ -28,6 +29,9 @@ class POLController extends Controller
                 break;
             case 'Printer 1':
                 $this->model->setTableName("pr_one");
+                break;
+            case 'Ink Cartridge':
+            $this->model->setTableName("ic");
                 break;
             default:
                 throw new Exception("Invalid section name.");
@@ -179,9 +183,9 @@ class POLController extends Controller
 
     public function getWorkCenters(string $section){
         try {
-            if($section == "bps"){
-                $section = "tc";
-            }
+            // if($section == "bps"){
+            //     $section = "tc";
+            // }
             $this->model->setTableName($section);
             $response = $this->model->getAll();
             $uniqueWorkCenters["work_centers"] = $this->findWorkCenter($response);
@@ -194,9 +198,9 @@ class POLController extends Controller
     public function getPOLUpdate($section)
     {
         try {
-            if (strtolower($section) === "bps") {
-                $section = "tc";
-            }
+            // if (strtolower($section) === "bps") {
+            //     $section = "tc";
+            // }
 
             $this->model->setTableName($section);
             $response = $this->model->getAll();
