@@ -24,7 +24,7 @@ class UserModel
                 $record["Section"] = "Ink Cartridge";
                 break;
             case "BPS":
-                $record["Section"] = "Ink Cartridge";
+                $record["Section"] = "Printer 1";
                 break;
             case "IH":
                 $record["Section"] = "Ink Head";

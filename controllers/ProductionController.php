@@ -28,7 +28,6 @@ class ProductionController extends Controller
         $this->workCenterController = new WorkCenterController();
         $this->userController = new UserController();
         $this->breaktimeController = new BreaktimeController();
-
     }
 
     public function lastRun($data){
@@ -136,7 +135,10 @@ class ProductionController extends Controller
                 "production_action"    => "end",
                 "commulative_plan"     => $newCummulativePlan,
                 "commulative_actual"   => $newCummulativeActual,
-                "islinestop"           => $data["islinestop"]
+                "islinestop"           => $data["islinestop"],
+                "actual_quantity_sum"  => $data["actual_quantity_sum"],
+
+                //"original_plan"         => $data["original_plan"],
             ]);
 
         }else{
@@ -155,7 +157,10 @@ class ProductionController extends Controller
                 "production_action"    => "end",
                 "commulative_plan"     => $newCummulativePlan,
                 "commulative_actual"   => $newCummulativeActual,
-                "islinestop"           => $data["islinestop"]
+                "islinestop"           => $data["islinestop"],
+
+                "actual_quantity_sum"  => $data["actual_quantity_sum"],
+                "original_plan"       => $data["original_plan"],
             ]);
             
         }

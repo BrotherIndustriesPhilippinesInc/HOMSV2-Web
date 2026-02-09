@@ -155,28 +155,28 @@ $(async function () {
     });
 
     $(".startProduction").on("click", function () {  
-        const shift = {
-            "ds": {"from": "06:00", "to": "19:00"},
-            "ns": {"from": "19:00", "to": "05:30"},
-        };
+        // const shift = {
+        //     "ds": {"from": "06:00", "to": "19:00"},
+        //     "ns": {"from": "19:00", "to": "05:30"},
+        // };
     
-        let now = new Date();
-        let selectedShift = null;
+        // let now = new Date();
+        // let selectedShift = null;
     
-        for (const [key, value] of Object.entries(shift)) {
-            const from = toTimeObj(value.from);
-            const to = toTimeObj(value.to);
+        // for (const [key, value] of Object.entries(shift)) {
+        //     const from = toTimeObj(value.from);
+        //     const to = toTimeObj(value.to);
     
-            if (now >= from && now <= to) {
-                selectedShift = key;
-                break;
-            }
-        }
+        //     if (now >= from && now <= to) {
+        //         selectedShift = key;
+        //         break;
+        //     }
+        // }
     
-        if (!selectedShift) {
-            alert("No matching shift found for the current time.");
-            return;
-        }
+        // if (!selectedShift) {
+        //     alert("No matching shift found for the current time.");
+        //     return;
+        // }
     
         Swal.fire({
             title: 'Start Production',
@@ -194,7 +194,7 @@ $(async function () {
                 let shiftSelected = $(".shiftSelect").val();
 
                 if(
-                    espSelected == "" ||
+                    espSelected == "" || espSelected == null ||
                     lineSelected == "0" ||
                     shiftSelected == "Shift"
                 ){
@@ -205,12 +205,35 @@ $(async function () {
                         timer: 1000,
                         timerProgressBar: true
                     });
+
+                    if(espSelected == "" || espSelected == null){
+                        $(".espSelect").addClass("border-danger danger");
+                    }else
+                    {
+                        $(".espSelect").removeClass("border-danger danger");
+                    }
+                    if(lineSelected == "0"){
+                        $(".lineSelect").addClass("border-danger danger");
+                    }
+                    else
+                    {
+                        $(".lineSelect").removeClass("border-danger danger");
+                    }
+                    if(shiftSelected == "Shift" || shiftSelected == null){
+                        $(".shiftSelect").addClass("border-danger danger");
+                    }
+                    else
+                    {
+                        $(".shiftSelect").removeClass("border-danger danger");
+                    }
+
+
                     return;
                 }
 
 
-                $("#startTime").val(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
-                $(".shiftSelect").val(selectedShift);
+                // $("#startTime").val(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+                // $(".shiftSelect").val(selectedShift);
 
                 let date = formatTimeOnlyToPostgres(startTime.input.value);
                 let data = {
@@ -241,6 +264,8 @@ $(async function () {
 
                     "commulative_plan": $("#target").val(),
                     "commulative_actual": $("#actualQuantity").val().trim() === "" ? 0 : Number($("#actualQuantity").val()),
+
+                    "original_plan": $("#planQuantity").val()
                 }
                 let result = await apiCall('/homs/API/production/startProductionRecord.php', 'POST', data).then((response) => {
                     /* ACKNOWLEDGEMENT */
@@ -280,6 +305,11 @@ $(async function () {
                         }
 
                         startProductionTime = $("#dateSelect").val() + " " + convertTo24Hour(startTime.input.value);
+
+                        /* REMOVE FORM HIGHLIGHTS */
+                        $(".espSelect").removeClass("border-danger danger");
+                        $(".lineSelect").removeClass("border-danger danger");
+                        $(".shiftSelect").removeClass("border-danger danger");
                     });
                     table.ajax.reload(null, false);
                 });
@@ -439,9 +469,8 @@ $(async function () {
 
         let variancePercent = calculateVariancePercent(target, actualQuantity);
 
-        // Get reasons
-        let advanceReasonCheck = collectAdvanceReasonData();
-        let linestopReasonCheck = collectLinestopReasonData();
+        let advanceReasonCheck = "";
+        let linestopReasonCheck = "";
 
         // Clean empty data
         if (advanceReasonCheck.length === 1 &&
@@ -456,10 +485,14 @@ $(async function () {
             linestopReasonCheck = [];
         }
 
+        // Get reasons
+        advanceReasonCheck = collectAdvanceReasonData();
+        linestopReasonCheck = collectLinestopReasonData();
+
         // Check variance and reasons
         if (
             Math.abs(variancePercent) >= 10 &&
-            (advanceReasonCheck.length === 0 || linestopReasonCheck.length === 0)
+            (advanceReasonCheck[0].action_id === "" || linestopReasonCheck[0].action_id === 0)
         ) {
             Swal.fire({
                 icon: "error",
@@ -1331,11 +1364,11 @@ $(async function () {
 
             const reason = row.find(".dynamic-select2-advance-reasons").val(); // ID of selected reason
             const reasonText = row.find(".dynamic-select2-advance-reasons option:selected").text();
-            const reasonNotes = row.find("textarea.advanceCause").val();
+            const reasonNotes = row.find("textarea.advanceCause").val() ?? "";
 
             const action = row.find(".dynamic-select2-advance-actions").val(); // ID of selected action
             const actionText = row.find(".dynamic-select2-advance-actions option:selected").text();
-            const actionNotes = row.find("textarea.advanceAction").val();
+            const actionNotes = row.find("textarea.advanceAction").val() ?? "";
 
             result.push({
                 reason_id: reason,
@@ -1358,11 +1391,11 @@ $(async function () {
 
             const reason = row.find(".dynamic-select2-linestop-reasons").val(); // ID of selected reason
             const reasonText = row.find(".dynamic-select2-linestop-reasons option:selected").text();
-            const reasonNotes = row.find("textarea.linestopCause").val();
+            const reasonNotes = row.find("textarea.linestopCause").val() ?? "";
 
             const action = row.find(".dynamic-select2-linestop-actions").val(); // ID of selected action
             const actionText = row.find(".dynamic-select2-linestop-actions option:selected").text();
-            const actionNotes = row.find("textarea.linestopAction").val();
+            const actionNotes = row.find("textarea.linestopAction").val() ?? "";
 
             result.push({
                 reason_id: reason,
@@ -1499,128 +1532,159 @@ $(async function () {
         const oldValueStr = (oldRowData[colName] ?? '').toString().trim();
         const newValueStr = newValue.toString().trim();
 
-        
         const excludedColumns = ["advance_reasons", "linestop_reasons"];
-        if (excludedColumns.includes(colName)) {
-            console.log(`Change ignored for column: ${colName}`);
-            return; // early exit
-        }
+        if (excludedColumns.includes(colName)) return;
+        if (oldValueStr === newValueStr) return;
 
-        const changedFields = [];
+        /* =========================
+        🔥 HELPERS (DO NOT TOUCH)
+        ========================= */
 
-
-        if (oldValueStr !== newValueStr) {
-            changedFields.push({
-                column: colName,
-                oldValue: oldValueStr,
-                newValue: newValueStr
-            });
-
-            newRowData[colName] = newValue;
-
-            // Target recalculation
-            if (colName === "start_time" || colName === "end_time") {
-                const taktTime = parseFloat($("#taktTime").val());
-                const hourlyPlan = parseInt($("#hourlyPlanQuantity").val());
-
-                const computedTarget = computeTargetBasedOnTime(
-                    newRowData["start_time"],
-                    newRowData["end_time"],
-                    taktTime,
-                    hourlyPlan
-                );
-
-                newRowData["target"] = computedTarget;
-
-                // Optional: Update variance if actual_quantity exists
-                if (!isNaN(parseInt(newRowData["actual_quantity"]))) {
-                    newRowData["variance"] = parseInt(newRowData["actual_quantity"]) - (parseInt(newRowData["target"]) || 0);
-
-                    newRowData["commulative_plan"] = Math.abs((parseInt(oldRowData["target"]) - (parseInt(newRowData["target"]) || 0) ) - parseInt(newRowData["commulative_plan"]));
-
-                    newRowData["compliance_rate"] = calculateComplianceRateWithValues(parseInt(newRowData["actual_quantity"]), parseInt(newRowData["target"]));
-                }
+        // Safe JSON parser for reasons
+        const parseSafe = (val) => {
+            try {
+                return typeof val === "string" ? JSON.parse(val) : val;
+            } catch {
+                return [];
             }
+        };
 
-                // Variance calculation if hourly_plan or actual_quantity edited
-            if (colName === "hourly_plan" || colName === "actual_quantity") {
-                newRowData["variance"] = parseInt(newRowData["actual_quantity"]) - (parseInt(newRowData["target"]) || 0);
+        // 🔥 NORMALIZE actual_quantity into OBJECT
+        const normalizeActualQuantity = (val) => {
+            // Already an object
+            if (typeof val === "object" && val !== null) return val;
 
-                newRowData["commulative_plan"] = Math.abs((parseInt(oldRowData["target"]) - (parseInt(newRowData["target"]) || 0) ) - parseInt(newRowData["commulative_plan"]));
+            if (typeof val === "string") {
+                const trimmed = val.trim();
 
-                newRowData["compliance_rate"] = calculateComplianceRateWithValues(parseInt(newRowData["actual_quantity"]), parseInt(newRowData["target"]));
-            }
-
-            // Defensively parse JSON fields
-            const parseSafe = (val) => {
-                try {
-                    return typeof val === "string" ? JSON.parse(val) : val;
-                } catch (e) {
-                    console.warn("JSON parse failed:", val);
-                    return [];
-                }
-            };
-
-            const buildActualQuantity = (val) => {
-                if (typeof val === "string") {
+                // Case 1: JSON string
+                if (trimmed.startsWith("{")) {
                     try {
-                        return JSON.parse(val);
+                        return JSON.parse(trimmed);
                     } catch {
-                        return null; // invalid JSON
+                        return {};
                     }
                 }
-                return val;
-            };
 
-            const updatedData = {
-                "id": newRowData["id"],
-                "po": newRowData["po"],
-                "section": newRowData["section"],
-                "work_center": newRowData["work_center"],
-                "line_name": newRowData["line_name"],
-                "area": newRowData["area"],
-                "material": newRowData["material"],
-                "description": newRowData["description"],
-                "plan_quantity": newRowData["plan_quantity"],
-                "takt_time": newRowData["takt_time"],
-                "actual_quantity": buildActualQuantity(newRowData["actual_quantity"]),
-                "variance": newRowData["variance"],
-                "shift": newRowData["shift"],
-                "hourly_time": newRowData["hourly_time"],
-                "direct_operators": newRowData["direct_operators"],
-                "start_time": newRowData["start_time"],
-                "end_time": newRowData["end_time"],
-                "advance_reasons": parseSafe(newRowData["advance_reasons"]),
-                "linestop_reasons": parseSafe(newRowData["linestop_reasons"]),
-                "creator": userId,
+                // Case 2: key:value (manual: 120000)
+                if (trimmed.includes(":")) {
+                    const [k, v] = trimmed.split(":");
+                    return {
+                        [k.trim()]: parseInt(v) || 0
+                    };
+                }
 
-                "esp_id": newRowData["esp_id"],
-                "hourly_plan": newRowData["hourly_plan"],
-                "target": newRowData["target"],
+                // Case 3: plain number
+                return { value: parseInt(trimmed) || 0 };
+            }
 
-                "compliance_rate": (newRowData["compliance_rate"] || "").replace('%', ''),
+            return {};
+        };
 
-                "commulative_plan": newRowData["commulative_plan"],
-                "commulative_actual": newRowData["commulative_actual"],
-            };
+        // 🔢 SUM ALL KEYS
+        const getActualTotal = (actualQty) => {
+            const obj = normalizeActualQuantity(actualQty);
+            return Object.values(obj)
+                .reduce((sum, v) => sum + (parseInt(v) || 0), 0);
+        };
 
-            // Update DataTable row once at the end
-            row.data(newRowData).invalidate();
+        /* ========================= */
 
-            // Submit edit history
-            const data = { creator: userId, old_data: oldRowData, new_data: newRowData };
-            await apiCall('/homs/API/production/submitEditHistory.php', 'POST', data);
+        // Apply edit
+        newRowData[colName] = newValue;
 
-            // Update the backend record
-            await apiCall('/homs/API/production/updateProductionRecord.php', 'POST', updatedData);
+        // 🔁 Recalculate target when time changes
+        if (colName === "start_time" || colName === "end_time") {
+            const taktTime = parseFloat($("#taktTime").val());
+            const hourlyPlan = parseInt($("#hourlyPlanQuantity").val());
 
-            console.log('Row edited:', { oldRowData, newRowData, changedFields });
-
-            showToast();
-        } else {
-            console.log("No changes detected in this row");
+            newRowData["target"] = computeTargetBasedOnTime(
+                newRowData["start_time"],
+                newRowData["end_time"],
+                taktTime,
+                hourlyPlan
+            );
         }
+
+        // 🔢 ALWAYS recompute variance & compliance when output-related fields change
+        
+
+        const prevCumActual = parseInt(oldRowData["commulative_actual"]) || 0;
+
+        if (
+            colName === "start_time" ||
+            colName === "end_time" ||
+            colName === "actual_quantity" ||
+            colName === "hourly_plan"
+        ) {
+            const oldActualTotal = getActualTotal(oldRowData["actual_quantity"]);
+            const newActualTotal = getActualTotal(newRowData["actual_quantity"]);
+            const target = parseInt(newRowData["target"]) || 0;
+
+            newRowData["actual_total"] = newActualTotal;
+            newRowData["variance"] = newActualTotal - target;
+            newRowData["compliance_rate"] =
+                calculateComplianceRateWithValues(newActualTotal, target);
+
+            // ✅ FIXED cumulative logic (delta-based)
+            if (colName === "actual_quantity") {
+                const prevCumActual = parseInt(oldRowData["commulative_actual"]) || 0;
+                const deltaActual = newActualTotal - oldActualTotal;
+
+                newRowData["commulative_actual"] = prevCumActual + deltaActual;
+            }
+        }
+
+
+        // 🔥 Build backend payload (JSONB SAFE)
+        const updatedData = {
+            id: newRowData["id"],
+            po: newRowData["po"],
+            section: newRowData["section"],
+            work_center: newRowData["work_center"],
+            line_name: newRowData["line_name"],
+            area: newRowData["area"],
+            material: newRowData["material"],
+            description: newRowData["description"],
+            plan_quantity: newRowData["plan_quantity"],
+            takt_time: newRowData["takt_time"],
+
+            // 👉 ALWAYS send normalized object
+            actual_quantity: normalizeActualQuantity(newRowData["actual_quantity"]),
+
+            variance: newRowData["variance"],
+            shift: newRowData["shift"],
+            hourly_time: newRowData["hourly_time"],
+            direct_operators: newRowData["direct_operators"],
+            start_time: newRowData["start_time"],
+            end_time: newRowData["end_time"],
+            advance_reasons: parseSafe(newRowData["advance_reasons"]),
+            linestop_reasons: parseSafe(newRowData["linestop_reasons"]),
+            creator: userId,
+            esp_id: newRowData["esp_id"],
+            hourly_plan: newRowData["hourly_plan"],
+            target: newRowData["target"],
+            compliance_rate: (newRowData["compliance_rate"] || "").replace('%', ''),
+            commulative_plan: newRowData["commulative_plan"],
+            commulative_actual: newRowData["commulative_actual"]
+        };
+
+        // Update DataTable row
+        row.data(newRowData).invalidate();
+
+        // Save history
+        await apiCall('/homs/API/production/submitEditHistory.php', 'POST', {
+            creator: userId,
+            old_data: oldRowData,
+            new_data: newRowData
+        });
+
+        // Update backend
+        await apiCall('/homs/API/production/updateProductionRecord.php', 'POST', updatedData);
+
+        showToast();
     }
+
 
     async function realTimeUpdateOfPODetails(poId, date) {
         console.log("Realtime update of PO details");
@@ -2001,10 +2065,6 @@ $(async function () {
 
         const units = Math.min(Math.floor(durationInMinutes / taktTime), hourlyPlan);
         return units;
-    }
-
-    function hideInputsWhenPastDatesAreSelected(){
-        
     }
 
     function collectEditAdvanceReasonData() {

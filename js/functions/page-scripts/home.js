@@ -1,32 +1,30 @@
 
 (async function() {
-  const data = [
-    { year: 2010, count: 10 },
-    { year: 2011, count: 20 },
-    { year: 2012, count: 15 },
-    { year: 2013, count: 25 },
-    { year: 2014, count: 22 },
-    { year: 2015, count: 30 },
-    { year: 2016, count: 28 },
-  ];
+  const viz = document.getElementById("tableau-viz");
 
-  new Chart(
-    document.getElementById('acquisitions'),
-    {
-      type: 'line',
-      options: {
-          responsive: true,
-          maintainAspectRatio: false,
-      },
-      data: {
-        labels: data.map(row => row.year),
-        datasets: [
-          {
-            label: 'Acquisitions by year',
-            data: data.map(row => row.count)
-          } 
-        ]
+    async function refreshTableauVizData() {
+      swal.fire({
+        title: "Refreshing Tableau Data...",
+        allowOutsideClick: false,
+        didOpen: () => {
+          swal.showLoading();
+        }
+      });
+
+      try {
+        await viz.refreshDataAsync();
+        swal.close();
+        
+        console.log("Tableau data refreshed successfully");
+      } catch (e) {
+        console.error("Tableau refresh failed:", e);
+        swal.fire("Error", "Failed to refresh Tableau data.", "error");
       }
     }
-  );
+
+    // Example: auto refresh every 5 minutes
+    setInterval(refreshTableauVizData, 5 * 60 * 1000);
+
+    // Or manual button
+    window.refreshTableauVizData = refreshTableauVizData;
 })();

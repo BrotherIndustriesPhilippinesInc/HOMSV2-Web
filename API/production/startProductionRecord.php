@@ -37,14 +37,17 @@ class StartInsertRecord extends API
 
             "commulative_plan",
             "commulative_actual",
+
+            "original_plan"
+
         ];
         
         $this->validation->requiredFields($data, $requiredFields);
 
         unset($data["production_status"]);
-        if(strtolower($data["section"]) === "bps"){
-            $data["section"] = "TC";
-        }
+        // if(strtolower($data["section"]) === "bps"){
+        //     $data["section"] = "TC";
+        // }
 
         //get esp id via sensor name
         $esp_details = $this->espController->getAllWhere("esp_name = '{$data["esp_id"]}'");
@@ -55,7 +58,8 @@ class StartInsertRecord extends API
         if($data["esp_id"] === 0){
             //MANUAL
             $data["actual_quantity"]["manual"] = 0;
-
+            
+            
         }else{
             //ESP32 USED
             foreach($esp_details as $detail){
@@ -76,9 +80,9 @@ class StartInsertRecord extends API
         }
 
 
+
         /* GENERATE UNIQUE SESSION ID */
         $data["unique_session"] = uniqid("session_", true);
-
         $this->post($data);
     }
 }
