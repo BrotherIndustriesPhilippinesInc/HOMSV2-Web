@@ -20,9 +20,10 @@ abstract class Model implements IModel {
 
         'pr_one_pol',
         'ic_pol',
-        'takt_time'
+        'takt_time',
+        'tape_cassette_pol',
     ]; // ✅ Prevents SQL Injection
-    private static string $host = '10.248.1.152';
+    private static string $host = '10.248.1.156';
     private static string $username = 'postgres';
     private static string $password = '1234';
     private static string $database = 'HOMS_V2';

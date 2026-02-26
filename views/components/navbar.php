@@ -15,6 +15,7 @@
   $breaktime_management = $button->navButton("Breaktime Management", "/homs/admin/breaktime_management", "text-center pt-2");
   $settings = $button->navButton("Settings", "/homs/admin/settings", "text-center pt-2");
   $users = $button->navButton("Users", "/homs/admin/users", "text-center pt-2");
+  $delay_overview = $button->navButton("Delay Overview", "/homs/admin/delay_overview", "text-center pt-2");
 
   $takttime = $button->navButton("Takt Time", "/homs/admin/takttime", "text-center pt-2");
 
@@ -108,6 +109,7 @@
                 echo $breaktime_management;
                 echo $settings;
                 echo $users;
+                echo $delay_overview;
               ?>
             </div>
           </div>

@@ -33,7 +33,7 @@
             <div>
                 <script type='module' src='https://bi.datalake.brother.co.jp/javascripts/api/tableau.embedding.3.latest.min.js'></script>
                 <div class="h-100 w-100">
-                    <tableau-viz id='tableau-viz' src='https://bi.datalake.brother.co.jp/t/biph/views/HOMSV2PR1EMES/Dashboard1/3141c6c0-3f46-4381-8b20-fecc6db31f92/354e3394-84df-4a5b-a1d7-f34a6d7358e4' width="100%" height="100vh" hide-tabs toolbar='bottom' ></tableau-viz>
+                    <tableau-viz id='tableau-viz' src='https://bi.datalake.brother.co.jp/t/biph/views/HOMSV2PR1EMES/Dashboard1' width="100%" height="100vh" hide-tabs toolbar='bottom' ></tableau-viz>
                 </div>
             </div>
         HTML;

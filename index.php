@@ -174,6 +174,9 @@
         '/homs/production/mes_po_reason' => function() {
             include __DIR__ . '/views/pages/production/mes_po_reason.php';
         },
+        '/homs/admin/delay_overview' => function() {
+            include __DIR__ . '/views/pages/admin/delay_overview.php';
+        },
     ];
 
     // Get the current path
